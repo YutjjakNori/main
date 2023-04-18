@@ -38,3 +38,18 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+// submodule copyPrivate
+tasks.register('copyPrivate') {
+	copy {
+		from './yutconfig/main'
+		include "*.yml"
+		into 'src/main/resources'
+	}
+
+	copy {
+		from './yutconfig/test'
+		include "*.yml"
+		into 'src/test/resources'
+	}
+}
