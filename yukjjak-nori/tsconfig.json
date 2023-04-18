@@ -16,7 +16,6 @@
     "incremental": true,
     "paths": {
       "@/*": ["/*"],
-      "@/assets/*": ["/assets/*"],
       "@/action/*": ["/action/*"],
       "@/pages/*": ["/pages/*"],
       "@/present/*": ["/present/*"],
