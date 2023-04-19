@@ -10,7 +10,7 @@ import java.util.Map;
 public class StompInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        return false;
+        return true;
     }
 
     @Override
