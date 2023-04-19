@@ -7,10 +7,20 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+/**
+ * stomp 설정
+ *
+ * @author 이준
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    /**
+     * stomp endpoint 설정.
+     *
+     * @param registry
+     */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/stomp")
@@ -18,6 +28,11 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .addInterceptors(new StompInterceptor());
     }
 
+    /**
+     * 발행, 구독 주소 설정
+     *
+     * @param registry
+     */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app", "/pub")
