@@ -15,19 +15,19 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["/*"],
-      "@/action/*": ["/action/*"],
-      "@/pages/*": ["/pages/*"],
-      "@/present/*": ["/present/*"],
-      "@/common/*": ["/common/*"],
-      "@/component/*": ["/component/*"],
-      "@/layout/*": ["/layout/*"],
-      "@/store/*": ["/store/*"],
-      "@/public/*": ["/public/*"],
-      "@/types/*": ["/types/*"],
-      "@/utils/*": ["/utils/*"]
+      "@/*": ["./*"],
+      "@/actions/*": ["./actions/*"],
+      "@/pages/*": ["./pages/*"],
+      "@/present/*": ["./present/*"],
+      "@/common/*": ["./common/*"],
+      "@/component/*": ["./component/*"],
+      "@/layout/*": ["./layout/*"],
+      "@/store/*": ["./store/*"],
+      "@/public/*": ["./public/*"],
+      "@/types/*": ["./types/*"],
+      "@/utils/*": ["./utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "stories/Colors.mdx"]
 }
