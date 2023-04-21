@@ -15,17 +15,17 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@/*": ["/*"],
-      "@/action/*": ["/action/*"],
-      "@/pages/*": ["/pages/*"],
-      "@/present/*": ["/present/*"],
-      "@/common/*": ["/common/*"],
-      "@/component/*": ["/component/*"],
-      "@/layout/*": ["/layout/*"],
-      "@/store/*": ["/store/*"],
-      "@/public/*": ["/public/*"],
-      "@/types/*": ["/types/*"],
-      "@/utils/*": ["/utils/*"]
+      "@/*": ["./*"],
+      "@/action/*": ["./action/*"],
+      "@/pages/*": ["./pages/*"],
+      "@/present/*": ["./present/*"],
+      "@/common/*": ["./present/common/*"],
+      "@/component/*": ["./present/component/*"],
+      "@/layout/*": ["./present/layout/*"],
+      "@/store/*": ["./store/*"],
+      "@/public/*": ["./public/*"],
+      "@/types/*": ["./types/*"],
+      "@/utils/*": ["./utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
