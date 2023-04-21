@@ -1,24 +1,11 @@
 //로비 페이지
 import CircleButton from "@/component/Button/CircleButton";
 import RectButton from "@/component/Button/RectButton";
-
+import { CircleButtonProps } from "@/component/Button/CircleButton";
+import { RectButtonProps } from "@/component/Button/RectButton";
 import styled from "styled-components";
 
 import Svg from "@/public/icon/close.svg";
-
-export interface RectButtonProps {
-  text: string;
-  fontSize: string;
-  backgroundColor: string;
-}
-
-export interface CircleButtonProps {
-  Icon?: any;
-  text?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  width?: string;
-}
 
 const CompoTest = () => {
   // 만들고자 하는 컴포넌트의 정보를 여기에서 설정! (버튼 사이즈는 아래 container div에서 설정!)

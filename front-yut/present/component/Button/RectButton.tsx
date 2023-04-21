@@ -1,5 +1,10 @@
 import * as style from "./RectButton.style";
-import { RectButtonProps } from "@/pages/compoTest";
+
+interface RectButtonProps {
+  text: string;
+  fontSize: string;
+  backgroundColor: string;
+}
 
 function RectButton({ backgroundColor, text, fontSize }: RectButtonProps) {
   return (
@@ -9,4 +14,5 @@ function RectButton({ backgroundColor, text, fontSize }: RectButtonProps) {
   );
 }
 
+export type { RectButtonProps };
 export default RectButton;
