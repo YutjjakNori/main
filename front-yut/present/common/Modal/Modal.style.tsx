@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const ModalWrapper = styled.div`
+export const Modal = styled.div`
   background: #fff;
   width: 500px;
   height: 600px;
