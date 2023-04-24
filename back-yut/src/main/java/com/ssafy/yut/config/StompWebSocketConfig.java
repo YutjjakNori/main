@@ -1,7 +1,10 @@
 package com.ssafy.yut.config;
 
 import com.ssafy.yut.interceptor.StompInterceptor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -12,9 +15,14 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  *
  * @author 이준
  */
+
+@Slf4j
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSocketMessageBroker
 public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final StompInterceptor stompInterceptor;
 
     /**
      * stomp endpoint 설정.
@@ -23,9 +31,9 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/stomp")
-                .setAllowedOriginPatterns("**")
-                .addInterceptors(new StompInterceptor());
+        registry.addEndpoint("/yut")
+                .setAllowedOriginPatterns("*")
+                .withSockJS();
     }
 
     /**
@@ -35,7 +43,17 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/app", "/pub")
+        registry.setApplicationDestinationPrefixes("/game", "/room")
                 .enableSimpleBroker("/sub");
+    }
+
+    /**
+     * 연결 관리를 위한 인터셉터 연결
+     *
+     * @param registration
+     */
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(stompInterceptor);
     }
 }
