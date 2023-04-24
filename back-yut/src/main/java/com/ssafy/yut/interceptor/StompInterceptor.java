@@ -30,10 +30,12 @@ public class StompInterceptor implements ChannelInterceptor {
         String sessionId = (String) message.getHeaders().get("simpSessionId");
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
+            // TODO: 연결 요청 시 토큰 검사. -> 스프링 시큐리티를 통해서 필터처리?
             log.info(accessor.toString());
         }
 
         else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            // TODO: 구독 시 방 검사 DB에 있는 지 검사.
             log.info(accessor.toString());
         }
 
