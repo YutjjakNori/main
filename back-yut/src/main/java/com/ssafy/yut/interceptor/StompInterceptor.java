@@ -1,7 +1,15 @@
 package com.ssafy.yut.interceptor;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
@@ -12,34 +20,27 @@ import java.util.Map;
  * 
  * @author 이준
  */
-public class StompInterceptor implements HandshakeInterceptor {
+@Slf4j
+@Component
+public class StompInterceptor implements ChannelInterceptor {
 
-    /**
-     * HandShake 수립 전
-     * 
-     * @param request the current request
-     * @param response the current response
-     * @param wsHandler the target WebSocket handler
-     * @param attributes the attributes from the HTTP handshake to associate with the WebSocket
-     * session; the provided attributes are copied, the original map is not used.
-     * @return
-     * @throws Exception
-     */
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        return true;
+    public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        String sessionId = (String) message.getHeaders().get("simpSessionId");
+
+        if (StompCommand.CONNECT == accessor.getCommand()) {
+            log.info(accessor.toString());
+        }
+
+        else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
+            log.info(accessor.toString());
+        }
+
+        else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            log.info(accessor.toString());
+        }
+        return message;
     }
 
-    /**
-     * HandShake 수립 후
-     * 
-     * @param request the current request
-     * @param response the current response
-     * @param wsHandler the target WebSocket handler
-     * @param exception an exception raised during the handshake, or {@code null} if none
-     */
-    @Override
-    public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
-
-    }
 }
