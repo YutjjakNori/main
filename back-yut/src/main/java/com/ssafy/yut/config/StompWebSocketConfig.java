@@ -14,6 +14,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * stomp 설정
  *
  * @author 이준
+ * @author 김정은
  */
 
 @Slf4j
@@ -32,7 +33,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/yut")
-                .setAllowedOriginPatterns("*")
+                .setAllowedOriginPatterns("**")
                 .withSockJS();
     }
 
@@ -43,8 +44,8 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setApplicationDestinationPrefixes("/game", "/room")
-                .enableSimpleBroker("/sub");
+        registry.setApplicationDestinationPrefixes("/")
+                .enableSimpleBroker("/topic");
     }
 
     /**
