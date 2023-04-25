@@ -1,15 +1,21 @@
 import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import * as style from "./Modal.style";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  modalStateAtom,
+  isBackgroundAtom,
+  isBrowserAtom,
+} from "@/store/modalStore";
 
 interface Props {
   show: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  modalChildren: React.ReactNode;
 }
 
-export default function Modal({ show, onClose, children }: Props) {
-  const [isBrowser, setIsBrowser] = useState(false);
+export default function Modal({ show, onClose, modalChildren }: Props) {
+  const [isBrowser, setIsBrowser] = useRecoilState(isBrowserAtom);
 
   useEffect(() => {
     setIsBrowser(true);
@@ -28,7 +34,7 @@ export default function Modal({ show, onClose, children }: Props) {
             <button className="btn">Close</button>
           </a>
         </style.Header>
-        <style.Body>{children}</style.Body>
+        <style.Body>{modalChildren}</style.Body>
       </style.Modal>
     </style.Overlay>
   ) : null;
