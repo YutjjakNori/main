@@ -40,6 +40,10 @@ dependencies {
 	// stomp
 	implementation 'org.webjars:stomp-websocket:2.3.4'
 	implementation 'org.webjars:sockjs-client:1.5.1'
+
+	// Random String
+	implementation 'org.apache.commons:commons-lang3:3.12.0'
+
 }
 
 tasks.named('test') {
