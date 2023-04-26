@@ -79,3 +79,4 @@ const GameProfile = ({
 };
 
 export default GameProfile;
+export type { GameProfileProps };
