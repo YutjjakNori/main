@@ -1,32 +1,30 @@
 import { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import * as style from "./Modal.style";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  modalStateAtom,
-  isBackgroundAtom,
-  isBrowserAtom,
-} from "@/store/modalStore";
+import { useRecoilState } from "recoil";
+import { modalState } from "@/store/modalStore";
 
-interface Props {
-  show: boolean;
-  onClose: () => void;
-  modalChildren: React.ReactNode;
-}
-
-export default function Modal({ show, onClose, modalChildren }: Props) {
-  const [isBrowser, setIsBrowser] = useRecoilState(isBrowserAtom);
-
+function Modal() {
+  const [modalProps, setModalProps] = useRecoilState(modalState);
   useEffect(() => {
-    setIsBrowser(true);
+    setModalProps({ ...modalProps, isShow: true, isBrowser: true });
+    // if (typeof window !== "undefined" && typeof document !== "undefined") {
+    //   setModalProps({ ...modalProps, isShow: true, isBrowser: true });
+    //   // modal 닫히면 원래 있는 위치에서 다시 스크롤 가능하도록 함
+    //   return () => {
+    //     const scrollY = document.body.style.top;
+    //     document.body.style.cssText = "";
+    //     window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
+    //   };
+    // }
   }, []);
 
   const handleClose = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    onClose();
+    modalProps.onClose();
   };
 
-  const modalContent = show ? (
+  const modalContent = modalProps.isShow ? (
     <style.Overlay>
       <style.Modal>
         <style.Header>
@@ -34,12 +32,12 @@ export default function Modal({ show, onClose, modalChildren }: Props) {
             <button className="btn">Close</button>
           </a>
         </style.Header>
-        <style.Body>{modalChildren}</style.Body>
+        <style.Body>{modalProps.modalChildren}</style.Body>
       </style.Modal>
     </style.Overlay>
   ) : null;
 
-  if (isBrowser) {
+  if (modalProps.isBrowser) {
     return ReactDOM.createPortal(
       modalContent,
       document.getElementById("modal-root")!
@@ -48,3 +46,5 @@ export default function Modal({ show, onClose, modalChildren }: Props) {
     return null;
   }
 }
+
+export default Modal;

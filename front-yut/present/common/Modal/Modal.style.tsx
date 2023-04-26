@@ -1,9 +1,9 @@
 import styled from "styled-components";
 
-export const Modal = styled.div`
+const Modal = styled.div`
   background: #fff;
   width: 500px;
-  height: 600px;
+  height: 320px;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0px 4px 4px gray;
@@ -11,17 +11,32 @@ export const Modal = styled.div`
   z-index: 100;
 `;
 
-export const Header = styled.div`
+const Header = styled.div`
   display: flex;
   justify-content: center;
   font-size: 25px;
 `;
 
-export const Body = styled.div`
+// const Body = styled.div<{
+//   scrollY: string;
+// }>`
+//   padding-top: 10px;
+//   position: fixed;
+//   top: 10px;
+//   /* top: -${({ scrollY }) => scrollY ?? "10"}px; */
+//   overflow-y: scroll;
+//   width: 100%;
+// `;
+
+const Body = styled.div`
   padding-top: 10px;
+  position: fixed;
+  top: 10px;
+  overflow-y: scroll;
+  width: 100%;
 `;
 
-export const Overlay = styled.div`
+const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -32,3 +47,5 @@ export const Overlay = styled.div`
   align-items: center;
   background-color: rgba(0, 0, 0, 0.3);
 `;
+
+export { Modal, Header, Body, Overlay };
