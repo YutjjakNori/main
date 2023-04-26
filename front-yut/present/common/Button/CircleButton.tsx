@@ -3,6 +3,8 @@ import * as style from "./CircleButton.style";
 interface CircleButtonProps {
   Icon?: any;
   text?: string;
+  fontSize: string;
+  color: string;
   backgroundColor?: string;
   borderColor?: string;
   width?: string;
@@ -11,12 +13,16 @@ interface CircleButtonProps {
 function CircleButton({
   Icon,
   text,
+  fontSize,
+  color,
   backgroundColor,
   borderColor,
 }: CircleButtonProps) {
   return (
     <>
       <style.StyledButton
+        fontSize={fontSize}
+        color={color}
         backgroundColor={backgroundColor}
         borderColor={borderColor}
       >
