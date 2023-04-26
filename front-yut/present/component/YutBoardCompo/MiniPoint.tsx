@@ -4,14 +4,14 @@ import YutPieceCompo, {
 import * as style from "./YutBoardCompo.style";
 
 interface MiniPointProps {
-  id: string;
+  id: number;
   classStr?: string;
   pieceList: Array<YutPieceCompoProps>;
 }
 
 const MiniPoint = ({ id, classStr, pieceList }: MiniPointProps) => {
   return (
-    <style.MiniPoint id={id} className={classStr ?? ""}>
+    <style.MiniPoint className={classStr ?? ""}>
       {pieceList?.map((piece, index) => (
         <YutPieceCompo key={index} {...piece} />
       ))}
