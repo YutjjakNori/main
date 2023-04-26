@@ -23,9 +23,8 @@ public class ChatController {
      *
      * @param message 유저가 보낸 메시지
      */
-    // TODO: RoomID가 맞을 때 채팅할 수 있도록
     @MessageMapping()
-    public void chat(ChatDto message){
+    public void chat(ChatDto.Request message){
         chatService.sendMessage(message);
     }
 }

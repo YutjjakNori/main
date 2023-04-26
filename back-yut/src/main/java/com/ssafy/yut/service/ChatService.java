@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class ChatService {
 
     private static final String TOPIC = "test", GROUP_ID = "yut";
-    private final KafkaTemplate<String, ChatDto> kafkaTemplate;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 
     /**
@@ -28,8 +28,7 @@ public class ChatService {
      *
      * @param message 유저가 작성한 매시지
      */
-    public void sendMessage(ChatDto message){
-        log.info("Produce message: " + message);
+    public void sendMessage(ChatDto.Request message){
         kafkaTemplate.send(TOPIC, message);
     }
 
@@ -39,8 +38,8 @@ public class ChatService {
      * @param message 유저가 받은 메시지
      */
     @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
-    public void readMessage(ChatDto message){
-        log.info("consume message: " + message);
-        template.convertAndSend("/topic/chat", message);
+    public void readMessage(ChatDto.Request message){
+        template.convertAndSend("/topic/chat/" + message.getRoomCode(),
+                ChatDto.Response.builder().userId(message.getUserId()).content(message.getContent()).build());
     }
 }
