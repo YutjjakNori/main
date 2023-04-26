@@ -35,7 +35,7 @@ public class StompInterceptor implements ChannelInterceptor {
         }
 
         else if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
-            // TODO: 구독 시 방 검사 DB에 있는 지 검사.
+            // TODO: 구독 시 알림 메시지
             log.info(accessor.toString());
         }
 
