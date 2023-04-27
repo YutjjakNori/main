@@ -75,8 +75,15 @@ public class RoomService {
 
     public void readyGame(ReadyDto.ReadyRequest readyRequest) {
         Optional<Room> room = redisMapper.getData(readyRequest.getRoomCode(), Room.class);
-        List<?> users = room.get().getUsers();
-//        users.
+        List<User> users = room.get().getUsers();
+        int userIndex;
+        for(int i=0; i < users.size(); i++) {
+            if(users.get(i).getUserId().equals(readyRequest.getUserId())) {
+                userIndex = i;
+            }
+        }
+        String ready = room.get().getReady();
+        // TODO 비트연산
     }
 
     @KafkaListener(topics = TOPIC_ROOM, groupId = GROUP_ID)
