@@ -1,6 +1,7 @@
 package com.ssafy.yut.service;
 
 import com.ssafy.yut.dto.ChatDto;
+import com.ssafy.yut.dto.ChatType;
 import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.TurnDto;
 import com.ssafy.yut.dto.YutDto;
@@ -58,7 +59,7 @@ public class GameService {
             result = "모";
         }
         kafkaTemplate.send("chat", request.getRoomCode(),
-                ChatDto.Request.builder().userId(request.getUserId()).roomCode(request.getRoomCode()).content("["+ result + "]을(를) 던졌습니다.").build());
+                ChatDto.Request.builder().type(ChatType.SYSTEM).userId(request.getUserId()).roomCode(request.getRoomCode()).content("["+ result + "]을(를) 던졌습니다.").build());
         template.convertAndSend("/topic/game/stick/" + request.getRoomCode(),
                 YutDto.Response.builder().userId(request.getUserId()).result(result).build());
     }
@@ -70,7 +71,7 @@ public class GameService {
      */
     public void getTurn(RequestDto request){
         kafkaTemplate.send("chat", request.getRoomCode(),
-                ChatDto.Request.builder().userId(request.getUserId()).roomCode(request.getRoomCode()).content("차례입니다.").build());
+                ChatDto.Request.builder().type(ChatType.SYSTEM).userId(request.getUserId()).roomCode(request.getRoomCode()).content("차례입니다.").build());
         kafkaTemplate.send(TOPIC + ".turn", request.getRoomCode(), request);
     }
 
