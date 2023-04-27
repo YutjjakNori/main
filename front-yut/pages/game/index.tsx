@@ -7,9 +7,11 @@ import YutBoardCompo from "@/present/component/YutBoardCompo/YutBoardCompo";
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
 import { colors } from "@/styles/theme";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { YutPieceListState } from "@/store/GameStore";
 import { useRecoilState } from "recoil";
+
+const animationSeconds = 0.5;
 
 //사용자의 초기 말 3개 생성
 const createUserPieceList = (
@@ -57,7 +59,36 @@ interface UserInfoType {
 const Game = () => {
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
   const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
-  const [index, setIndex] = useState(0);
+  //움직여야할 piece의 index
+  const [movePieceIndex, setMovePieceIndex] = useState(-1);
+  //움직일 경로
+  const [movePathList, setMovePathList] = useState<Array<number>>([]);
+
+  const setMoveInfo = useCallback(
+    (userId: string, pieceId: number, movePath: Array<number>) => {
+      const pieceIndex = pieceList.findIndex(
+        (p) => p.userId === userId && p.pieceId === pieceId,
+      );
+      setMovePieceIndex(pieceIndex);
+      setMovePathList(movePath);
+    },
+    [pieceList],
+  );
+  const pieceMove = useCallback(
+    (pieceIndex: number, cornerIndex: number) => {
+      const list = pieceList.map((p, idx) => {
+        if (pieceIndex !== idx) return p;
+        const tmp: YutPieceCompoProps = { ...p };
+        if (tmp.state === "NotStarted") {
+          tmp.state = "InBoard";
+        }
+        tmp.position = cornerIndex;
+        return tmp;
+      });
+      setPieceList(list);
+    },
+    [pieceList],
+  );
 
   useEffect(() => {
     //TODO : 서버에서 사용자 정보를 받아오는걸로 변경
@@ -86,16 +117,21 @@ const Game = () => {
     setPieceList(pieceInitialList);
   }, []);
 
-  const testMove = () => {
-    setIndex((current) => current + 1);
-    const list: Array<YutPieceCompoProps> = pieceList.map((piece, count) => {
-      const tmp = { ...piece };
-      if (count === 0) {
-        tmp.position = index;
+  useEffect(() => {
+    if (movePieceIndex === -1 || movePathList.length === 0) return;
+
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i >= movePathList.length) {
+        clearInterval(timer);
+        return;
       }
-      return tmp;
-    });
-    setPieceList(list);
+      pieceMove(movePieceIndex, movePathList[i++]);
+    }, animationSeconds * 1000);
+  }, [movePathList, movePieceIndex]);
+
+  const testMove = () => {
+    setMoveInfo("1", 1, [0, 1, 2, 3, 4, 5]);
   };
 
   return (
