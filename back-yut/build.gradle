@@ -46,8 +46,14 @@ dependencies {
 
 }
 
+// submodule copyPrivate
 tasks.named('test') {
 	useJUnitPlatform()
+	dependsOn 'copyPrivate'
+}
+
+tasks.named('compileJava') {
+	dependsOn 'copyPrivate'
 }
 
 // submodule copyPrivate
