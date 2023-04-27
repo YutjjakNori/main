@@ -1,5 +1,7 @@
 package com.ssafy.yut.service;
 
+import com.ssafy.yut.dto.RequestDto;
+import com.ssafy.yut.dto.TurnDto;
 import com.ssafy.yut.dto.YutDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class GameService {
 
-    private static final String TOPIC = "game", GROUP_ID = "yut";
+    private final String TOPIC = "game", GROUP_ID = "yut";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 
@@ -27,8 +29,8 @@ public class GameService {
      *
      * @param request
      */
-    public void yut(YutDto.Request request){
-        kafkaTemplate.send(TOPIC, request.getRoomCode(), request);
+    public void yut(RequestDto request){
+        kafkaTemplate.send(TOPIC + ".yut", request.getRoomCode(), request);
     }
 
     /**
@@ -36,8 +38,8 @@ public class GameService {
      *
      * @param request
      */
-    @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
-    public void throwYut(YutDto.Request request){
+    @KafkaListener(topics = TOPIC + ".yut", groupId = GROUP_ID)
+    public void throwYut(RequestDto request){
         int random = (int)(Math.random() * 100);
         log.info(String.valueOf(random));
 
@@ -55,7 +57,26 @@ public class GameService {
             result = 5;
         }
         template.convertAndSend("/topic/game/stick/" + request.getRoomCode(),
-                YutDto.Response.builder().userId(request.userId).result(result).build());
+                YutDto.Response.builder().userId(request.getUserId()).result(result).build());
     }
 
+    /**
+     * 턴 돌리기 메시지 요청
+     *
+     * @param request
+     */
+    public void getTurn(RequestDto request){
+        kafkaTemplate.send(TOPIC + ".turn", request.getRoomCode(), request);
+    }
+
+    /**
+     * 턴 돌리기 응답
+     *
+     * @param request
+     */
+    @KafkaListener(topics = TOPIC + ".turn", groupId = GROUP_ID)
+    public void sendTurn(RequestDto request){
+        template.convertAndSend("/topic/game/turn/" + request.getRoomCode(),
+                TurnDto.builder().userId(request.getUserId()).build());
+    }
 }
