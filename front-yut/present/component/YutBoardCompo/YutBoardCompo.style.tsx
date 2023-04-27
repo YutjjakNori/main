@@ -120,6 +120,21 @@ const PointStyle = css`
   border: inherit;
 `;
 
+const PieceSize = css`
+  .piece {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    width: 4.5rem;
+    height: 4.5rem;
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+    }
+  }
+`;
+
 const CornerPoint = styled.div<{ type: string }>`
   width: ${cornerPointSize}%;
   ${PointStyle}
@@ -127,7 +142,7 @@ const CornerPoint = styled.div<{ type: string }>`
   background-color: ${({ type }) =>
     type === "blue" ? colors.gamePage.darkBlue : colors.gamePage.darkPink};
 
-  div {
+  div:nth-child(1) {
     ${PointStyle}
     width: 70%;
     top: 50%;
@@ -136,6 +151,8 @@ const CornerPoint = styled.div<{ type: string }>`
     background-color: ${({ type }) =>
       type === "blue" ? colors.gamePage.blue : colors.gamePage.pink};
   }
+
+  ${PieceSize}
 `;
 
 const MiniPoint = styled.div`
@@ -143,7 +160,10 @@ const MiniPoint = styled.div`
   border: 2px solid ${colors.achromaticColor.lightBlack};
   background-color: ${colors.achromaticColor.white};
   position: relative;
+  box-sizing: border-box;
   width: ${miniPointSize}rem;
+
+  ${PieceSize}
 `;
 
 const MiniList = styled.div`

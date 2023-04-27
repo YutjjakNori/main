@@ -1,14 +1,14 @@
 import styled from "styled-components";
 
 const SvgContainer = styled.div`
-  width: 2rem;
+  width: fit-content;
   height: auto;
   aspect-ratio: 1/1;
   position: relative;
 
   svg {
-    width: 100%;
-    height: 100%;
+    width: 2rem;
+    height: 2rem;
   }
 `;
 

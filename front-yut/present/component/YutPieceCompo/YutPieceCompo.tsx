@@ -28,7 +28,7 @@ const YutPieceCompo = ({
   appendedCount = 1,
 }: YutPieceCompoProps) => {
   return (
-    <style.SvgContainer>
+    <style.SvgContainer className="piece">
       {/* player type에 맞는 svg icon */}
       {PieceIcon(pieceType)}
       <style.AppendCount>

@@ -162,7 +162,7 @@ const Game = () => {
         <YutBoardCompo />
       </div>
       <div style={{ position: "absolute", right: "10%" }}>
-        <button onClick={testMove}>index ++</button>
+        <button onClick={testMove}>movePath</button>
       </div>
     </div>
   );
