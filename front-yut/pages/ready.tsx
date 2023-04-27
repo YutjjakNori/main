@@ -6,7 +6,7 @@ import Timer from "@/present/common/Timer/Timer";
 import useModal from "@/actions/hook/controlModal";
 
 const Ready = () => {
-  const { openModal } = useModal(); //모달 열기
+  const { openModal, closeModal } = useModal(); //모달 열기
 
   return (
     <>
@@ -21,7 +21,14 @@ const Ready = () => {
         준비
       </button>
       <Modal title={"게임을 시작합니다"}>
-        <Timer ss={5} size={65} color={"#000"} handleOver={() => {}} />
+        <Timer
+          ss={5}
+          size={65}
+          color={"#000"}
+          handleOver={() => {
+            closeModal();
+          }}
+        />
       </Modal>
     </>
   );

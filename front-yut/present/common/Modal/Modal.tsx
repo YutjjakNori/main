@@ -1,9 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import * as style from "./Modal.style";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { modalState, showState } from "@/store/modalStore";
-import useModal from "@/actions/hook/controlModal";
+import { showState } from "@/store/modalStore";
 
 interface ReadyModalProps {
   title: string;
@@ -11,16 +10,12 @@ interface ReadyModalProps {
 }
 
 function Modal({ title, children }: ReadyModalProps) {
-  const [modal, setModal] = useRecoilState(modalState);
+  const [mounted, setMounted] = useState(false);
   const isShow = useRecoilValue(showState);
-  const { closeModal } = useModal();
 
   useEffect(() => {
-    setModal((modalState) => ({ ...modalState, isBrowser: true }));
-    const timer = setTimeout(() => {
-      closeModal();
-    }, 5000);
-    return () => clearTimeout(timer);
+    setMounted(true);
+    return () => setMounted(false);
   }, []);
 
   const modalContent = isShow ? (
@@ -32,7 +27,7 @@ function Modal({ title, children }: ReadyModalProps) {
     </style.Overlay>
   ) : null;
 
-  if (modal.isBrowser) {
+  if (mounted) {
     return ReactDOM.createPortal(
       modalContent,
       document.getElementById("modal-root")!
