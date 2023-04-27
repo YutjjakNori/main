@@ -10,7 +10,9 @@ const pieceFilterByIndex = (
   index: number,
   pieceList: Array<YutPieceCompoProps>,
 ) => {
-  return pieceList.filter((piece) => piece.position === index);
+  return pieceList.filter(
+    (piece) => piece.state === "InBoard" && piece.position === index,
+  );
 };
 
 const createMiniPoint = (

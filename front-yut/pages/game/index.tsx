@@ -74,6 +74,7 @@ const Game = () => {
     },
     [pieceList],
   );
+
   const pieceMove = useCallback(
     (pieceIndex: number, cornerIndex: number) => {
       const list = pieceList.map((p, idx) => {
@@ -117,6 +118,22 @@ const Game = () => {
     setPieceList(pieceInitialList);
   }, []);
 
+  //말 동내기
+  const pieceOver = useCallback(
+    (userId: string, pieceId: number) => {
+      const list = pieceList.map((p) => {
+        if (p.userId === userId && p.pieceId === pieceId) {
+          const tmp: YutPieceCompoProps = { ...p };
+          tmp.state = "Done";
+          return tmp;
+        }
+        return p;
+      });
+      setPieceList(list);
+    },
+    [pieceList],
+  );
+
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
 
@@ -130,8 +147,12 @@ const Game = () => {
     }, animationSeconds * 1000);
   }, [movePathList, movePieceIndex]);
 
+  //test
   const testMove = () => {
     setMoveInfo("1", 1, [0, 1, 2, 3, 4, 5]);
+  };
+  const testPieceOver = () => {
+    pieceOver("1", 1);
   };
 
   return (
@@ -163,6 +184,7 @@ const Game = () => {
       </div>
       <div style={{ position: "absolute", right: "10%" }}>
         <button onClick={testMove}>movePath</button>
+        <button onClick={testPieceOver}>pieceOver</button>
       </div>
     </div>
   );
