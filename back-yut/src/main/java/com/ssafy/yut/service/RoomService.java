@@ -1,6 +1,12 @@
 package com.ssafy.yut.service;
 
+import com.ssafy.yut.dto.ChatDto;
 import com.ssafy.yut.dto.RoomDto;
+import com.ssafy.yut.entity.Game;
+import com.ssafy.yut.entity.Room;
+import com.ssafy.yut.exception.CustomException;
+import com.ssafy.yut.exception.ErrorCode;
+import com.ssafy.yut.util.RedisMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -8,6 +14,9 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+
+import javax.swing.text.html.Option;
+import java.util.Optional;
 
 /**
  * 대기방 관련 Service
@@ -20,7 +29,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RoomService {
 
-    private static final String TOPIC = "room", GROUP_ID = "yut";
+    private final RedisMapper redisMapper;
+    private final String TOPIC_ROOM = "room", TOPIC_CHAT = "chat", TOPIC_GAME = "GAME", GROUP_ID = "yut";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessagingTemplate template;
     private final int RANDOM_LEN = 5;
@@ -37,17 +47,34 @@ public class RoomService {
     }
 
     public boolean enterRoom(RoomDto.RoomCode roomDto) {
+        Optional<Room> room = redisMapper.getData(roomDto.getRoomCode(), Room.class);
+
+        if (room.isEmpty()) {
+            throw new CustomException(ErrorCode.NOT_FOUND_ROOM);
+        }
+
+        else {
+            Optional<Game> game = redisMapper.getData(roomDto.getRoomCode(), Game.class);
+
+            // TODO: 게임 중, 종료 되었을 때 에러 던지기
+        }
+
         return true;
     }
 
     public void enterRoom(RoomDto.RequestEnter enterDto) {
         log.info("Enter Room: " + enterDto);
         // TODO: Redis 조회 후 대기방 정보(대기인원, 준비 상태) 넘겨주기
-        kafkaTemplate.send(TOPIC, enterDto);
+        kafkaTemplate.send(TOPIC_ROOM, enterDto);
+        kafkaTemplate.send(TOPIC_CHAT, new ChatDto());
     }
 
-    @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
-    public void announceRoom(RoomDto.RequestEnter enterDto) {
+    public void readyGame() {
+
+    }
+
+    @KafkaListener(topics = TOPIC_ROOM, groupId = GROUP_ID)
+    public void announceRoomInfo(RoomDto.RequestEnter enterDto) {
         log.info("Announce Enter Room : " + enterDto);
         template.convertAndSend("/topic/room/"+enterDto.getRoomCode(), enterDto);
     }

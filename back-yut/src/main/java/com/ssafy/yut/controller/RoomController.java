@@ -46,4 +46,9 @@ public class RoomController {
     public void enterRoom(@RequestBody RoomDto.RequestEnter enterDto) {
         roomService.enterRoom(enterDto);
     }
+
+    @MessageMapping("/preparation")
+    public void readyGame(@RequestBody ) {
+
+    }
 }
