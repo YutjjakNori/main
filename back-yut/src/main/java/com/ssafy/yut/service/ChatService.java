@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private static final String TOPIC = "test", GROUP_ID = "yut";
+    private static final String TOPIC = "chat", GROUP_ID = "yut";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 
@@ -40,6 +40,10 @@ public class ChatService {
     @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
     public void readMessage(ChatDto.Request message){
         template.convertAndSend("/topic/chat/" + message.getRoomCode(),
-                ChatDto.Response.builder().userId(message.getUserId()).content(message.getContent()).build());
+                ChatDto.Response.builder()
+                        .type(message.getType())
+                        .userId(message.getUserId())
+                        .content(message.getContent())
+                        .build());
     }
 }

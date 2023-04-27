@@ -20,6 +20,6 @@ public class YutDto {
     @Builder
     public static class Response{
         private String userId;
-        private int result;
+        private String result;
     }
 }
