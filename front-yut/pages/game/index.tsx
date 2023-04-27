@@ -8,7 +8,11 @@ import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCo
 import { colors } from "@/styles/theme";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
 import { useEffect, useState, useCallback } from "react";
-import { YutPieceListState } from "@/store/GameStore";
+import {
+  NowTurnPlayerIdState,
+  PlayTurnState,
+  YutPieceListState,
+} from "@/store/GameStore";
 import { useRecoilState } from "recoil";
 
 const animationSeconds = 0.5;
@@ -58,6 +62,8 @@ interface UserInfoType {
 
 const Game = () => {
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
+  const [playTurn, setPlayTurn] = useRecoilState(PlayTurnState);
+  const [nowTurn, setNowTurn] = useRecoilState(NowTurnPlayerIdState);
   const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
   //움직여야할 piece의 index
   const [movePieceIndex, setMovePieceIndex] = useState(-1);
@@ -112,8 +118,13 @@ const Game = () => {
         color: colors.gamePlayer[index],
       };
     });
-
     setUserList([...playerList]);
+
+    const playTurnList = list.map((user) => {
+      return user.userId;
+    });
+    setPlayTurn(playTurnList);
+
     const pieceInitialList = createAllPieceList(list);
     setPieceList(pieceInitialList);
   }, []);
@@ -155,6 +166,10 @@ const Game = () => {
     pieceOver("1", 1);
   };
 
+  const myTurn = () => {
+    setNowTurn("1");
+  };
+
   return (
     <div>
       <div
@@ -185,6 +200,7 @@ const Game = () => {
       <div style={{ position: "absolute", right: "10%" }}>
         <button onClick={testMove}>movePath</button>
         <button onClick={testPieceOver}>pieceOver</button>
+        <button onClick={myTurn}>set my turn</button>
       </div>
     </div>
   );

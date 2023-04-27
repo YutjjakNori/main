@@ -1,5 +1,8 @@
+import { NowTurnPlayerIdState } from "@/store/GameStore";
 import { PieceStateType } from "@/types/game/YutGameTypes";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
+import { useState } from "react";
+import { useRecoilValue } from "recoil";
 import PieceIcon from "./PieceIcon";
 import * as style from "./YutPieceCompo.style";
 
@@ -27,8 +30,21 @@ const YutPieceCompo = ({
   state = "NotStarted",
   appendedCount = 1,
 }: YutPieceCompoProps) => {
+  const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
+  const isClickable = nowTurnPlayerId === userId;
+
+  const onClick = () => {
+    if (!isClickable) return;
+
+    //TODO : 서버에 요청
+  };
+
   return (
-    <style.SvgContainer className="piece">
+    <style.SvgContainer
+      className="piece"
+      onClick={onClick}
+      isClickable={isClickable}
+    >
       {/* player type에 맞는 svg icon */}
       {PieceIcon(pieceType)}
       <style.AppendCount>
