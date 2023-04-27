@@ -14,7 +14,7 @@ import java.util.List;
  * @author 김정은
  */
 
-public class RoomDto {
+public class RoomDto extends RequestDto{
 
     @Getter
     @Setter
@@ -24,15 +24,6 @@ public class RoomDto {
     public static class User {
         private String userId;
         private String nickName;
-    }
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class RequestEnter {
-        private String roomCode;
-        private String userId;
     }
 
     @Getter
