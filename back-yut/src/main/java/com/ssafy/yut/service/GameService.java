@@ -59,9 +59,17 @@ public class GameService {
             result = "모";
         }
         kafkaTemplate.send("chat", request.getRoomCode(),
-                ChatDto.Request.builder().type(ChatType.SYSTEM).userId(request.getUserId()).roomCode(request.getRoomCode()).content("["+ result + "]을(를) 던졌습니다.").build());
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .content("["+ result + "]을(를) 던졌습니다.")
+                        .build());
         template.convertAndSend("/topic/game/stick/" + request.getRoomCode(),
-                YutDto.Response.builder().userId(request.getUserId()).result(result).build());
+                YutDto.Response.builder()
+                        .userId(request.getUserId())
+                        .result(result)
+                        .build());
     }
 
     /**
@@ -71,7 +79,12 @@ public class GameService {
      */
     public void getTurn(RequestDto request){
         kafkaTemplate.send("chat", request.getRoomCode(),
-                ChatDto.Request.builder().type(ChatType.SYSTEM).userId(request.getUserId()).roomCode(request.getRoomCode()).content("차례입니다.").build());
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .content("차례입니다.")
+                        .build());
         kafkaTemplate.send(TOPIC + ".turn", request.getRoomCode(), request);
     }
 
@@ -83,6 +96,8 @@ public class GameService {
     @KafkaListener(topics = TOPIC + ".turn", groupId = GROUP_ID)
     public void sendTurn(RequestDto request){
         template.convertAndSend("/topic/game/turn/" + request.getRoomCode(),
-                TurnDto.builder().userId(request.getUserId()).build());
+                TurnDto.builder()
+                        .userId(request.getUserId())
+                        .build());
     }
 }
