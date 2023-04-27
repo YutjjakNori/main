@@ -20,6 +20,7 @@ public class ChatDto {
     @AllArgsConstructor
     @Builder
     public static class Request {
+        private ChatType type;
         private String userId;
         private String roomCode;
         private String content;
@@ -33,6 +34,7 @@ public class ChatDto {
     @AllArgsConstructor
     @Builder
     public static class Response{
+        private ChatType type;
         private String userId;
         private String content;
     }

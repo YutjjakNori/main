@@ -1,5 +1,7 @@
 package com.ssafy.yut.service;
 
+import com.ssafy.yut.dto.ChatDto;
+import com.ssafy.yut.dto.ChatType;
 import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.TurnDto;
 import com.ssafy.yut.dto.YutDto;
@@ -44,20 +46,30 @@ public class GameService {
         log.info(String.valueOf(random));
 
         // 도 15%, 개 35%, 걸 35%, 윷 13%, 모 3%
-        int result = 0;
+        String result = "";
         if(random > 0 && random <= 15){
-            result = 1;
+            result = "도";
         } else if(random > 15 && random <= 50) {
-            result = 2;
+            result = "개";
         } else if(random > 50 && random <= 85) {
-            result = 3;
+            result = "걸";
         } else if(random > 85 && random <= 98) {
-            result = 4;
+            result = "윷";
         } else {
-            result = 5;
+            result = "모";
         }
+        kafkaTemplate.send("chat", request.getRoomCode(),
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .content("["+ result + "]을(를) 던졌습니다.")
+                        .build());
         template.convertAndSend("/topic/game/stick/" + request.getRoomCode(),
-                YutDto.Response.builder().userId(request.getUserId()).result(result).build());
+                YutDto.Response.builder()
+                        .userId(request.getUserId())
+                        .result(result)
+                        .build());
     }
 
     /**
@@ -66,6 +78,13 @@ public class GameService {
      * @param request
      */
     public void getTurn(RequestDto request){
+        kafkaTemplate.send("chat", request.getRoomCode(),
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .content("차례입니다.")
+                        .build());
         kafkaTemplate.send(TOPIC + ".turn", request.getRoomCode(), request);
     }
 
@@ -77,6 +96,8 @@ public class GameService {
     @KafkaListener(topics = TOPIC + ".turn", groupId = GROUP_ID)
     public void sendTurn(RequestDto request){
         template.convertAndSend("/topic/game/turn/" + request.getRoomCode(),
-                TurnDto.builder().userId(request.getUserId()).build());
+                TurnDto.builder()
+                        .userId(request.getUserId())
+                        .build());
     }
 }
