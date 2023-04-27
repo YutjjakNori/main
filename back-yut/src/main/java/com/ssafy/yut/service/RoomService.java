@@ -1,9 +1,12 @@
 package com.ssafy.yut.service;
 
 import com.ssafy.yut.dto.ChatDto;
+import com.ssafy.yut.dto.ReadyDto;
+import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.Room;
+import com.ssafy.yut.entity.User;
 import com.ssafy.yut.exception.CustomException;
 import com.ssafy.yut.exception.ErrorCode;
 import com.ssafy.yut.util.RedisMapper;
@@ -16,6 +19,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -62,19 +66,21 @@ public class RoomService {
         return true;
     }
 
-    public void enterRoom(RoomDto.RequestEnter enterDto) {
+    public void enterRoom(RequestDto enterDto) {
         log.info("Enter Room: " + enterDto);
         // TODO: Redis 조회 후 대기방 정보(대기인원, 준비 상태) 넘겨주기
         kafkaTemplate.send(TOPIC_ROOM, enterDto);
         kafkaTemplate.send(TOPIC_CHAT, new ChatDto());
     }
 
-    public void readyGame() {
-
+    public void readyGame(ReadyDto.ReadyRequest readyRequest) {
+        Optional<Room> room = redisMapper.getData(readyRequest.getRoomCode(), Room.class);
+        List<?> users = room.get().getUsers();
+//        users.
     }
 
     @KafkaListener(topics = TOPIC_ROOM, groupId = GROUP_ID)
-    public void announceRoomInfo(RoomDto.RequestEnter enterDto) {
+    public void announceRoomInfo(RequestDto enterDto) {
         log.info("Announce Enter Room : " + enterDto);
         template.convertAndSend("/topic/room/"+enterDto.getRoomCode(), enterDto);
     }
