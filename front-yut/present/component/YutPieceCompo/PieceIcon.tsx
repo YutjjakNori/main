@@ -1,6 +1,6 @@
 import { YutPieceType } from "@/types/game/YutPieceTypes";
 import YakgwaIcon from "@/public/icon/yakgwa.svg";
-import SongpyeonIcon from "@/public/icon/Songpyeon.svg";
+import SongpyeonIcon from "@/public/icon/songpyeon.svg";
 
 // TODO : 각 icon 추가되면 수정하기
 const PieceIcon = (type: YutPieceType): any => {
