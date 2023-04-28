@@ -8,6 +8,7 @@ interface CircleButtonProps {
   backgroundColor?: string;
   borderColor?: string;
   width?: string;
+  margin: string;
 }
 
 function CircleButton({
@@ -17,6 +18,7 @@ function CircleButton({
   color,
   backgroundColor,
   borderColor,
+  margin,
 }: CircleButtonProps) {
   return (
     <>
@@ -25,6 +27,7 @@ function CircleButton({
         color={color}
         backgroundColor={backgroundColor}
         borderColor={borderColor}
+        margin={margin}
       >
         {Icon ? <Icon /> : text ?? ""}
       </style.StyledButton>
