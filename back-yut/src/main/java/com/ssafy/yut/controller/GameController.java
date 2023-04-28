@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 게임 관련 Controller
  *
  * @author 김정은
+ * @author 이준
  */
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class GameController {
 
     private final GameService gameService;
+
+    @MessageMapping("start")
+    public void startGame() {
+        gameService.startGame();
+    }
 
     /**
      * 윷 던지기
