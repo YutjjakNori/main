@@ -111,6 +111,36 @@ const Container = styled.div`
     left: ${size1}%;
     position: absolute;
   }
+
+  /* arrow */
+  .cornerLeftTop1 {
+    top: 8%;
+    left: -10%;
+  }
+  .cornerLeftTop2 {
+    transform: rotate(-35deg);
+    top: 8%;
+    left: 4%;
+  }
+  .cornerRightTop1 {
+    top: 8%;
+    right: -10%;
+  }
+  .cornerRightTop2 {
+    transform: rotate(-320deg);
+    top: 8%;
+    right: 4%;
+  }
+  .cornerCenter1 {
+    transform: rotate(50deg);
+    left: 34%;
+    top: 50%;
+  }
+  .cornerCenter2 {
+    transform: rotate(-50deg);
+    right: 34%;
+    top: 50%;
+  }
 `;
 
 const PointStyle = css`
@@ -173,5 +203,15 @@ const MiniList = styled.div`
   width: fit-contents;
 `;
 
+const ArrowWrapper = styled.span<{ active: boolean }>`
+  position: absolute;
+  display: ${({ active }) => (active ? "block" : "none")};
+
+  svg {
+    width: 2.5rem;
+    height: auto;
+  }
+`;
+
 //--------------------
-export { Container, CornerPoint, MiniPoint, MiniList };
+export { Container, CornerPoint, MiniPoint, MiniList, ArrowWrapper };
