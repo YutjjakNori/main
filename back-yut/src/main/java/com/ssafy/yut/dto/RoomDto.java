@@ -23,7 +23,6 @@ public class RoomDto extends RequestDto{
     @Builder
     public static class User {
         private String userId;
-        private String nickName;
     }
 
     @Getter
