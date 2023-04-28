@@ -40,7 +40,7 @@ public class RoomDto extends RequestDto{
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ResponseEnter {
+    public static class EnterResponse {
         private List<User> users;
         private String ready;
     }
