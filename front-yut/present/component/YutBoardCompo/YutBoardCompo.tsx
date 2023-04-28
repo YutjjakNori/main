@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
 import CornerPoint from "./CornerPoint";
 import MiniPoint from "./MiniPoint";
