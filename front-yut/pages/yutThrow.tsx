@@ -1,10 +1,16 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
 import CircleButton from "@/present/common/Button/CircleButton";
 import { CircleButtonProps } from "@/present/common/Button/CircleButton";
 
 import Do from "@/public/icon/do.svg";
 import Gae from "@/public/icon/gae.svg";
+import Gul from "@/public/icon/gul.svg";
+import Yut from "@/public/icon/yut.svg";
+import Mo from "@/public/icon/mo.svg";
+import BackDo from "@/public/icon/backDo.svg";
+
+import { YutImageProps } from "./StyledThrow";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/RectButton";
@@ -12,12 +18,18 @@ import RectButton, {
 interface RectStyleInfo {
   display: string;
 }
-
 const YutThrow = () => {
-  const images = [<Do></Do>, <Gae></Gae>];
+  // const [name, setName] = useState("aaa");
+  const images = [
+    <Do></Do>,
+    <Gae></Gae>,
+    <Gul></Gul>,
+    <Yut></Yut>,
+    <Mo></Mo>,
+    <BackDo></BackDo>,
+  ];
   const [currentImage, setCurrentImage] = useState(images[0]);
 
-  // const [name, setName] = useState("aaa");
   const [resList, setResList] = useState<Array<string>>([
     "윷",
     "모",
@@ -26,7 +38,6 @@ const YutThrow = () => {
     "모",
   ]);
   const [btnDisplay, setBtnDisplay] = useState<"block" | "none">("block");
-  // const [yutResult, setYutResult] = useState<string>("");
 
   const yutResultInfo: CircleButtonProps = {
     text: "윷",
@@ -44,8 +55,22 @@ const YutThrow = () => {
   };
 
   function throwYut() {
+    // {btnDisplay === "block" ? setBtnDisplay}
+    // if (btnThrowYutRef.current?.style.display == "block") {
+    //   btnThrowYutRef.current.style.display = "none";
+    // }
+    // if (btnThrowYutRef.current?.style.display == "block") {
+    //   btnThrowYutRef.current.style.display = "none";
+    // } else {
+    //   btnThrowYutRef.current.style.display = "block";
+    // }
+    // setBtnDisplay(!btnDisplay);
     setBtnDisplay(btnDisplay === "block" ? "none" : "block");
-    // 여기서 소켓 통신하여 얻어낸 윷 결과를 치환.
+    // if (btnDisplay === "none") {
+    //   btnThrowYutRef.current!.style.display = "none";
+    // } else {
+    //   btnThrowYutRef.current!.style.display = "block";
+    // }
     setCurrentImage(images[1]);
   }
 
@@ -68,9 +93,20 @@ const YutThrow = () => {
       </StyledResultList>
 
       <StyledResult>
-        {/* <ImgContainer>{currentImage}</ImgContainer> */}
         <ImgContainer>
-          <Do></Do>
+          {currentImage === images[0] ? (
+            <Do width={"100%"} height={"100%"}></Do>
+          ) : currentImage === images[1] ? (
+            <Gae width={"100%"} height={"100%"}></Gae>
+          ) : // ) : currentImage === images[2] ? (
+          //   <Gul width={"100%"} height={"100%"}></Gul>
+          // ) : currentImage === images[3] ? (
+          //   <Yut width={"100%"} height={"100%"}></Yut>
+          // ) : currentImage === images[4] ? (
+          //   <Mo width={"100%"} height={"100%"}></Mo>
+          // ) : currentImage === images[5] ? (
+          //   <BackDo width={"100%"} height={"100%"}></BackDo>
+          null}
         </ImgContainer>
         {/* <RectContainer ref={btnThrowYutRef} onClick={throwYut}> */}
         <RectContainer
@@ -99,11 +135,6 @@ const StyledContainer = styled.div`
   width: 30%;
   margin: auto;
 `;
-
-// const StyledContainer2 = styled.div`
-//   width: 50%;33
-//   margin: auto;
-// `;
 
 const StyledResultList = styled.div`
   position: relative;
@@ -136,10 +167,5 @@ const StyledResult = styled.div`
   position: relative;
   margin-top: 5%;
 `;
-
-// const StyledName = styled.h2`
-//   /* font-family: */
-//   margin-bottom: 1%;
-// `;
 
 export default YutThrow;
