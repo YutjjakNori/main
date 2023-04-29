@@ -123,8 +123,9 @@ const Container = styled.div`
     left: 4%;
   }
   .cornerRightTop1 {
-    top: 8%;
-    right: -10%;
+    transform: rotate(90deg);
+    top: -13%;
+    right: 8%;
   }
   .cornerRightTop2 {
     transform: rotate(-320deg);
