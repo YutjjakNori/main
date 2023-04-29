@@ -80,6 +80,10 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
+  const clearActiveCornerArrow = useCallback(() => {
+    setCornerSelectType("none");
+  }, []);
+
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
 
@@ -93,7 +97,7 @@ const usePieceMove = () => {
     }, animationSeconds * 1000);
   }, [movePathList, movePieceIndex]);
 
-  return { pieceMove, pieceOver, selectPiece };
+  return { pieceMove, pieceOver, selectPiece, clearActiveCornerArrow };
 };
 
 export default usePieceMove;

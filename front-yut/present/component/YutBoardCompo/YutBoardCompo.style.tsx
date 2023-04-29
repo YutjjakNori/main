@@ -207,10 +207,19 @@ const MiniList = styled.div`
 const ArrowWrapper = styled.span<{ active: boolean }>`
   position: absolute;
   display: ${({ active }) => (active ? "block" : "none")};
+  width: fit-contents;
+
+  :hover {
+    cursor: pointer;
+  }
 
   svg {
     width: 2.5rem;
     height: auto;
+
+    :hover {
+      width: 2.7rem;
+    }
   }
 `;
 
