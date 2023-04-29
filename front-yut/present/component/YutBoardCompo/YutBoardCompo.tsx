@@ -49,19 +49,19 @@ const YutBoardCompo = () => {
       <style.Container>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
         {/* 분기점 */}
-        <ArrowIconCompo active={true} classStr={"cornerLeftTop1"} />
-        <ArrowIconCompo active={true} classStr={"cornerLeftTop2"} />
+        <ArrowIconCompo classStr={"cornerLeftTop1"} position={10} />
+        <ArrowIconCompo classStr={"cornerLeftTop2"} position={10} />
         {createCornerPoint(15, "blue", "leftBottom", pieceList)}
         {/* 분기점 */}
         {createCornerPoint(5, "blue", "rightTop", pieceList)}
         {/* 분기점 */}
-        <ArrowIconCompo active={true} classStr={"cornerRightTop1"} />
-        <ArrowIconCompo active={true} classStr={"cornerRightTop2"} />
+        <ArrowIconCompo classStr={"cornerRightTop1"} position={5} />
+        <ArrowIconCompo classStr={"cornerRightTop2"} position={5} />
         {createCornerPoint(0, "blue", "rightBottom", pieceList)}
         {createCornerPoint(22, "pink", "center", pieceList)}
         {/* 분기점 */}
-        <ArrowIconCompo active={true} classStr={"cornerCenter1"} />
-        <ArrowIconCompo active={true} classStr={"cornerCenter2"} />
+        <ArrowIconCompo classStr={"cornerCenter1"} position={22} />
+        <ArrowIconCompo classStr={"cornerCenter2"} position={22} />
         <style.MiniList className="miniTop">
           {createMiniPoint(9, "", pieceList)}
           {createMiniPoint(8, "", pieceList)}

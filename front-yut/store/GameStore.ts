@@ -31,8 +31,8 @@ const GameActionQueueState = atom<Array<GameActionType>>({
 });
 
 //코너에서 분기점을 선택해야할때 활성화
-const SelectedCornerTypeState = atom<CornerType>({
-  key: "CornerType",
+const ActiveCornerArrowState = atom<CornerType>({
+  key: "ActiveCornerArrow",
   default: "none",
 });
 
@@ -42,5 +42,5 @@ export {
   PlayTurnState,
   GameActionState,
   GameActionQueueState,
-  SelectedCornerTypeState,
+  ActiveCornerArrowState,
 };
