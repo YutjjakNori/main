@@ -22,7 +22,9 @@ const ArrowIconCompo = ({ classStr, position }: ArrowCompoProps) => {
   useEffect(() => {
     if (cornerType === activeArrowType) {
       setActive(true);
+      return;
     }
+    setActive(false);
   }, [activeArrowType]);
   return (
     <ArrowWrapper active={active} className={classStr}>

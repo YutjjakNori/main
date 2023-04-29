@@ -1,5 +1,6 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
 import {
+  ActiveCornerArrowState,
   NowTurnPlayerIdState,
   PlayTurnState,
   YutPieceListState,
@@ -50,6 +51,7 @@ const useGameTurn = () => {
   const [playerTurnList, setPlayerTurnList] = useRecoilState(PlayTurnState);
   const setPlayerPieceList = useSetRecoilState(YutPieceListState);
   const { initQueue, addAction } = useGameActionQueue();
+  const setCornerSelectType = useSetRecoilState(ActiveCornerArrowState);
 
   //현재 순서인 플레이어 아이디
   const [nowTurnPlayerId, setNowTurnPlayerId] =
@@ -66,6 +68,7 @@ const useGameTurn = () => {
   //턴 시작
   const startTurn = () => {
     initQueue();
+    setCornerSelectType("none");
     addAction("ThrowYut");
   };
 
