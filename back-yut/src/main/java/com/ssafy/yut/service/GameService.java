@@ -26,6 +26,10 @@ public class GameService {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 
+    public void startGame() {
+
+    }
+
     /**
      * kafka로 전송
      *

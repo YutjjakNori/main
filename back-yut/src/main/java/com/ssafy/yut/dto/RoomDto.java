@@ -23,7 +23,6 @@ public class RoomDto extends RequestDto{
     @Builder
     public static class User {
         private String userId;
-        private String nickName;
     }
 
     @Getter
@@ -40,7 +39,7 @@ public class RoomDto extends RequestDto{
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ResponseEnter {
+    public static class EnterResponse {
         private List<User> users;
         private String ready;
     }

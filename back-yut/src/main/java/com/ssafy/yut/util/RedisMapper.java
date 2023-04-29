@@ -25,18 +25,18 @@ public class RedisMapper {
             return false;
         }
     }
-    public <T> Optional<T> getData(String key, Class<T> classType) {
+    public <T> T getData(String key, Class<T> classType) {
         String value = redisTemplate.opsForValue().get(key);
 
         if(value == null) {
-            return Optional.empty();
+            return null;
         }
         try {
             ObjectMapper mapper = new ObjectMapper();
-            return Optional.of(mapper.readValue(value, classType));
+            return mapper.readValue(value, classType);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return Optional.empty();
+            return null;
         }
     }
 }
