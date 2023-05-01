@@ -1,5 +1,7 @@
 package com.ssafy.yut.controller;
 
+import com.ssafy.yut.dto.GameDto;
+import com.ssafy.yut.dto.PieceDto;
 import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +21,14 @@ public class GameController {
 
     private final GameService gameService;
 
+    /**
+     * 게임 시작
+     * 
+     * @param request
+     */
     @MessageMapping("start")
-    public void startGame() {
-        gameService.startGame();
+    public void startGame(GameDto.Request request) {
+        gameService.startGame(request);
     }
 
     /**
@@ -37,5 +44,10 @@ public class GameController {
     @MessageMapping("/turn")
     public void turn(RequestDto request){
         gameService.getTurn(request);
+    }
+
+    @MessageMapping("/piece")
+    public void movePiece(PieceDto.Request request) {
+        gameService.actPiece(request);
     }
 }
