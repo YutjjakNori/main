@@ -16,8 +16,8 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class Game {
-    private List<Map<String, Object>> users;
-    private String start;
+    private List<GameUser> users;
+    private String gameStatus;
     private Set<Integer> event;
-
+    private Map<Integer, Integer> plate;
 }
