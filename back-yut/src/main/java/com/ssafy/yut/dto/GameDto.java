@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 게임 상태
@@ -29,7 +30,7 @@ public class GameDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class GameStartRequest {
+    public static class Request {
         String roomCode;
     }
 
@@ -38,8 +39,8 @@ public class GameDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class GameStartResponse {
+    public static class Response {
         List<User> users;
-        List<Integer> event;
+        Set<Integer> event;
     }
 }

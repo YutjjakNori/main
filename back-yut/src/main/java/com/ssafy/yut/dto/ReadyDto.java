@@ -18,7 +18,7 @@ public class ReadyDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ReadyRequest {
+    public static class Request {
         private String userId;
         private boolean ready;
         private String roomCode;
@@ -32,7 +32,7 @@ public class ReadyDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class ReadyResponse {
+    public static class Response {
         private String userId;
         private boolean ready;
         private boolean start;
