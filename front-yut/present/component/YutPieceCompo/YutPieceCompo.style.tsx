@@ -17,11 +17,25 @@ const SvgContainer = styled.div<{ isClickable: boolean }>`
   }
 `;
 
-const AppendCount = styled.span`
+const AppendCount = styled.div<{ color: string }>`
   position: absolute;
-  right: -1rem;
-  bottom: 0;
-  font-size: 1rem;
+  right: 0rem;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  background-color: ${({ color }) => color};
+  border-radius: 100%;
+  width: auto;
+  height: 1.8rem;
+  aspect-ratio: 1;
+
+  span {
+    position: relative;
+    font-size: 1.5rem;
+    color: white;
+  }
 `;
 
 export { SvgContainer, AppendCount };
