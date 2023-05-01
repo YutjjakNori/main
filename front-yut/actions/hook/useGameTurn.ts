@@ -37,7 +37,7 @@ const createAllPieceList = (userList: Array<string>) => {
 
     if (index == 1) type = "songpyeon";
     else if (index === 2) type = "ssukRice";
-    else type = "yakgwa";
+    else if (index === 3) type = "yakgwa";
 
     const pieces = createUserPieceList(userId, type);
     pieceTmp = pieceTmp.concat(pieces);

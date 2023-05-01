@@ -22,7 +22,6 @@ const usePieceMove = () => {
     const newArr = pieceList.filter(
       (piece) => piece.userId !== userId || piece.pieceId !== pieceId,
     );
-    console.log(newArr);
     setPieceList(newArr);
   };
 

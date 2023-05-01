@@ -14,8 +14,8 @@ const useGameActionQueue = () => {
   };
 
   const nextAction = (): GameActionType => {
-    const action = actionQueue[size - 1];
-    const newArr = actionQueue.slice(-1);
+    const action = actionQueue[0];
+    const newArr = actionQueue.slice(1);
     setActionQueue(newArr);
     return action;
   };
