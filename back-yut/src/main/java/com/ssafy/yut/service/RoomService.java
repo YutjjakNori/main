@@ -6,8 +6,7 @@ import com.ssafy.yut.dto.ReadyDto;
 import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.entity.Game;
-import com.ssafy.yut.entity.Room;
-import com.ssafy.yut.entity.User;
+import com.ssafy.yut.entity.GameUser;
 import com.ssafy.yut.exception.CustomException;
 import com.ssafy.yut.exception.ErrorCode;
 import com.ssafy.yut.util.RedisMapper;
@@ -19,14 +18,14 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 /**
  * 대기방 관련 Service
@@ -57,18 +56,33 @@ public class RoomService {
         return new RoomDto.RoomCode(code);
     }
 
+    /**
+     * 방 입장
+     *
+     * @param roomDto
+     * @return
+     */
     public boolean enterRoom(RoomDto.RoomCode roomDto) {
-        Room room = redisMapper.getData(roomDto.getRoomCode(), Room.class);
+        Game room = redisMapper.getData("game:"+roomDto.getRoomCode(), Game.class);
 
+        // 방이 없을 때
         if (room == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_ROOM);
         }
 
+        // 방이 있을 때
         else {
-            Game game = redisMapper.getData(roomDto.getRoomCode(), Game.class);
+            // 게임 중인 경우
+            if(room.getGameStatus().equals("start")) {
+                // TODO: 2023-05-01 게임 중
+                throw new CustomException(ErrorCode.GAME_ON);
+            }
+            // 게임 중은 아니나, 정원 초과인 경우
+            else if(room.getUsers().size() == 4) {
+                // TODO: 2023-05-01 정원 초과
+                throw new CustomException(ErrorCode.FULL_ROOM);
+            }
 
-            // TODO: 게임 중, 종료 되었을 때 에러 던지기
-//            if(game.)
         }
 
         return true;
@@ -83,40 +97,46 @@ public class RoomService {
         // TODO: Redis 조회 후 대기방 정보(대기인원, 준비 상태) 넘겨주기
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
-        String key = "room:"+roomCode;
+        String key = "game:"+roomCode;
         log.info("Enter Room : " + roomCode + " USER : " + userId);
 
-        List<User> users = new ArrayList<>();
+        List<GameUser> users = new ArrayList<>();
+        List<Integer> pieces = new ArrayList<>();
+        pieces.add(-1);
+        pieces.add(-1);
+        pieces.add(-1);
 
-        User user = User.builder().userId(userId).build();
+        GameUser user = GameUser.builder().userId(userId).pieces(pieces).build();
 
-        Room room = redisMapper.getData(key, Room.class);
+        Game game = redisMapper.getData(key, Game.class);
 
-        if (room == null) {
+        if (game == null) {
             users.add(user);
-            room = Room.builder()
+            game = Game.builder()
                     .users(users)
-                    .ready("0")
+                    .gameStatus("0")
+                    .plate(new LinkedHashMap<>())
                     .build();
-            redisMapper.saveData(key, room);
+            redisMapper.saveData(key, game);
         } else {
-            users = room.getUsers();
+            users = game.getUsers();
             users.add(user);
-            String ready = room.getReady();
-            room.setUsers(users);
-            room.setReady(ready + "0");
+            String ready = game.getGameStatus();
+            game.setUsers(users);
+            game.setGameStatus(ready + "0");
 
-            redisMapper.saveData(key, room);
+            redisMapper.saveData(key, game);
         }
+
         List<RoomDto.User> userResponse = new ArrayList<>();
 
-        for (User getUser : users) {
+        for (GameUser getUser : users) {
             userResponse.add(new RoomDto.User(getUser.getUserId()));
         }
 
-        RoomDto.EnterResponse responseEnter = RoomDto.EnterResponse.builder()
+        RoomDto.EnterResponse enterResponse = RoomDto.EnterResponse.builder()
                 .users(userResponse)
-                .ready(room.getReady())
+                .ready(game.getGameStatus())
                 .build();
 
         ChatDto.Request chatRequestDto = ChatDto.Request.builder()
@@ -125,12 +145,13 @@ public class RoomService {
                 .roomCode(roomCode)
                 .content("[" + userId + "]님이 입장했습니다.")
                 .build();
+
         Map<String, Object> response = new HashMap<>();
         response.put("roomCode", roomCode);
-        response.put("responseEnter", responseEnter);
+        response.put("response", enterResponse);
 
-        kafkaTemplate.send(TOPIC_ROOM + ".enter", response);
-        kafkaTemplate.send(TOPIC_CHAT, chatRequestDto);
+        kafkaTemplate.send(TOPIC_ROOM + ".enter", roomCode, response);
+        kafkaTemplate.send(TOPIC_CHAT, roomCode, chatRequestDto);
     }
 
     /**
@@ -141,48 +162,59 @@ public class RoomService {
     @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = GROUP_ID)
     public void sendRoomState(Map<String, Object> response) {
         log.info("Announce Enter Room : " + response.get("roomCode"));
-        template.convertAndSend("/topic/room/" + response.get("roomCode"), response.get("responseEnter"));
+        template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
     }
 
     /**
      * 준비 변경 상태 Kafka로 보내기
      *
-     * @param readyRequest 준비 변경
+     * @param request 준비 변경
      */
-    public void readyGame(ReadyDto.ReadyRequest readyRequest) {
-        String roomCode = readyRequest.getRoomCode();
-        boolean isReady = readyRequest.isReady();
-        String key = "room:"+roomCode;
-        Room room = redisMapper.getData(key, Room.class);
-        List<User> users = room.getUsers();
+    public void readyGame(ReadyDto.Request request) {
+        String roomCode = request.getRoomCode();
+        boolean isReady = request.isReady();
+        String key = "game:"+roomCode;
+        Game game = redisMapper.getData(key, Game.class);
+        List<GameUser> users = game.getUsers();
         int userSize = users.size();
 
         int userIndex = 0;
         for(int i=0; i < userSize; i++) {
-            if(users.get(i).getUserId().equals(readyRequest.getUserId())) {
+            if(users.get(i).getUserId().equals(request.getUserId())) {
                 userIndex = i;
             }
         }
-        String[] readyArray = room.getReady().split("");
+        String[] readyArray = game.getGameStatus().split("");
 
         readyArray[userIndex] = isReady ? "1" : "0";
 
         String ready = String.join("", readyArray);
 
-        room.setReady(ready);
+        game.setGameStatus(ready);
 
-        redisMapper.saveData(key, room);
+        boolean canStart = ((1 << userSize) - 1) == Integer.parseInt(ready,2);
+        if((userSize > 1 && userSize < 5) && canStart) {
+            Collections.shuffle(users);
+            game.setUsers(users);
+            game.setGameStatus("start");
+            Set<Integer> event = new HashSet<>();
+            while(event.size() < 2) {
+                event.add((int)((Math.random()*28)+1));
+            }
 
+        }
 
-        ReadyDto.ReadyResponse readyResponse = ReadyDto.ReadyResponse.builder()
-                .userId(readyRequest.getUserId())
+        redisMapper.saveData(key, game);
+
+        ReadyDto.Response readyResponse = ReadyDto.Response.builder()
+                .userId(request.getUserId())
                 .ready(isReady)
-                .start(((1 << userSize) - 1) == Integer.parseInt(ready,2))
+                .start(canStart)
                 .build();
 
         Map<String, Object> response= new HashMap<>();
         response.put("roomCode", roomCode);
-        response.put("readyResponse", readyResponse);
+        response.put("response", readyResponse);
 
         kafkaTemplate.send(TOPIC_ROOM + ".prepare", response);
     }
@@ -194,6 +226,6 @@ public class RoomService {
      */
     @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
     public void sendReady(Map<String, Object> response) {
-        template.convertAndSend("/topic/room/prepare/" + response.get("roomCode"), response.get("readyResponse"));
+        template.convertAndSend("/topic/room/prepare/" + response.get("roomCode"), response.get("response"));
     }
 }
