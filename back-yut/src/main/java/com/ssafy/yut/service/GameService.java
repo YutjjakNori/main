@@ -2,9 +2,14 @@ package com.ssafy.yut.service;
 
 import com.ssafy.yut.dto.ChatDto;
 import com.ssafy.yut.dto.ChatType;
+import com.ssafy.yut.dto.GameDto;
+import com.ssafy.yut.dto.PieceDto;
 import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.TurnDto;
 import com.ssafy.yut.dto.YutDto;
+import com.ssafy.yut.entity.Game;
+import com.ssafy.yut.entity.GameUser;
+import com.ssafy.yut.util.RedisMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,9 +17,15 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 게임 관련 Service
  *
+ * @author 이준
  * @author 김정은
  */
 @Service
@@ -22,12 +33,57 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class GameService {
 
+    private final RedisMapper redisMapper;
     private final String TOPIC = "game", GROUP_ID = "yut";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 
-    public void startGame() {
+    /**
+     * 게임 시작 요청
+     *
+     * @param request 게임 시작
+     */
+    public void startGame(GameDto.Request request) {
+        Map<String, Object> response = new HashMap<>();
+        String roomCode = request.getRoomCode();
+        String key = "game:" + roomCode;
 
+        Game game = redisMapper.getData(key, Game.class);
+
+        List<GameUser> gameUsers = game.getUsers();
+        List<GameDto.User> users = new ArrayList<>();
+        for(GameUser gameUser : gameUsers) {
+            users.add(GameDto.User.builder()
+                    .id(gameUser.getUserId())
+                    .pieceNum(gameUser.getPieces())
+                    .build());
+        }
+
+        GameDto.Response gameStartResponse = GameDto.Response.builder()
+                .users(users)
+                .event(game.getEvent())
+                .build();
+        response.put("roomCode", roomCode);
+        response.put("response", gameStartResponse);
+
+        kafkaTemplate.send("chat", roomCode,
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId("SYSTEM")
+                        .roomCode(roomCode)
+                        .content("게임을 시작합니다!")
+                        .build());
+        kafkaTemplate.send(TOPIC + ".start", roomCode, response);
+    }
+
+    /**
+     * 게임 시작 응답
+     *
+     * @param response
+     */
+    @KafkaListener(topics = TOPIC + ".start", groupId = GROUP_ID)
+    public void startGame(Map<String, Object> response) {
+        template.convertAndSend("/topic/game/start"+response.get("roomCode"), response.get("response"));
     }
 
     /**
@@ -103,5 +159,33 @@ public class GameService {
                 TurnDto.builder()
                         .userId(request.getUserId())
                         .build());
+    }
+
+    public void actPiece(PieceDto.Request request) {
+        String roomCode = request.getRoomCode();
+        String key = "game:" + roomCode;
+        int direction = request.getDirection();
+
+        Game game = redisMapper.getData(key, Game.class);
+        List<GameUser> gameUsers = game.getUsers();
+        GameUser gameUser = new GameUser(request.getUserId(), null);
+        int index = gameUsers.indexOf(gameUser);
+        List<Integer> pieces = gameUsers.get(index).getPieces();
+
+        switch (direction) {
+            case 1:
+
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+        }
+    }
+
+    public void checkPlate() {
+
     }
 }
