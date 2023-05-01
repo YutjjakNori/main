@@ -32,4 +32,13 @@ public class GameController {
     public void turn(RequestDto request){
         gameService.getTurn(request);
     }
+
+    /**
+     * 이벤트 실행하기
+     *
+     * @param request
+     */
+    @MessageMapping("/event")
+    public void event(RequestDto request) { gameService.occurrenceEvent(request); }
+
 }
