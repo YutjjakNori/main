@@ -1,3 +1,4 @@
+import usePieceMove from "@/actions/hook/usePieceMove";
 import { NowTurnPlayerIdState } from "@/store/GameStore";
 import { PieceStateType } from "@/types/game/YutGameTypes";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
@@ -30,13 +31,14 @@ const YutPieceCompo = ({
   state = "NotStarted",
   appendedCount = 1,
 }: YutPieceCompoProps) => {
+  const { selectPiece } = usePieceMove();
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const isClickable = nowTurnPlayerId === userId;
 
   const onClick = () => {
     if (!isClickable) return;
 
-    //TODO : 서버에 요청
+    selectPiece(userId, pieceId);
   };
 
   return (
