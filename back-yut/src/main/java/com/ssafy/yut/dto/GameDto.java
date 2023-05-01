@@ -31,7 +31,7 @@ public class GameDto {
     @AllArgsConstructor
     @Builder
     public static class Request {
-        String roomCode;
+        private String roomCode;
     }
 
     @Getter
@@ -40,7 +40,7 @@ public class GameDto {
     @AllArgsConstructor
     @Builder
     public static class Response {
-        List<User> users;
-        Set<Integer> event;
+        private List<User> users;
+        private Set<Integer> event;
     }
 }
