@@ -37,6 +37,7 @@
     "@storybook/react": "^7.0.3",
     "@storybook/testing-library": "^0.0.14-next.2",
     "@svgr/webpack": "^7.0.0",
+    "@types/recoil": "^0.0.9",
     "eslint-plugin-storybook": "^0.6.11",
     "storybook": "^7.0.3"
   }
