@@ -19,7 +19,8 @@ export function connect() {
     () => {
       //@ts-ignore
       sessionId = socket._transport.url.split("/")[5];
-      onConnected(sessionId);
+      // onConnected(sessionId);
+      //To do : 세션ID 받고 Atom으로 저장,로컬스토리지에 저장
     },
     // onError
     (frame: any) => {
@@ -29,16 +30,17 @@ export function connect() {
 }
 /**
  * Socket 연결에 성공했을 때 실행하는 함수
- * 
+ *
  * @param sessionId socket을 연결한 sessionID
  */
-function onConnected(sessionId: string) {
+function onConnected(sessionId: string, callback: () => void) {
   console.log("success");
   console.log();
   // TODO: roomCode를 변수로 바꾸기!
   stompClient?.subscribe("/topic/chat/{roomCode}", (body: any) => {
     const data = JSON.parse(body.body);
     console.log(data);
+    callback();
   });
 
   // 서버에 입장한다는 메시지 전송
@@ -54,7 +56,7 @@ function onConnected(sessionId: string) {
 
 /**
  * Socket 연결 시 오류가 발생했을 때 실행하는 함수
- * 
+ *
  * @param frame 연결 실패 시 반환하는 parameter
  */
 function onError(frame: any) {
@@ -63,21 +65,24 @@ function onError(frame: any) {
 
 /**
  * 채팅 메시지 보내기
- * 
+ *
  * @param content 사용자가 보내는 메시지
  */
-export function sending(content: string) {
+export function sending(topic: any, content: any) {
   stompClient?.send(
     // TOPIC
-    `/chat`,
+    topic,
     {},
     // CONTENT
-    JSON.stringify({
-      type: "CHAT",
-      userId: sessionId,
-      // TODO: roomCode 변수로 바꾸기
-      roomCode: "abcde",
-      content: content,
-    })
+    JSON.stringify(content)
   );
 }
+
+//예시
+// sending(`/chat`, {
+//   type: "CHAT",
+//   userId: sessionId,
+//   // TODO: roomCode 변수로 바꾸기
+//   roomCode: "abcde",
+//   content: "dkfjasldfjsd",
+// });
