@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 대기방 관련 Controller
  *
  * @author 김정은
+ * @author 이준
  */
 
 @RestController
@@ -39,18 +40,34 @@ public class RoomController {
         return ResponseEntity.ok(roomService.createRoom());
     }
 
+    /**
+     * 방 입장 : 검사
+     *
+     * @param roomDto
+     * @return
+     */
     @PostMapping("/entry")
     public ResponseEntity<?> enterRoom(@RequestBody RoomDto.RoomCode roomDto) {
         return ResponseEntity.ok(roomService.enterRoom(roomDto));
     }
 
+    /**
+     * 방 입장 요청
+     *
+     * @param enterDto
+     */
     @MessageMapping("/enter")
     public void enterRoom(@RequestBody RequestDto enterDto) {
         roomService.enterRoom(enterDto);
     }
 
+    /**
+     * 준비 상태 변경
+     *
+     * @param request
+     */
     @MessageMapping("/preparation")
-    public void readyGame(@RequestBody ReadyDto.ReadyRequest readyRequest) {
-        roomService.readyGame(readyRequest);
+    public void readyGame(@RequestBody ReadyDto.Request request) {
+        roomService.readyGame(request);
     }
 }
