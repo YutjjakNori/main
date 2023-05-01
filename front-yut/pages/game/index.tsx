@@ -17,7 +17,7 @@ interface UserInfoType {
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
-  const { pieceMove, pieceOver } = usePieceMove();
+  const { pieceMove, pieceOver, appendPiece } = usePieceMove();
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
 
   useEffect(() => {
@@ -45,11 +45,17 @@ const Game = () => {
     setUserList([...playerList]);
   }, []);
 
-  const testMove = () => {
-    pieceMove("1", 1, [0, 1, 2, 3, 4, 5]);
+  const testMove1 = () => {
+    pieceMove("1", 1, [0, 1, 2, 3, 4]);
+  };
+  const testMove2 = () => {
+    pieceMove("1", 2, [0, 1, 2, 3, 4]);
   };
   const testPieceOver = () => {
     pieceOver("1", 1);
+  };
+  const testPieceAppend = () => {
+    appendPiece("1", 1, 2);
   };
 
   return (
@@ -80,9 +86,11 @@ const Game = () => {
         <YutBoardCompo />
       </div>
       <div style={{ position: "absolute", right: "10%" }}>
-        <button onClick={testMove}>movePath</button>
+        <button onClick={testMove1}>movePath 1</button>
+        <button onClick={testMove2}>movePath 2</button>
         <button onClick={testPieceOver}>pieceOver</button>
         <button onClick={nextTurn}>다음 차례</button>
+        <button onClick={testPieceAppend}>말 합치기</button>
       </div>
     </div>
   );

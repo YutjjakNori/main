@@ -79,6 +79,58 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
+  //말 합치기
+  const appendPiece = (
+    userId: string,
+    movePieceId: number, //움직여서 합칠 말
+    targetPieceId: number, //원래 말 판에 있던 말
+  ) => {
+    let basePieceIndex = pieceList.findIndex(
+      (p) => p.userId === userId && p.pieceId === movePieceId,
+    );
+    let targetPieceIndex = pieceList.findIndex(
+      (p) => p.userId === userId && p.pieceId === targetPieceId,
+    );
+
+    if (basePieceIndex === -1 || targetPieceIndex === -1)
+      throw Error("usePieceMove/appendPiece : piece 정보를 찾을 수 없음");
+
+    let basePiece = pieceList[basePieceIndex];
+    let targetPiece = pieceList[targetPieceIndex];
+
+    if (
+      basePiece.state === "NotStarted" &&
+      targetPiece.state === "NotStarted"
+    ) {
+      throw Error(
+        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음",
+      );
+    }
+
+    if (basePiece.state === "InBoard" && targetPiece.state === "NotStarted") {
+      const tmpIndex = basePieceIndex;
+      const tmpPiece = basePiece;
+
+      basePieceIndex = targetPieceIndex;
+      basePiece = targetPiece;
+
+      targetPieceIndex = tmpIndex;
+      targetPiece = tmpPiece;
+    }
+
+    //target에 move를 append함
+    let newArr = pieceList.map((p, idx) => {
+      if (idx !== targetPieceIndex) return p;
+
+      const tmpP = { ...p };
+      tmpP.appendArray = [...tmpP.appendArray, pieceList[basePieceIndex]];
+      return tmpP;
+    });
+
+    newArr.splice(basePieceIndex, 1);
+    setPieceList(newArr);
+  };
+
   const clearActiveCornerArrow = useCallback(() => {
     setCornerSelectType("none");
   }, []);
@@ -96,7 +148,13 @@ const usePieceMove = () => {
     }, animationSeconds * 1000);
   }, [movePathList, movePieceIndex]);
 
-  return { pieceMove, pieceOver, selectPiece, clearActiveCornerArrow };
+  return {
+    pieceMove,
+    pieceOver,
+    selectPiece,
+    clearActiveCornerArrow,
+    appendPiece,
+  };
 };
 
 export default usePieceMove;

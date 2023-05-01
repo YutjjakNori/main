@@ -21,7 +21,7 @@ const createUserPieceList = (
       pieceId: i,
       pieceType: pieceType,
       state: "NotStarted",
-      appendedCount: 1,
+      appendArray: [],
       position: -1,
     });
   }
