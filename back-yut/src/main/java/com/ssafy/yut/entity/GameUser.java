@@ -20,6 +20,6 @@ public class GameUser {
     @Override
     public boolean equals(Object obj) {
         GameUser user = (GameUser) obj;
-        return (user.getUserId().equals(userId) && user.getPieces().equals(pieces));
+        return user.getUserId().equals(userId);
     }
 }
