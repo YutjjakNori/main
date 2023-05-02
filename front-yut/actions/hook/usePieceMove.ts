@@ -80,7 +80,30 @@ const usePieceMove = () => {
   }, []);
 
   //말 합치기
-  const appendPiece = (
+  const appendPiece = (userId: string, targetPieceIdList: Array<number>) => {
+    if (targetPieceIdList.length === 2) {
+      const fromId = targetPieceIdList[0];
+      const toId = targetPieceIdList[1];
+      appendAToB(userId, fromId, toId);
+      return;
+    }
+
+    const filteredIdList: Array<number> = targetPieceIdList.filter((id) => {
+      const idx = pieceList.findIndex(
+        (p) => p.userId === userId && p.pieceId === id,
+      );
+
+      return idx !== -1;
+    });
+
+    if (filteredIdList.length > 2) {
+      throw Error("잘못된 말 업기 요청입니다.");
+    }
+
+    appendAToB(userId, filteredIdList[0], filteredIdList[1]);
+  };
+
+  const appendAToB = (
     userId: string,
     movePieceId: number, //움직여서 합칠 말
     targetPieceId: number, //원래 말 판에 있던 말
@@ -92,8 +115,9 @@ const usePieceMove = () => {
       (p) => p.userId === userId && p.pieceId === targetPieceId,
     );
 
-    if (basePieceIndex === -1 || targetPieceIndex === -1)
+    if (basePieceIndex === -1 || targetPieceIndex === -1) {
       throw Error("usePieceMove/appendPiece : piece 정보를 찾을 수 없음");
+    }
 
     let basePiece = pieceList[basePieceIndex];
     let targetPiece = pieceList[targetPieceIndex];
@@ -123,13 +147,55 @@ const usePieceMove = () => {
       if (idx !== targetPieceIndex) return p;
 
       const tmpP = { ...p };
-      tmpP.appendArray = [...tmpP.appendArray, pieceList[basePieceIndex]];
+      const baseTmpP = { ...pieceList[basePieceIndex] };
+      baseTmpP.state = "Appended";
+      baseTmpP.position = tmpP.position;
+      tmpP.appendArray = [...tmpP.appendArray, baseTmpP];
       return tmpP;
     });
 
     newArr.splice(basePieceIndex, 1);
     setPieceList(newArr);
   };
+
+  const catchPiece = (
+    targetUserId: string,
+    targetPieceIdList: Array<number>,
+  ) => {
+    //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
+    let targetPieceIndex = -1;
+    for (let i = 0; i < targetPieceIdList.length; i++) {
+      const idx = pieceList.findIndex(
+        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i],
+      );
+
+      if (idx !== -1) {
+        targetPieceIndex = idx;
+      }
+    }
+    if (targetPieceIndex === -1)
+      throw Error("usePieceMove/catchPiece : 잡을 말을 찾을 수 없습니다");
+
+    //targetPiece의 appendedList를 초기화하고 다시 pieceList에 넣어줌
+    const targetPiece = pieceList[targetPieceIndex];
+    const appendedPieceList = [
+      ...targetPiece.appendArray,
+      pieceList[targetPieceIndex],
+    ].map((p) => pieceCatched(p));
+
+    let newArr = [...pieceList];
+    newArr.splice(targetPieceIndex, 1);
+    newArr = newArr.concat(appendedPieceList);
+    setPieceList(newArr);
+  };
+
+  const pieceCatched = useCallback((piece: YutPieceCompoProps) => {
+    const tmp = { ...piece };
+    tmp.position = -1;
+    tmp.state = "NotStarted";
+    tmp.appendArray = [];
+    return tmp;
+  }, []);
 
   const clearActiveCornerArrow = useCallback(() => {
     setCornerSelectType("none");
@@ -154,6 +220,7 @@ const usePieceMove = () => {
     selectPiece,
     clearActiveCornerArrow,
     appendPiece,
+    catchPiece,
   };
 };
 
