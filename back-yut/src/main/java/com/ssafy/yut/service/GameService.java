@@ -18,9 +18,13 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 게임 관련 Service
@@ -161,26 +165,86 @@ public class GameService {
                         .build());
     }
 
+
     public void actPiece(PieceDto.Request request) {
+        // 1번 0, 1, 2 | 2번 3, 4, 5 | 3번 6, 7, 8 | 4번 9, 10, 11
         String roomCode = request.getRoomCode();
         String key = "game:" + roomCode;
         int direction = request.getDirection();
+        int plateNum = request.getPlateNum();
+        int yut = request.getYut();
+        List<Integer> selectPieces = request.getSelectPiece();
 
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> gameUsers = game.getUsers();
+        Set<Integer> event = game.getEvent();
+        Map<Integer, List<Integer>> plate = game.getPlate();
         GameUser gameUser = new GameUser(request.getUserId(), null);
         int index = gameUsers.indexOf(gameUser);
         List<Integer> pieces = gameUsers.get(index).getPieces();
 
         switch (direction) {
             case 1:
+                // 선택된 말이 시작 전일 때
+                if(selectPieces.size() == 1 && plateNum == -1) {
+                    List<Integer> platePieces = plate.get(yut);
+                    // 이동할 윷판 위치에 말이 있는 경우
+                    if(platePieces != null) {
+                        int platePiece = platePieces.get(0);
+
+                        // 내 말이 아닐 때
+                        if((platePiece / 3) != index) {
+                            // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
+                            for(Integer removePieces : platePieces) {
+                                gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
+                            }
+                            platePieces.clear();
+                        }
+                    }
+                    // 이동할 윷판 위치에 말이 없는 경우
+                    else {
+                        // 윷판 위치에 말 추가.
+                        platePieces = new ArrayList<>();
+                    }
+                    platePieces.add((index * 3) + (selectPieces.get(0) - 1));
+                    plate.put(yut, platePieces);
+                }
+
+                // 선택된 말이 시작 중 일때
+                else if(plateNum != -1) {
+                    List<Integer> platePieces = plate.get(yut + plateNum);
+                    // 이동할 윷판 위치에 말이 있는 경우
+                    if(platePieces != null) {
+                        int platePiece = platePieces.get(0);
+
+                        // 내 말이 아닐 때
+                        if((platePiece / 3) != index) {
+                            // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
+                            for(Integer removePieces : platePieces) {
+                                gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
+                            }
+                            platePieces.clear();
+                        }
+                    }
+                    // 이동할 윷판 위치에 말이 없는 경우
+                    else {
+                        // 윷판 위치에 말 추가.
+                        platePieces = new ArrayList<>();
+                    }
+                    platePieces.add((index * 3) + (selectPieces.get(0) - 1));
+                    plate.put(yut + plateNum, platePieces);
+                }
+                break;
+
+            case 2:
+
 
                 break;
-            case 2:
-                break;
             case 3:
+
                 break;
             case 4:
+
                 break;
         }
     }
@@ -188,4 +252,9 @@ public class GameService {
     public void checkPlate() {
 
     }
+
+    public void changeDirection() {
+
+    }
+
 }
