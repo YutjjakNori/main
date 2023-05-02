@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import CircleButton from "@/present/common/Button/CircleButton";
 import { CircleButtonProps } from "@/present/common/Button/CircleButton";
-import * as style from "@/pages/game/YutThrow.style";
+import * as style from "@/present/component/YutBoardCompo/YutThrow.style";
 
 import Do from "@/public/icon/yutImage/do.svg";
 import Gae from "@/public/icon/yutImage/gae.svg";
