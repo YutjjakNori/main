@@ -18,6 +18,7 @@ public class PieceDto {
     @Builder
     public static class Request extends RequestDto{
         private List<Integer> selectPiece;
+        private int plateNum;
         private int yut;
         private int direction;
     }
