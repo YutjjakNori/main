@@ -1,6 +1,6 @@
 import { StaticImageData } from "next/image";
 
-type PieceStateType = "NotStarted" | "InBoard" | "Done";
+type PieceStateType = "NotStarted" | "InBoard" | "Done" | "Appended";
 
 /** 현재 실행중인 게임 로직 종류
  * @Started 게임 시작
