@@ -55,7 +55,12 @@ const Game = () => {
     pieceOver("1", 1);
   };
   const testPieceAppend = () => {
-    appendPiece("1", 1, 2);
+    appendPiece("1", [1, 2]);
+  };
+  const testPieceAppend2 = () => {
+    const appendList = [1, 2, 3];
+
+    appendPiece("1", [1, 2, 3]);
   };
 
   return (
@@ -91,6 +96,7 @@ const Game = () => {
         <button onClick={testPieceOver}>pieceOver</button>
         <button onClick={nextTurn}>다음 차례</button>
         <button onClick={testPieceAppend}>말 합치기</button>
+        <button onClick={testPieceAppend2}>말 3개 합치기</button>
       </div>
     </div>
   );
