@@ -43,7 +43,6 @@ function onConnected(sessionId: string) {
 
   stompClient?.subscribe("/topic/game/stick/abcde", (body: any) => {
     const data = JSON.parse(body.body);
-    
     console.log(data);
   });
 
