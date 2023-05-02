@@ -16,7 +16,7 @@ interface Timer {
 }
 
 const Timer = ({ ss, size, color, handleOver }: Timer) => {
-  const [seconds, setSeconds] = useState<number>(0);
+  const [seconds, setSeconds] = useState<number>(ss);
 
   useEffect(() => {
     setSeconds(ss);

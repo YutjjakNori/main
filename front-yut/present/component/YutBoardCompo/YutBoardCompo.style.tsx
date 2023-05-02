@@ -4,6 +4,9 @@ import styled, { css } from "styled-components";
 const cornerPointSize = 15;
 const miniPointSize = 4;
 
+const size1 = 13;
+const size2 = 28;
+
 const Container = styled.div`
   border: 2px solid ${colors.achromaticColor.lightBlack};
   width: 36rem;
@@ -67,6 +70,47 @@ const Container = styled.div`
     height: calc(100% - ${cornerPointSize}%);
     padding: 6% 0;
   }
+
+  .leftCross1 {
+    top: ${size1}%;
+    left: ${size1}%;
+    position: absolute;
+  }
+  .leftCross2 {
+    top: ${size2}%;
+    left: ${size2}%;
+    position: absolute;
+  }
+  .leftCross3 {
+    bottom: ${size2}%;
+    right: ${size2}%;
+    position: absolute;
+  }
+  .leftCross4 {
+    bottom: ${size1}%;
+    right: ${size1}%;
+    position: absolute;
+  }
+  .rightCross1 {
+    top: ${size1}%;
+    right: ${size1}%;
+    position: absolute;
+  }
+  .rightCross2 {
+    top: ${size2}%;
+    right: ${size2}%;
+    position: absolute;
+  }
+  .rightCross3 {
+    bottom: ${size2}%;
+    left: ${size2}%;
+    position: absolute;
+  }
+  .rightCross4 {
+    bottom: ${size1}%;
+    left: ${size1}%;
+    position: absolute;
+  }
 `;
 
 const PointStyle = css`
@@ -76,6 +120,21 @@ const PointStyle = css`
   border: inherit;
 `;
 
+const PieceSize = css`
+  .piece {
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    width: 4.5rem;
+    height: 4.5rem;
+    svg {
+      width: 100%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+    }
+  }
+`;
+
 const CornerPoint = styled.div<{ type: string }>`
   width: ${cornerPointSize}%;
   ${PointStyle}
@@ -83,7 +142,7 @@ const CornerPoint = styled.div<{ type: string }>`
   background-color: ${({ type }) =>
     type === "blue" ? colors.gamePage.darkBlue : colors.gamePage.darkPink};
 
-  div {
+  div:nth-child(1) {
     ${PointStyle}
     width: 70%;
     top: 50%;
@@ -92,6 +151,8 @@ const CornerPoint = styled.div<{ type: string }>`
     background-color: ${({ type }) =>
       type === "blue" ? colors.gamePage.blue : colors.gamePage.pink};
   }
+
+  ${PieceSize}
 `;
 
 const MiniPoint = styled.div`
@@ -99,7 +160,10 @@ const MiniPoint = styled.div`
   border: 2px solid ${colors.achromaticColor.lightBlack};
   background-color: ${colors.achromaticColor.white};
   position: relative;
+  box-sizing: border-box;
   width: ${miniPointSize}rem;
+
+  ${PieceSize}
 `;
 
 const MiniList = styled.div`
@@ -109,61 +173,5 @@ const MiniList = styled.div`
   width: fit-contents;
 `;
 
-const size1 = 13;
-const size2 = 28;
-
-const MiniLeftCross1 = styled(MiniPoint)`
-  top: ${size1}%;
-  left: ${size1}%;
-  position: absolute;
-`;
-const MiniLeftCross2 = styled(MiniPoint)`
-  top: ${size2}%;
-  left: ${size2}%;
-  position: absolute;
-`;
-const MiniLeftCross3 = styled(MiniPoint)`
-  bottom: ${size2}%;
-  right: ${size2}%;
-  position: absolute;
-`;
-const MiniLeftCross4 = styled(MiniPoint)`
-  bottom: ${size1}%;
-  right: ${size1}%;
-  position: absolute;
-`;
 //--------------------
-const MiniRightCross1 = styled(MiniPoint)`
-  top: ${size1}%;
-  right: ${size1}%;
-  position: absolute;
-`;
-const MiniRightCross2 = styled(MiniPoint)`
-  top: ${size2}%;
-  right: ${size2}%;
-  position: absolute;
-`;
-const MiniRightCross3 = styled(MiniPoint)`
-  bottom: ${size2}%;
-  left: ${size2}%;
-  position: absolute;
-`;
-const MiniRightCross4 = styled(MiniPoint)`
-  bottom: ${size1}%;
-  left: ${size1}%;
-  position: absolute;
-`;
-export {
-  Container,
-  CornerPoint,
-  MiniPoint,
-  MiniList,
-  MiniLeftCross1,
-  MiniLeftCross2,
-  MiniLeftCross3,
-  MiniLeftCross4,
-  MiniRightCross1,
-  MiniRightCross2,
-  MiniRightCross3,
-  MiniRightCross4,
-};
+export { Container, CornerPoint, MiniPoint, MiniList };

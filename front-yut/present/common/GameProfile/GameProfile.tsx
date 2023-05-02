@@ -1,6 +1,6 @@
 import { colors } from "@/styles/theme";
 import Image, { StaticImageData } from "next/image";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Timer from "../Timer/Timer";
 import * as style from "./GameProfile.style";
 
@@ -20,7 +20,7 @@ const GameProfile = ({
   timerSeconds,
 }: GameProfileProps) => {
   const [profileColor, setProfileColor] = useState<string>(
-    colors.readyPage.notReady,
+    colors.readyPage.notReady
   );
   const [seconds, setSeconds] = useState<number>(0);
 
@@ -78,4 +78,5 @@ const GameProfile = ({
   );
 };
 
-export default GameProfile;
+export default React.memo(GameProfile);
+export type { GameProfileProps };

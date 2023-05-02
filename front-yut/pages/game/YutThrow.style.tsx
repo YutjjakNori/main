@@ -41,6 +41,7 @@ const StyledResult = styled.div`
   position: relative;
   margin-top: 5%;
 `;
+
 export {
   StyledContainer,
   StyledResultList,

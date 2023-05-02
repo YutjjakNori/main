@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import CircleButton from "@/present/common/Button/CircleButton";
 import { CircleButtonProps } from "@/present/common/Button/CircleButton";
 import * as style from "@/pages/game/YutThrow.style";
@@ -10,6 +10,8 @@ import Yut from "@/public/icon/yutImage/yut.svg";
 import Mo from "@/public/icon/yutImage/mo.svg";
 import BackDo from "@/public/icon/yutImage/backDo.svg";
 
+import { connect, sending } from "@/actions/socket-api/socketInstance";
+
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/RectButton";
@@ -18,17 +20,31 @@ interface RectStyleInfo {
   display: string;
 }
 
-// 소켓 통신으로 서버에서 윷 결과 받아오기.
+interface ListItem {
+  id: number;
+  res: string;
+}
 
 const YutThrow = () => {
+  useEffect(() => {
+    connect();
+    console.log("re-render");
+  }, []);
+
   const [currentImage, setCurrentImage] = useState(0);
 
-  // 소켓 연결해서 결과를 받기 --------------------------(1)
-  
-
-
   // resList를 쌓기. --------------------------------- (2)
-  const [resList, setResList] = useState<Array<string>>(["", "", "", "", ""]);
+  // const [resList, setResList] = useState<Array<string>>(["", "", "", "", ""]);
+  const [resList, setResList] = useState<ListItem[]>([
+    { id: 1, res: "" },
+    { id: 2, res: "" },
+    { id: 3, res: "" },
+    { id: 4, res: "" },
+    { id: 5, res: "" },
+  ]);
+
+  // 윷 던지기 순서 idx를 관리하는 count 변수
+  const [count, setCount] = useState(0);
   const [btnDisplay, setBtnDisplay] = useState<"block" | "none">("block");
   const getYutSvgByIndex = useCallback((index: number) => {
     switch (index) {
@@ -62,19 +78,61 @@ const YutThrow = () => {
     backgroundColor: "#6EBA91",
   };
 
-  // 소켓 연결해서 결과를 받기 --------------------------(1)
   function throwYut() {
     setBtnDisplay(btnDisplay === "block" ? "none" : "block");
-    setCurrentImage(5);
+
+    // 소켓 연결해서 결과를 받기 --------------------------(1)
+    // userId, roomCode 를 전역변수에서 나중에 가져와야함.
+    const request = { userId: "lewis", roomCode: "abcde" };
+    sending("/game/stick", request);
+
+    const temp = ["윷", "모", "윷", "개"]; // 임시 결과 리스트
+    const getYutResult = () => {};
+
+    // '윷 던지기' 버튼을 통해서 서버로부터 윷 결과 받아오기 (?)
+    // 윷/모이면 한번더 던저!
+    if (temp[count] === "윷" || temp[count] === "모") {
+      if (temp[count] === "윷") {
+        setCurrentImage(3);
+      } else {
+        setCurrentImage(4);
+      }
+
+      setTimeout(() => {
+        setBtnDisplay("block");
+      }, 1000);
+
+      setCount(count + 1);
+    } else if (temp[count] === "도") {
+      setCurrentImage(0);
+    } else if (temp[count] === "개") {
+      setCurrentImage(1);
+    } else if (temp[count] === "걸") {
+      setCurrentImage(2);
+    } else {
+      setCurrentImage(5);
+    }
+
+    // setResList(["윷", "", "", "", ""]);
+    setResList(
+      resList.map((item, index) => {
+        if (index === count) {
+          return { ...item, res: temp[count] }; // 원하는 index를 새로운 값으로 변경
+        }
+        return item; // 다른 item들은 그대로 유지
+      })
+    );
+
+    setBtnDisplay("none");
   }
 
   return (
     <style.StyledContainer>
       <style.StyledResultList>
-        {resList.map((data) => {
+        {resList.map((data, index) => {
           return (
             <CircleButton
-              text={data}
+              text={data.res}
               fontSize={yutResultInfo.fontSize}
               color={yutResultInfo.color}
               backgroundColor={yutResultInfo.backgroundColor}
