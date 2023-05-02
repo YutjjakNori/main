@@ -6,32 +6,39 @@ import * as style from "./YutBoardCompo.style";
 import { useRecoilState } from "recoil";
 import { YutPieceListState } from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo";
+import { cornerIndex } from "@/utils/gameUtils";
+
+// TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
+// 임시 정보
+const eventList = {""}
 
 const pieceFilterByIndex = (
   index: number,
-  pieceList: Array<YutPieceCompoProps>,
+  pieceList: Array<YutPieceCompoProps>
 ) => {
   return pieceList.filter(
-    (piece) => piece.state === "InBoard" && piece.position === index,
+    (piece) => piece.state === "InBoard" && piece.position === index
   );
 };
 
 const createMiniPoint = (
   cornerIndex: number,
   classStr: string,
-  pieceList: Array<YutPieceCompoProps>,
+  pieceList: Array<YutPieceCompoProps>
 ): JSX.Element => (
+  if(cornerIndex == )
   <MiniPoint
     id={cornerIndex}
     classStr={classStr}
     pieceList={pieceFilterByIndex(cornerIndex, pieceList)}
   />
 );
+
 const createCornerPoint = (
   id: number,
   type: string,
   point: string,
-  pieceList: Array<YutPieceCompoProps>,
+  pieceList: Array<YutPieceCompoProps>
 ) => (
   <CornerPoint
     id={id}

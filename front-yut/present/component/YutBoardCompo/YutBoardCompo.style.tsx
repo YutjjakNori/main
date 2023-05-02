@@ -223,5 +223,23 @@ const ArrowWrapper = styled.span<{ active: boolean }>`
   }
 `;
 
+const EventPoint = styled.div`
+  ${PointStyle}
+  border: 2px solid ${colors.achromaticColor.lightBlack};
+  background-color: ${colors.achromaticColor.white};
+  position: relative;
+  box-sizing: border-box;
+  width: ${miniPointSize}rem;
+
+  ${PieceSize}
+`;
+
 //--------------------
-export { Container, CornerPoint, MiniPoint, MiniList, ArrowWrapper };
+export {
+  Container,
+  CornerPoint,
+  MiniPoint,
+  MiniList,
+  ArrowWrapper,
+  EventPoint,
+};
