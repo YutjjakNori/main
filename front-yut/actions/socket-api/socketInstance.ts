@@ -29,7 +29,7 @@ export function connect() {
 }
 /**
  * Socket 연결에 성공했을 때 실행하는 함수
- * 
+ *
  * @param sessionId socket을 연결한 sessionID
  */
 function onConnected(sessionId: string) {
@@ -54,7 +54,7 @@ function onConnected(sessionId: string) {
 
 /**
  * Socket 연결 시 오류가 발생했을 때 실행하는 함수
- * 
+ *
  * @param frame 연결 실패 시 반환하는 parameter
  */
 function onError(frame: any) {
@@ -63,7 +63,7 @@ function onError(frame: any) {
 
 /**
  * 채팅 메시지 보내기
- * 
+ *
  * @param content 사용자가 보내는 메시지
  */
 export function sending(content: string) {
