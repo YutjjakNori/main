@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import * as style from "./Modal.style";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { showState } from "@/store/modalStore";
+import { showState } from "@/store/ModalStore";
 
 interface ReadyModalProps {
   title: string;

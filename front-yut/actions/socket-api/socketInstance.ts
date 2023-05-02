@@ -1,5 +1,7 @@
 import SockJS from "sockjs-client";
+import { useRecoilState } from "recoil";
 import { CompatClient, Stomp } from "@stomp/stompjs";
+import { userInfoState } from "@/store/UserStore";
 
 // stomp 연결 객체
 let stompClient: CompatClient | null = null;
@@ -10,7 +12,18 @@ let sessionId: string = "";
  * STOMP over SockJS 연결
  */
 export function connect() {
-  let socket = new SockJS("http://localhost:8888/yut");
+  // let socket = new SockJS("http://localhost:8888/yut");
+  let socket = new SockJS("https://k8d109.p.ssafy.io/yut");
+
+  // userId 값을 받아와서 로컬 스토리지에 저장하는 함수
+  // function saveUserIdToLocalStorage(sessionId: string) {
+
+  // }
+  // userId 값을 로컬 스토리지에서 가져오는 함수
+  function getUserIdFromLocalStorage() {
+    return localStorage.getItem("userId");
+  }
+  //stomp.js를 사용하여 SockJS와 웹 소켓 통신을 수행
   stompClient = Stomp.over(socket);
 
   stompClient.connect(
@@ -19,8 +32,12 @@ export function connect() {
     () => {
       //@ts-ignore
       sessionId = socket._transport.url.split("/")[5];
-      // onConnected(sessionId);
-      //To do : 세션ID 받고 Atom으로 저장,로컬스토리지에 저장
+      onConnected(sessionId);
+      //To do : 세션ID 받고 Atom으로 저장, 로컬스토리지에 저장
+      // const [userInfo, setUserInfo] = useRecoilState(userInfoState);
+      // setUserInfo({ ...userInfo, userId: sessionId });
+      localStorage.setItem("userId", sessionId);
+      console.log("userId: ", sessionId);
     },
     // onError
     (frame: any) => {
@@ -33,14 +50,35 @@ export function connect() {
  *
  * @param sessionId socket을 연결한 sessionID
  */
-function onConnected(sessionId: string, callback: () => void) {
+// function onConnected(sessionId: string, callback: () => void) {
+//   console.log("success");
+//   console.log();
+//   // TODO: roomCode를 변수로 바꾸기!
+//   stompClient?.subscribe("/topic/chat/{roomCode}", (body: any) => {
+//     const data = JSON.parse(body.body);
+//     console.log(data);
+//     callback();
+//   });
+
+//   // 서버에 입장한다는 메시지 전송
+//   stompClient?.send(
+//     `/room/enter`,
+//     {},
+//     JSON.stringify({
+//       userId: sessionId,
+//       roomCode: "abcde",
+//     })
+//   );
+// }
+
+function onConnected(sessionId: string) {
   console.log("success");
   console.log();
+
   // TODO: roomCode를 변수로 바꾸기!
   stompClient?.subscribe("/topic/chat/{roomCode}", (body: any) => {
     const data = JSON.parse(body.body);
-    console.log(data);
-    callback();
+    // console.log(data);
   });
 
   // 서버에 입장한다는 메시지 전송

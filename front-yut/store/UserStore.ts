@@ -2,8 +2,8 @@ import { atom } from "recoil";
 import { StaticImageData } from "next/image";
 
 interface UserInfoProps {
-  userId: string;
-  playerName: string;
+  userId?: string;
+  playerName?: string;
   profileImage?: string | StaticImageData;
 }
 

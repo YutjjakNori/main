@@ -4,6 +4,7 @@ import GameProfile from "@/present/common/GameProfile/GameProfile";
 import Modal from "@/present/common/Modal/Modal";
 import Timer from "@/present/common/Timer/Timer";
 import useModal from "@/actions/hook/controlModal";
+import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 
 const Ready = () => {
   const { openModal, closeModal } = useModal(); //모달 열기
@@ -30,6 +31,7 @@ const Ready = () => {
           }}
         />
       </Modal>
+      <ChatCompo></ChatCompo>
     </>
   );
 };
