@@ -1,9 +1,14 @@
 //chatting component
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import * as style from "./ChatCompo.style";
-import { connect, sending } from "@/actions/socket-api/socketInstance";
 import { userInfoState } from "@/store/UserStore";
+import {
+  connect,
+  readySocketObject,
+  readyTopic,
+} from "@/actions/socket-api/readySocketInstance";
+import * as socketUtil from "@/utils/socketUtils";
 
 // interface ChatCompoProps {
 //   userId: string;
@@ -14,8 +19,19 @@ const ChatCompo = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
 
+  const chatStart = useCallback((users: Array<any>) => {
+    initPlayerTurn(users.map((user) => user.userId));
+  }, []);
+  const subscribeTopics = useCallback(() => {
+    socketUtil.subscribeEvnet(
+      readySocketObject,
+      readyTopic.chatStart,
+      chatStart
+    );
+  }, []);
+
   useEffect(() => {
-    connect();
+    connect(subscribeTopics);
     let userId = localStorage.getItem("userId");
     //유저 전역 관리
     setUserInfo({ ...userInfo, userId: `${userId}` });
