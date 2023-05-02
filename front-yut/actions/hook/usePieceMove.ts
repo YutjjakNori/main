@@ -158,6 +158,45 @@ const usePieceMove = () => {
     setPieceList(newArr);
   };
 
+  const catchPiece = (
+    targetUserId: string,
+    targetPieceIdList: Array<number>,
+  ) => {
+    //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
+    let targetPieceIndex = -1;
+    for (let i = 0; i < targetPieceIdList.length; i++) {
+      const idx = pieceList.findIndex(
+        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i],
+      );
+
+      if (idx !== -1) {
+        targetPieceIndex = idx;
+      }
+    }
+    if (targetPieceIndex === -1)
+      throw Error("usePieceMove/catchPiece : 잡을 말을 찾을 수 없습니다");
+
+    //targetPiece의 appendedList를 초기화하고 다시 pieceList에 넣어줌
+    const targetPiece = pieceList[targetPieceIndex];
+    const appendedPieceList = [
+      ...targetPiece.appendArray,
+      pieceList[targetPieceIndex],
+    ].map((p) => pieceCatched(p));
+
+    let newArr = [...pieceList];
+    newArr.splice(targetPieceIndex, 1);
+    newArr = newArr.concat(appendedPieceList);
+    setPieceList(newArr);
+  };
+
+  const pieceCatched = useCallback((piece: YutPieceCompoProps) => {
+    const tmp = { ...piece };
+    tmp.position = -1;
+    tmp.state = "NotStarted";
+    tmp.appendArray = [];
+    return tmp;
+  }, []);
+
   const clearActiveCornerArrow = useCallback(() => {
     setCornerSelectType("none");
   }, []);
@@ -181,6 +220,7 @@ const usePieceMove = () => {
     selectPiece,
     clearActiveCornerArrow,
     appendPiece,
+    catchPiece,
   };
 };
 
