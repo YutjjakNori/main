@@ -9,8 +9,8 @@ const size2 = 28;
 
 const Container = styled.div`
   border: 2px solid ${colors.achromaticColor.lightBlack};
-  width: 36rem;
-  height: auto;
+  width: auto;
+  height: 70vh;
   aspect-ratio: 8/7;
   position: relative;
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="100%" y2="100%" stroke="black" /></svg>'),

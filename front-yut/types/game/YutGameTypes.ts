@@ -30,4 +30,10 @@ type CornerType =
   | "centerRight"
   | "none";
 
-export type { PieceStateType, GameActionType, CornerType };
+interface UserInfoType {
+  userId: string;
+  playerName: string;
+  profileImage: string;
+}
+
+export type { PieceStateType, GameActionType, CornerType, UserInfoType };
