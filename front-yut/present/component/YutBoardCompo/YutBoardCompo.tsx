@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
 import CornerPoint from "./CornerPoint";
 import MiniPoint from "./MiniPoint";
 import * as style from "./YutBoardCompo.style";
 import { useRecoilState } from "recoil";
 import { YutPieceListState } from "@/store/GameStore";
+import ArrowIconCompo from "./ArrowCompo";
 
 const pieceFilterByIndex = (
   index: number,
@@ -47,10 +48,20 @@ const YutBoardCompo = () => {
     <>
       <style.Container>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
+        {/* 분기점 */}
+        <ArrowIconCompo classStr={"cornerLeftTop1"} position={10} />
+        <ArrowIconCompo classStr={"cornerLeftTop2"} position={10} />
         {createCornerPoint(15, "blue", "leftBottom", pieceList)}
+        {/* 분기점 */}
         {createCornerPoint(5, "blue", "rightTop", pieceList)}
+        {/* 분기점 */}
+        <ArrowIconCompo classStr={"cornerRightTop1"} position={5} />
+        <ArrowIconCompo classStr={"cornerRightTop2"} position={5} />
         {createCornerPoint(0, "blue", "rightBottom", pieceList)}
         {createCornerPoint(22, "pink", "center", pieceList)}
+        {/* 분기점 */}
+        <ArrowIconCompo classStr={"cornerCenter1"} position={22} />
+        <ArrowIconCompo classStr={"cornerCenter2"} position={22} />
         <style.MiniList className="miniTop">
           {createMiniPoint(9, "", pieceList)}
           {createMiniPoint(8, "", pieceList)}

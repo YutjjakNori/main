@@ -9,8 +9,8 @@ const size2 = 28;
 
 const Container = styled.div`
   border: 2px solid ${colors.achromaticColor.lightBlack};
-  width: 36rem;
-  height: auto;
+  width: auto;
+  height: 70vh;
   aspect-ratio: 8/7;
   position: relative;
   background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><line x1="0" y1="0" x2="100%" y2="100%" stroke="black" /></svg>'),
@@ -111,6 +111,37 @@ const Container = styled.div`
     left: ${size1}%;
     position: absolute;
   }
+
+  /* arrow */
+  .cornerLeftTop1 {
+    top: 8%;
+    left: -10%;
+  }
+  .cornerLeftTop2 {
+    transform: rotate(-35deg);
+    top: 8%;
+    left: 4%;
+  }
+  .cornerRightTop1 {
+    transform: rotate(90deg);
+    top: -13%;
+    right: 8%;
+  }
+  .cornerRightTop2 {
+    transform: rotate(-320deg);
+    top: 8%;
+    right: 4%;
+  }
+  .cornerCenter1 {
+    transform: rotate(50deg);
+    left: 34%;
+    top: 50%;
+  }
+  .cornerCenter2 {
+    transform: rotate(-50deg);
+    right: 34%;
+    top: 50%;
+  }
 `;
 
 const PointStyle = css`
@@ -128,9 +159,9 @@ const PieceSize = css`
     width: 4.5rem;
     height: 4.5rem;
     svg {
+      transform: translate(-50%, -50%);
       width: 100%;
       height: 100%;
-      transform: translate(-50%, -50%);
     }
   }
 `;
@@ -173,5 +204,24 @@ const MiniList = styled.div`
   width: fit-contents;
 `;
 
+const ArrowWrapper = styled.span<{ active: boolean }>`
+  position: absolute;
+  display: ${({ active }) => (active ? "block" : "none")};
+  width: fit-contents;
+
+  :hover {
+    cursor: pointer;
+  }
+
+  svg {
+    width: 2.5rem;
+    height: auto;
+
+    :hover {
+      width: 2.7rem;
+    }
+  }
+`;
+
 //--------------------
-export { Container, CornerPoint, MiniPoint, MiniList };
+export { Container, CornerPoint, MiniPoint, MiniList, ArrowWrapper };
