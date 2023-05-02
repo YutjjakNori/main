@@ -28,7 +28,6 @@ interface ListItem {
 const YutThrow = () => {
   useEffect(() => {
     connect();
-    console.log("re-render");
   }, []);
 
   const [currentImage, setCurrentImage] = useState(0);
@@ -83,14 +82,15 @@ const YutThrow = () => {
 
     // 소켓 연결해서 결과를 받기 --------------------------(1)
     // userId, roomCode 를 전역변수에서 나중에 가져와야함.
+    // 아래는 임시 dummy 코드.
     const request = { userId: "lewis", roomCode: "abcde" };
-    sending("/game/stick", request);
+    // sending("/game/stick", request);
 
     const temp = ["윷", "모", "윷", "개"]; // 임시 결과 리스트
     const getYutResult = () => {};
 
     // '윷 던지기' 버튼을 통해서 서버로부터 윷 결과 받아오기 (?)
-    // 윷/모이면 한번더 던저!
+    // 윷/모이면 한번더 던져!
     if (temp[count] === "윷" || temp[count] === "모") {
       if (temp[count] === "윷") {
         setCurrentImage(3);

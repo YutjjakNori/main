@@ -10,7 +10,7 @@ let sessionId: string = "";
  * STOMP over SockJS 연결
  */
 export function connect() {
-  let socket = new SockJS("https://k8d109.p.ssafy.io/yut");
+  let socket = new SockJS("http://localhost:8888/yut");
   stompClient = Stomp.over(socket);
 
   stompClient.connect(
@@ -41,11 +41,6 @@ function onConnected(sessionId: string) {
     console.log(data);
   });
 
-  stompClient?.subscribe("/topic/game/stick/abcde", (body: any) => {
-    const data = JSON.parse(body.body);
-    console.log(data);
-  });
-
   // 서버에 입장한다는 메시지 전송
   stompClient?.send(
     `/room/enter`,
@@ -71,12 +66,18 @@ function onError(frame: any) {
  *
  * @param content 사용자가 보내는 메시지
  */
-export function sending(topic: any, content: any) {
+export function sending(content: string) {
   stompClient?.send(
     // TOPIC
-    topic,
+    `/chat`,
     {},
     // CONTENT
-    JSON.stringify(content)
+    JSON.stringify({
+      type: "CHAT",
+      userId: sessionId,
+      // TODO: roomCode 변수로 바꾸기
+      roomCode: "abcde",
+      content: content,
+    })
   );
 }
