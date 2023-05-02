@@ -1,19 +1,12 @@
 //게임 화면
 
-import PlayerCompo, {
-  PlayerCompoProps,
-} from "@/present/component/PlayerCompo/PlayerCompo";
-import YutBoardCompo from "@/present/component/YutBoardCompo/YutBoardCompo";
+import { PlayerCompoProps } from "@/present/component/PlayerCompo/PlayerCompo";
 import { colors } from "@/styles/theme";
 import { useEffect, useState } from "react";
 import useGameTurn from "@/actions/hook/useGameTurn";
 import usePieceMove from "@/actions/hook/usePieceMove";
-
-interface UserInfoType {
-  userId: string;
-  playerName: string;
-  profileImage: string;
-}
+import { UserInfoType } from "@/types/game/YutGameTypes";
+import GameLayout from "@/present/layout/game/GameLayout";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
@@ -67,42 +60,17 @@ const Game = () => {
   };
 
   return (
-    <div>
-      <div
-        style={{
-          position: "absolute",
-          display: "flex",
-          flexDirection: "column",
-          gap: "5vh",
-          top: "20px",
-          left: "20px",
-        }}
-      >
-        {userList.map((user) => (
-          <PlayerCompo key={user.playerName} {...user} />
-        ))}
-      </div>
+    <>
+      <GameLayout userList={userList} />
 
-      <div
-        style={{
-          position: "absolute",
-          paddingTop: "10vh",
-          paddingLeft: "30vw",
-          zIndex: -1,
-        }}
-      >
-        <YutBoardCompo />
-      </div>
-      <div style={{ position: "absolute", right: "10%" }}>
-        <button onClick={testMove1}>movePath 1</button>
-        <button onClick={testMove2}>movePath 2</button>
-        <button onClick={testPieceOver}>pieceOver</button>
-        <button onClick={nextTurn}>다음 차례</button>
-        <button onClick={testPieceAppend}>말 합치기</button>
-        <button onClick={testPieceAppend2}>말 3개 합치기</button>
-        <button onClick={testCatchPiece}>말 잡기</button>
-      </div>
-    </div>
+      <button onClick={testMove1}>movePath 1</button>
+      <button onClick={testMove2}>movePath 2</button>
+      <button onClick={testPieceOver}>pieceOver</button>
+      <button onClick={nextTurn}>다음 차례</button>
+      <button onClick={testPieceAppend}>말 합치기</button>
+      <button onClick={testPieceAppend2}>말 3개 합치기</button>
+      <button onClick={testCatchPiece}>말 잡기</button>
+    </>
   );
 };
 
