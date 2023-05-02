@@ -5,9 +5,10 @@ import * as style from "./ChatCompo.style";
 import { connect, sending } from "@/actions/socket-api/socketInstance";
 import { userInfoState } from "@/store/UserStore";
 
-const ChatCompo = () => {
+const ChatCompo: React.FC<ChatCompoProps> = ({ roomCode }) => {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
 
   useEffect(() => {
     connect();
@@ -29,6 +30,7 @@ const ChatCompo = () => {
       });
       setMessage("");
       console.log("message:", message);
+
       // inputRef.current.focus();
     }
   };
@@ -43,7 +45,14 @@ const ChatCompo = () => {
         {/* 채팅창 전체 */}
         <style.ChatBox>
           {/* 채팅창 로그 */}
-          <style.ChatLogBox></style.ChatLogBox>
+          <style.ChatLogBox>
+            <div>
+              {messages.map((message, index) => (
+                <div key={index}>{message}</div>
+              ))}
+              // ...
+            </div>
+          </style.ChatLogBox>
           {/* 채팅 입력창 */}
           <style.ChatInoutBox>
             <form onSubmit={sendMessage}>

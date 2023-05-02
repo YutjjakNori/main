@@ -7,22 +7,13 @@ import { userInfoState } from "@/store/UserStore";
 let stompClient: CompatClient | null = null;
 // session ID
 let sessionId: string = "";
-
 /**
  * STOMP over SockJS 연결
  */
-export function connect() {
+function connect() {
   // let socket = new SockJS("http://localhost:8888/yut");
   let socket = new SockJS("https://k8d109.p.ssafy.io/yut");
 
-  // userId 값을 받아와서 로컬 스토리지에 저장하는 함수
-  // function saveUserIdToLocalStorage(sessionId: string) {
-
-  // }
-  // userId 값을 로컬 스토리지에서 가져오는 함수
-  function getUserIdFromLocalStorage() {
-    return localStorage.getItem("userId");
-  }
   //stomp.js를 사용하여 SockJS와 웹 소켓 통신을 수행
   stompClient = Stomp.over(socket);
 
@@ -34,8 +25,6 @@ export function connect() {
       sessionId = socket._transport.url.split("/")[5];
       onConnected(sessionId);
       //To do : 세션ID 받고 Atom으로 저장, 로컬스토리지에 저장
-      // const [userInfo, setUserInfo] = useRecoilState(userInfoState);
-      // setUserInfo({ ...userInfo, userId: sessionId });
       localStorage.setItem("userId", sessionId);
       console.log("userId: ", sessionId);
     },
@@ -106,7 +95,7 @@ function onError(frame: any) {
  *
  * @param content 사용자가 보내는 메시지
  */
-export function sending(topic: any, content: any) {
+function sending(topic: any, content: any) {
   stompClient?.send(
     // TOPIC
     topic,
@@ -124,3 +113,5 @@ export function sending(topic: any, content: any) {
 //   roomCode: "abcde",
 //   content: "dkfjasldfjsd",
 // });
+
+export { connect, onConnected, onError, sending };
