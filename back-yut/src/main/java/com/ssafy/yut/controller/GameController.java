@@ -1,6 +1,7 @@
 package com.ssafy.yut.controller;
 
 import com.ssafy.yut.dto.RequestDto;
+import com.ssafy.yut.dto.YutDto;
 import com.ssafy.yut.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -24,10 +25,15 @@ public class GameController {
      * @param request
      */
     @MessageMapping("/stick")
-    public void throwYut(RequestDto request){
+    public void throwYut(YutDto.Request request){
         gameService.yut(request);
     }
 
+    /**
+     * 턴 돌리기
+     *
+     * @param request
+     */
     @MessageMapping("/turn")
     public void turn(RequestDto request){
         gameService.getTurn(request);
