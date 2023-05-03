@@ -1,4 +1,4 @@
-import YutThrow from "@/component/YutBoardCompo/YutThrow";
+import YutThrow from "@/present/component/YutThrowCompo/YutThrowCompo";
 
 const yutThrowTest = () => {
   return (

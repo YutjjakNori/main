@@ -1,7 +1,7 @@
 import YutPieceCompo, {
   YutPieceCompoProps,
-} from "../YutPieceCompo/YutPieceCompo";
-import * as style from "./YutBoardCompo.style";
+} from "../../YutPieceCompo/YutPieceCompo";
+import * as style from "../YutBoardCompo.style";
 
 interface MiniPointProps {
   id: number;

@@ -1,16 +1,16 @@
 import YutPieceCompo, {
   YutPieceCompoProps,
-} from "../YutPieceCompo/YutPieceCompo";
-import * as style from "./YutBoardCompo.style";
+} from "../../YutPieceCompo/YutPieceCompo";
+import * as style from "../YutBoardCompo.style";
 
-interface CornerPointProps {
+interface CornerPointCompoProps {
   id: number;
   type: string;
   point: string;
   pieceList: Array<YutPieceCompoProps>;
 }
 
-const CornerPoint = ({ id, type, point, pieceList }: CornerPointProps) => {
+const CornerPoint = ({ id, type, point, pieceList }: CornerPointCompoProps) => {
   return (
     <style.CornerPoint type={type} className={point}>
       <div></div>

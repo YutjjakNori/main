@@ -1,8 +1,8 @@
 //로비 페이지
-import CircleButton from "@/present/common/Button/CircleButton";
-import RectButton from "@/present/common/Button/RectButton";
-import { CircleButtonProps } from "@/present/common/Button/CircleButton";
-import { RectButtonProps } from "@/present/common/Button/RectButton";
+import CircleButton from "@/present/common/Button/Circle/CircleButton";
+import RectButton from "@/present/common/Button/Rect/RectButton";
+import { CircleButtonProps } from "@/present/common/Button/Circle/CircleButton";
+import { RectButtonProps } from "@/present/common/Button/Rect/RectButton";
 import styled from "styled-components";
 
 import Svg from "@/public/icon/close.svg";
