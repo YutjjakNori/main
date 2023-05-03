@@ -5,10 +5,6 @@ import * as style from "./ChatCompo.style";
 import { connect, sending } from "@/actions/socket-api/socketInstance";
 import { userInfoState } from "@/store/UserStore";
 
-// interface ChatCompoProps {
-//   userId: string;
-// }
-
 const ChatCompo = () => {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [message, setMessage] = useState("");
