@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -165,13 +166,26 @@ public class GameService {
                         .build());
     }
 
-
+    /**
+     * 말 이동
+     *
+     * @param request
+     */
     public void actPiece(PieceDto.Request request) {
         // 1번 0, 1, 2 | 2번 3, 4, 5 | 3번 6, 7, 8 | 4번 9, 10, 11
+        // type : 1 말 이동, 2 말 잡기, 3 말 합치기, 4 말 동나기.
+        Map<String, Object> response = new HashMap<>();
+        PieceDto.Response pieceResponse;
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("userId", request.getUserId());
+        List<Integer> move = new ArrayList<>();
+        int type = 1;
+
         String roomCode = request.getRoomCode();
         String key = "game:" + roomCode;
         int direction = request.getDirection();
         int plateNum = request.getPlateNum();
+        int orgPlate = plateNum;
         int yut = request.getYut();
         List<Integer> selectPieces = request.getSelectPiece();
 
@@ -184,77 +198,162 @@ public class GameService {
         List<Integer> pieces = gameUsers.get(index).getPieces();
 
         switch (direction) {
+            // 순행
             case 1:
                 // 선택된 말이 시작 전일 때
-                if(selectPieces.size() == 1 && plateNum == -1) {
-                    List<Integer> platePieces = plate.get(yut);
-                    // 이동할 윷판 위치에 말이 있는 경우
-                    if(platePieces != null) {
-                        int platePiece = platePieces.get(0);
-
-                        // 내 말이 아닐 때
-                        if((platePiece / 3) != index) {
-                            // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
-                            for(Integer removePieces : platePieces) {
-                                gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
-                            }
-                            platePieces.clear();
-                        }
+                if(plateNum == -1) {
+                    plateNum = 0;
+                    move.add(plateNum);
+                    for(int path = 1; path <= yut; path++) {
+                        move.add(plateNum + path);
                     }
-                    // 이동할 윷판 위치에 말이 없는 경우
-                    else {
-                        // 윷판 위치에 말 추가.
-                        platePieces = new ArrayList<>();
-                    }
-                    platePieces.add((index * 3) + (selectPieces.get(0) - 1));
-                    plate.put(yut, platePieces);
+                    // 이동한 위치
+                    plateNum = yut;
+                    break;
                 }
 
-                // 선택된 말이 시작 중 일때
-                else if(plateNum != -1) {
-                    List<Integer> platePieces = plate.get(yut + plateNum);
-                    // 이동할 윷판 위치에 말이 있는 경우
-                    if(platePieces != null) {
-                        int platePiece = platePieces.get(0);
-
-                        // 내 말이 아닐 때
-                        if((platePiece / 3) != index) {
-                            // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
-                            for(Integer removePieces : platePieces) {
-                                gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
-                            }
-                            platePieces.clear();
-                        }
-                    }
-                    // 이동할 윷판 위치에 말이 없는 경우
-                    else {
-                        // 윷판 위치에 말 추가.
-                        platePieces = new ArrayList<>();
-                    }
-                    platePieces.add((index * 3) + (selectPieces.get(0) - 1));
-                    plate.put(yut + plateNum, platePieces);
+                // 동나기 직전
+                else if(plateNum == 0) {
+                    // 이동한 위치
+                    plateNum = -1;
+                    move.add(-1);
+                    break;
                 }
+
+                // 선택된 말이 시작 중 일때 1 ~ 14
+                else if(plateNum > 0 && plateNum < 15){
+                    for(int path = 1; path <= yut; path++) {
+                        move.add(plateNum + path);
+                    }
+                    // 이동한 위치
+                    plateNum += yut;
+                    break;
+                }
+
+                // 선택된 말이 시작 중 일때 15 ~
+                else if(plateNum >= 15) {
+                    for(int path = 1; path <= yut; path++) {
+                        // 0번 도착
+                        if((plateNum + path) == 20) {
+                            plateNum = 0;
+                            move.add(0);
+                            continue;
+                        }
+                        // 말 동나기
+                        else if((plateNum + path) > 20) {
+                            plateNum = -1;
+                            move.add(-1);
+                            break;
+                        }
+                        move.add(plateNum + path);
+                    }
+                }
+                // 이동한 위치
+                plateNum = (plateNum == 0 || plateNum == -1) ? plateNum : plateNum + yut;
                 break;
 
+            // 좌하 ↙
             case 2:
+                // 우상단 모서리
+                if(plateNum == 5) {
+                    plateNum += 14;
+                    for(int path = 1; path <= yut; path++) {
+                        move.add(plateNum + path);
+                    }
+                    // 이동한 위치
+                    plateNum += yut;
+                    break;
+                }
 
+                // 중앙
+                else if(plateNum == 22 || plateNum == 27) {
+                    plateNum = 22;
+                }
 
+                for(int path = 1; path <= yut; path++) {
+                    if((plateNum + path) >= 25) {
+                        move.add((plateNum + path) - 10);
+                        continue;
+                    }
+                    move.add(plateNum + path);
+                }
+                // 이동한 위치
+                plateNum = plateNum + yut >= 25 ? (plateNum - 10) + yut  : plateNum + yut;
                 break;
+
+            // 우하 ↘
             case 3:
+                // 좌상단 모서리
+                if(plateNum == 10) {
+                    plateNum += 14;
+                    for(int path = 1; path <= yut; path++) {
+                        move.add(plateNum + path);
+                    }
+                    // 이동한 위치
+                    plateNum += yut;
+                    break;
+                }
 
-                break;
-            case 4:
+                // 중앙
+                else if(plateNum == 22 || plateNum == 27) {
+                    plateNum = 27;
+                }
 
+                for(int path = 1; path <= yut; path++) {
+                    // 0번 도착
+                    if((plateNum + path) == 30) {
+                        plateNum = 0;
+                        move.add(0);
+                        continue;
+                    }
+                    // 말 동나기
+                    else if((plateNum + path) > 30) {
+                        plateNum = -1;
+                        move.add(-1);
+                        break;
+                    }
+                    move.add(plateNum + path);
+                }
+                // 이동한 위치
+                plateNum = (plateNum == 0 || plateNum == -1) ? plateNum : plateNum + yut;
                 break;
         }
+        // 이동 끝 응답하기
+
+        // 말 동나기
+        if(plateNum == -1) {
+            List<Integer> finishPieces = plate.remove(orgPlate);
+
+            type = 4;
+            data.put("userId", request.getUserId());
+            data.put("selectPiece", selectPieces);
+            data.put("move", move);
+            pieceResponse = PieceDto.Response.builder()
+                    .type(type)
+                    .data(data)
+                    .build();
+        }
+
+        List<Integer> platePieces = plate.get(yut);
+        // 이동할 윷판 위치에 말이 있는 경우
+        if(platePieces != null) {
+            int platePiece = platePieces.get(0);
+
+            // 내 말이 아닐 때
+            if((platePiece / 3) != index) {
+                // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
+                for(Integer removePieces : platePieces) {
+                    gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
+                }
+                platePieces.clear();
+            }
+        }
+        // 이동할 윷판 위치에 말이 없는 경우
+        else {
+            // 윷판 위치에 말 추가.
+            platePieces = new ArrayList<>();
+        }
+        platePieces.add((index * 3) + (selectPieces.get(0) - 1));
+        plate.put(yut, platePieces);
     }
-
-    public void checkPlate() {
-
-    }
-
-    public void changeDirection() {
-
-    }
-
 }
