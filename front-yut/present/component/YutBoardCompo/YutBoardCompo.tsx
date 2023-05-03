@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
-import CornerPoint from "./CornerPoint";
-import MiniPoint from "./MiniPoint";
+import CornerPoint from "./Point/CornerPointCompo";
+import MiniPoint from "./Point/MiniPointCompo";
 import * as style from "./YutBoardCompo.style";
 import { useRecoilState } from "recoil";
 import { YutPieceListState } from "@/store/GameStore";
-import ArrowIconCompo from "./ArrowCompo";
+import ArrowIconCompo from "./ArrowCompo/ArrowCompo";
 
 const pieceFilterByIndex = (
   index: number,
