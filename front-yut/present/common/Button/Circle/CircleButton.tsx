@@ -1,4 +1,4 @@
-import * as style from "@/common/Button/CircleButton.style";
+import * as style from "./CircleButton.style";
 
 interface CircleButtonProps {
   Icon?: any;

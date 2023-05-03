@@ -1,4 +1,4 @@
-import { ArrowWrapper } from "./YutBoardCompo.style";
+import { ArrowWrapper } from "../YutBoardCompo.style";
 import ArrowSvg from "@/public/icon/CornerArrow.svg";
 import { useEffect, useMemo, useState } from "react";
 import * as gameUtil from "@/utils/gameUtils";

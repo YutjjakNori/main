@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import CircleButton from "@/present/common/Button/CircleButton";
-import { CircleButtonProps } from "@/present/common/Button/CircleButton";
-import * as style from "@/present/component/YutBoardCompo/YutThrow.style";
+import CircleButton from "@/present/common/Button/Circle/CircleButton";
+import { CircleButtonProps } from "@/present/common/Button//Circle/CircleButton";
+import * as style from "@/present/component/YutThrowCompo/YutThrowCompo.style";
 
 import Do from "@/public/icon/yutImage/do.svg";
 import Gae from "@/public/icon/yutImage/gae.svg";
@@ -14,7 +14,7 @@ import { connect, sending } from "@/actions/socket-api/socketInstance";
 
 import RectButton, {
   RectButtonProps,
-} from "@/present/common/Button/RectButton";
+} from "@/present/common/Button/Rect/RectButton";
 
 interface RectStyleInfo {
   display: string;
@@ -120,7 +120,7 @@ const YutThrow = () => {
           return { ...item, res: temp[count] }; // 원하는 index를 새로운 값으로 변경
         }
         return item; // 다른 item들은 그대로 유지
-      })
+      }),
     );
 
     setBtnDisplay("none");

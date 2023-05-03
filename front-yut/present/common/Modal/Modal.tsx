@@ -30,7 +30,7 @@ function Modal({ title, children }: ReadyModalProps) {
   if (mounted) {
     return ReactDOM.createPortal(
       modalContent,
-      document.getElementById("modal-root")!
+      document.getElementById("modal-root")!,
     );
   } else {
     return null;
@@ -38,3 +38,4 @@ function Modal({ title, children }: ReadyModalProps) {
 }
 
 export default Modal;
+export type { ReadyModalProps };
