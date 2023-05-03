@@ -174,6 +174,7 @@ public class GameService {
     public void actPiece(PieceDto.Request request) {
         // 1번 0, 1, 2 | 2번 3, 4, 5 | 3번 6, 7, 8 | 4번 9, 10, 11
         // type : 1 말 이동, 2 말 잡기, 3 말 합치기, 4 말 동나기.
+        // 말 상태
         Map<String, Object> response = new HashMap<>();
         PieceDto.Response pieceResponse;
         Map<String, Object> data = new LinkedHashMap<>();
@@ -191,11 +192,12 @@ public class GameService {
 
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> gameUsers = game.getUsers();
+        GameUser gameUser = new GameUser(request.getUserId(), null);
+        int gameUserIndex = gameUsers.indexOf(gameUser);
+        gameUser.setPieces(gameUsers.get(gameUserIndex).getPieces());
+        List<Integer> pieces = gameUser.getPieces();
         Set<Integer> event = game.getEvent();
         Map<Integer, List<Integer>> plate = game.getPlate();
-        GameUser gameUser = new GameUser(request.getUserId(), null);
-        int index = gameUsers.indexOf(gameUser);
-        List<Integer> pieces = gameUsers.get(index).getPieces();
 
         switch (direction) {
             // 순행
@@ -322,38 +324,56 @@ public class GameService {
 
         // 말 동나기
         if(plateNum == -1) {
+            boolean end = true;
             List<Integer> finishPieces = plate.remove(orgPlate);
+            // 윷 판에서 말지우고 완주상태로 바꾸기
+            for(Integer finishPiece : finishPieces) {
+                pieces.set(finishPiece - 1, 0);
+            }
+
+            for(Integer piece : pieces) {
+                if(piece != 0) {
+                    end = false;
+                    break;
+                }
+            }
 
             type = 4;
             data.put("userId", request.getUserId());
             data.put("selectPiece", selectPieces);
             data.put("move", move);
+            data.put("end", end);
             pieceResponse = PieceDto.Response.builder()
                     .type(type)
                     .data(data)
                     .build();
         }
-
-        List<Integer> platePieces = plate.get(yut);
-        // 이동할 윷판 위치에 말이 있는 경우
-        if(platePieces != null) {
-            int platePiece = platePieces.get(0);
-
-            // 내 말이 아닐 때
-            if((platePiece / 3) != index) {
-                // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
-                for(Integer removePieces : platePieces) {
-                    gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
-                }
-                platePieces.clear();
-            }
-        }
-        // 이동할 윷판 위치에 말이 없는 경우
+        // 말이 동나는 경우 아닐 때
         else {
-            // 윷판 위치에 말 추가.
-            platePieces = new ArrayList<>();
+            List<Integer> platePieces;
+            // 윷판에 말이 있는 지 검사 -> 없으면 NullPointException
+            // 있으면 내 말인지 아닌지 판단
+            if(plate.containsKey(plateNum)) {
+                platePieces = plate.get(plateNum);
+                int platePieceIndex = platePieces.get(0) / 3;
+
+                // 내 말이 아닐 때
+                if(platePieceIndex != gameUserIndex) {
+                    // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
+                    for(Integer removePieces : platePieces) {
+                        gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
+                    }
+                    platePieces.clear();
+                }
+            }
+            // 없으면 이동 시킬 말을 놓는다.
+            else {
+                platePieces = new ArrayList<>();
+            }
+
+            platePieces.add((gameUserIndex * 3) + (selectPieces.get(0) - 1));
+            plate.put(yut, platePieces);
         }
-        platePieces.add((index * 3) + (selectPieces.get(0) - 1));
-        plate.put(yut, platePieces);
+
     }
 }
