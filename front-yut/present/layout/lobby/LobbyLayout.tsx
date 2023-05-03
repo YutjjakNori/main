@@ -1,4 +1,4 @@
-import BackgroundTextCompo from "@/present/component/BackgroundTextCompo.tsx/BackgroundTextCompo";
+import BackgroundTextCompo from "@/present/component/BackgroundTextCompo/BackgroundTextCompo";
 import LobbyButtonCompo from "@/present/component/LobbyButtonCompo/LobbyButtonCompo";
 import { colors } from "@/styles/theme";
 import * as style from "./LobbyLayout.style";

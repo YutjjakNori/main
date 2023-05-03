@@ -28,6 +28,11 @@
       "@/utils/*": ["./utils/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "present/component/BackgroundTextCompo"
+  ],
   "exclude": ["node_modules", "stories/Colors.mdx"]
 }
