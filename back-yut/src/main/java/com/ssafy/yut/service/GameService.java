@@ -29,7 +29,7 @@ public class GameService {
      *
      * @param request
      */
-    public void yut(RequestDto request){
+    public void yut(YutDto.Request request){
         kafkaTemplate.send(TOPIC + ".yut", request.getRoomCode(), request);
     }
 
@@ -39,9 +39,12 @@ public class GameService {
      * @param request
      */
     @KafkaListener(topics = TOPIC + ".yut", groupId = GROUP_ID)
-    public void throwYut(RequestDto request){
-        int random = (int)(Math.random() * 100);
-        log.info(String.valueOf(random));
+    public void throwYut(YutDto.Request request){
+        int number = 100;
+        if(request.isLast()){
+            number = 85;
+        }
+        int random = (int)(Math.random() * number);
 
         // 도 15%, 개 35%, 걸 35%, 윷 13%, 모 3%
         String result = "";
