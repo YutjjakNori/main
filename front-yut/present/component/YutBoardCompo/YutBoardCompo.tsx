@@ -7,10 +7,11 @@ import { useRecoilState } from "recoil";
 import { YutPieceListState } from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
+import EventPoint from "./EventPoint";
 
 // TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
 // 임시 정보
-const eventList = {""}
+const eventPointList = [2, 7]; // -------------------- (1)
 
 const pieceFilterByIndex = (
   index: number,
@@ -25,14 +26,25 @@ const createMiniPoint = (
   cornerIndex: number,
   classStr: string,
   pieceList: Array<YutPieceCompoProps>
-): JSX.Element => (
-  if(cornerIndex == )
-  <MiniPoint
-    id={cornerIndex}
-    classStr={classStr}
-    pieceList={pieceFilterByIndex(cornerIndex, pieceList)}
-  />
-);
+): JSX.Element => {
+  if (eventPointList[0] === cornerIndex || eventPointList[1] === cornerIndex) {
+    return (
+      <EventPoint
+        id={cornerIndex}
+        classStr={classStr}
+        pieceList={pieceFilterByIndex(cornerIndex, pieceList)}
+      />
+    );
+  } else {
+    return (
+      <MiniPoint
+        id={cornerIndex}
+        classStr={classStr}
+        pieceList={pieceFilterByIndex(cornerIndex, pieceList)}
+      />
+    );
+  }
+};
 
 const createCornerPoint = (
   id: number,
@@ -50,6 +62,14 @@ const createCornerPoint = (
 
 const YutBoardCompo = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
+
+  /*
+  0: 꽝 / 1: 한번더던지기 / 2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
+  if(res === '0'){
+    
+  }
+
+  */
 
   return (
     <>

@@ -46,6 +46,7 @@ const YutThrow = () => {
   const [count, setCount] = useState(0);
   const [btnDisplay, setBtnDisplay] = useState<"block" | "none">("block");
   const getYutSvgByIndex = useCallback((index: number) => {
+    //    배열로 만들어서 하나씩 꺼내도록 리팩토링 가능.
     switch (index) {
       case 0:
         return <Do width={"100%"} height={"100%"} />;
