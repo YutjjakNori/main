@@ -16,9 +16,12 @@ const CompoTest = () => {
   };
   const exitBtnInfo: CircleButtonProps = {
     Icon: Svg,
+    fontSize: "",
     text: "",
+    color: "#575757",
     backgroundColor: "#EA857C",
     borderColor: "transparent",
+    margin: "1rem",
   };
 
   return (
@@ -34,9 +37,12 @@ const CompoTest = () => {
       <StyledContainer2>
         <CircleButton
           Icon={exitBtnInfo.Icon}
+          fontSize={exitBtnInfo.fontSize}
           text={exitBtnInfo.text}
+          color={exitBtnInfo.color}
           backgroundColor={exitBtnInfo.backgroundColor}
           borderColor={exitBtnInfo.borderColor}
+          margin={exitBtnInfo.margin}
         />
       </StyledContainer2>
     </StyledContainer>
