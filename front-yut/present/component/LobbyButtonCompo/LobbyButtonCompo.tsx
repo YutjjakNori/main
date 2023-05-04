@@ -1,11 +1,11 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import * as style from "./LobbyButtonCompo.style";
 
 interface LobbyButtonCompoProps {
   color: string;
   text: string;
   isEditable: boolean;
-  handler: () => void;
+  handler: (code?: string) => void;
 }
 
 const LobbyButtonCompo = ({
@@ -32,6 +32,12 @@ const LobbyButtonCompo = ({
     setInputText(e.target.value);
   }, []);
 
+  const onKeyPress = useCallback((e: any) => {
+    if (e.key === "Enter") {
+      handler(text);
+    }
+  }, []);
+
   return (
     <>
       <style.Button color={color} isEditMode={isEditMode} onClick={onClick}>
@@ -43,6 +49,7 @@ const LobbyButtonCompo = ({
               placeholder="방 코드 입력"
               value={inputText}
               onChange={onChange}
+              onKeyDown={onKeyPress}
             ></style.Input>
           </style.InputContainer>
         ) : (

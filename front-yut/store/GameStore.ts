@@ -2,6 +2,11 @@ import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCo
 import { CornerType, GameActionType } from "@/types/game/YutGameTypes";
 import { atom } from "recoil";
 
+const RoomCodeState = atom<string>({
+  key: "GamRoomCode",
+  default: "",
+});
+
 //사용자들의 모든 말 정보
 const YutPieceListState = atom<Array<YutPieceCompoProps>>({
   key: "PlayerPieceList",
@@ -37,6 +42,7 @@ const ActiveCornerArrowState = atom<CornerType>({
 });
 
 export {
+  RoomCodeState,
   YutPieceListState,
   NowTurnPlayerIdState,
   PlayTurnState,
