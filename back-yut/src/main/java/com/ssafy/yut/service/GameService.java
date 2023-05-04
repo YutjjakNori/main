@@ -2,6 +2,7 @@ package com.ssafy.yut.service;
 
 import com.ssafy.yut.dto.ChatDto;
 import com.ssafy.yut.dto.ChatType;
+import com.ssafy.yut.dto.EventDto;
 import com.ssafy.yut.dto.GameDto;
 import com.ssafy.yut.dto.PieceDto;
 import com.ssafy.yut.dto.RequestDto;
@@ -18,14 +19,11 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.Random;
 
 /**
@@ -171,7 +169,6 @@ public class GameService {
     }
 
     /**
-<<<<<<< back-yut/src/main/java/com/ssafy/yut/service/GameService.java
      * 말 이동
      *
      * @param request
@@ -209,10 +206,8 @@ public class GameService {
             case 1:
                 // 선택된 말이 시작 전일 때
                 if(plateNum == -1) {
-                    plateNum = 0;
-                    move.add(plateNum);
-                    for(int path = 1; path <= yut; path++) {
-                        move.add(plateNum + path);
+                    for(int path = 0; path <= yut; path++) {
+                        move.add(path);
                     }
                     // 이동한 위치
                     plateNum = yut;
@@ -466,7 +461,8 @@ public class GameService {
         template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("responsemd" +
                 ""));
     }
-=======
+
+    /**
      * 이벤트 발생하기
      *
      * @param request
@@ -492,12 +488,10 @@ public class GameService {
     /**
      * 이벤트 보내기
      *
-     * @param EventDto
+     * @param eventDto
      */
     @KafkaListener(topics = TOPIC + ".event", groupId = GROUP_ID)
     public void sendEvent(EventDto eventDto) {
         template.convertAndSend("/topic/game/event" + eventDto.getRoomCode(), eventDto);
     }
-
->>>>>>> back-yut/src/main/java/com/ssafy/yut/service/GameService.java
 }
