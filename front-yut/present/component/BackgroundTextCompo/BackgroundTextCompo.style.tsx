@@ -12,6 +12,14 @@ const MainText = styled.div`
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
+
+  /* 드래그 금지 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 `;
 
 export { MainText };
