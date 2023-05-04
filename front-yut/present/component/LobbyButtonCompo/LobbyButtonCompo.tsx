@@ -32,11 +32,14 @@ const LobbyButtonCompo = ({
     setInputText(e.target.value);
   }, []);
 
-  const onKeyPress = useCallback((e: any) => {
-    if (e.key === "Enter") {
-      handler(text);
-    }
-  }, []);
+  const onKeyPress = useCallback(
+    (e: any) => {
+      if (e.key === "Enter") {
+        handler(inputText);
+      }
+    },
+    [inputText],
+  );
 
   return (
     <>
