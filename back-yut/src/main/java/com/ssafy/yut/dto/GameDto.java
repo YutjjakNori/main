@@ -10,11 +10,15 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 게임 상태
+ * 게임 상태 DTO
+ * 
+ * @author 이준
  */
 public class GameDto {
 
-
+    /**
+     * 게임 유저
+     */
     @Getter
     @Setter
     @NoArgsConstructor
@@ -25,6 +29,9 @@ public class GameDto {
         private List<Integer> pieceNum;
     }
 
+    /**
+     * 게임 방 요청
+     */
     @Getter
     @Setter
     @NoArgsConstructor
@@ -34,6 +41,9 @@ public class GameDto {
         private String roomCode;
     }
 
+    /**
+     * 게임 방 응답
+     */
     @Getter
     @Setter
     @NoArgsConstructor

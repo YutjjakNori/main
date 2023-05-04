@@ -3,7 +3,7 @@ package com.ssafy.yut.dto;
 import lombok.*;
 
 /**
- * 준비 상태
+ * 준비 DTO
  *
  * @author 이준
  */

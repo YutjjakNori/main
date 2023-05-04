@@ -8,6 +8,11 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * 방 유저 Entity
+ * 
+ * @author 이준
+ */
 @Getter
 @Setter
 @NoArgsConstructor

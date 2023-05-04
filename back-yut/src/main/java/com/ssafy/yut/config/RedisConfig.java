@@ -13,14 +13,19 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+/**
+ * Redis 설정
+ *
+ * @author 이준
+ */
 @Configuration
 @Getter
 @RequiredArgsConstructor
 @EnableRedisRepositories
 public class RedisConfig {
 
-    @Value("${spring.redis.host}")
-    private String host;
+//    @Value("${spring.redis.host}")
+    private String host = "localhost";
     @Value("${spring.redis.port}")
     private int port;
     @Value("${spring.redis.password}")

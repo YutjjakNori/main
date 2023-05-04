@@ -16,6 +16,9 @@ import java.util.List;
 
 public class RoomDto extends RequestDto{
 
+    /**
+     * 방 입장
+     */
     @Getter
     @Setter
     @NoArgsConstructor
@@ -25,6 +28,9 @@ public class RoomDto extends RequestDto{
         private String userId;
     }
 
+    /**
+     * 대기방 입장 요청
+     */
     @Getter
     @Setter
     @NoArgsConstructor
@@ -34,6 +40,9 @@ public class RoomDto extends RequestDto{
         private String roomCode;
     }
 
+    /**
+     * 대기방 입장 응답
+     */
     @Getter
     @Setter
     @NoArgsConstructor

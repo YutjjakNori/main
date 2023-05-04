@@ -9,8 +9,16 @@ import lombok.Setter;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 말 이동 DTO
+ *
+ * @author 이준
+ */
 public class PieceDto {
 
+    /**
+     * 말 이동 요청
+     */
     @Getter
     @Setter
     @NoArgsConstructor
@@ -23,6 +31,9 @@ public class PieceDto {
         private int direction;
     }
 
+    /**
+     * 말 이동 응답
+     */
     @Getter
     @Setter
     @NoArgsConstructor

@@ -10,6 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * 방 정보 Entity
+ *
+ * @author 이준
+ */
 @Getter
 @Setter
 @NoArgsConstructor

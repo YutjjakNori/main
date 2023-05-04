@@ -46,6 +46,11 @@ public class GameController {
         gameService.getTurn(request);
     }
 
+    /**
+     * 말 이동
+     * 
+     * @param request
+     */
     @MessageMapping("/piece")
     public void movePiece(PieceDto.Request request) {
         gameService.actPiece(request);
