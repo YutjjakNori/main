@@ -8,6 +8,8 @@ import { YutPieceListState } from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
 import EventPoint from "./EventPoint";
+import Nothing from "@/public/icon/gameItems/Nothing.svg";
+import styled from "styled-components";
 
 // TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
 // 임시 정보
@@ -60,19 +62,54 @@ const createCornerPoint = (
   />
 );
 
+const Image = styled.object<{ opacity: number }>`
+  opacity: ${(props) => props.opacity};
+  transition: opacity 5s ease-in-out;
+`;
+
 const YutBoardCompo = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
+  // const [opacity, setOpacity] = useState(1);
 
-  /*
-  0: 꽝 / 1: 한번더던지기 / 2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
-  if(res === '0'){
-    
-  }
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     setOpacity(0);
+  //   }, 5000);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
-  */
+  // const takeAction = useCallback((index: number) => {
+  //   /*
+  //   0: 꽝 / 1: 한번더던지기
+  //   2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
+  //   */
+  //   switch (index) {
+  //     case 0:
+  //       <Image
+  //         data={"@/public/icon/gameItems/Nothing.svg"}
+  //         type="image/svg+xml"
+  //         opacity={opacity}
+  //       />;
+  //   }
+  // }, []);
+
+  const request = {
+    roomCode: "abcde",
+    userId: "lewis",
+  };
+
+  // 서버에 요청 전송
+  const getEventResult = () => {
+    // 응답 데이터에 따라 함수 실행하기
+    const result = 0;
+
+    // takeAction(result);
+  };
 
   return (
     <>
+      {/* <button onClick={() => "getEventResult"}>이벤트칸</button> */}
+      <button onClick={getEventResult}>이벤트칸</button>
       <style.Container>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
         {/* 분기점 */}

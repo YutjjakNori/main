@@ -84,8 +84,15 @@ const YutThrow = () => {
     // 소켓 연결해서 결과를 받기 --------------------------(1)
     // userId, roomCode 를 전역변수에서 나중에 가져와야함.
     // 아래는 임시 dummy 코드.
-    const request = { userId: "lewis", roomCode: "abcde" };
+    const request = {
+      roomCode: "abcde",
+      userId: "lewis",
+      isLast: count === 3 ? true : false,
+    };
+
+    // 서버에 요청 전송
     // sending("/game/stick", request);
+    // 서버로 응답 수신
 
     const temp = ["윷", "모", "윷", "개"]; // 임시 결과 리스트
     const getYutResult = () => {};
