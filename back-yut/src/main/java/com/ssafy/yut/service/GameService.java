@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Random;
 
 /**
  * 게임 관련 Service
@@ -96,7 +97,7 @@ public class GameService {
      *
      * @param request
      */
-    public void yut(RequestDto request){
+    public void yut(YutDto.Request request){
         kafkaTemplate.send(TOPIC + ".yut", request.getRoomCode(), request);
     }
 
@@ -106,9 +107,12 @@ public class GameService {
      * @param request
      */
     @KafkaListener(topics = TOPIC + ".yut", groupId = GROUP_ID)
-    public void throwYut(RequestDto request){
-        int random = (int)(Math.random() * 100);
-        log.info(String.valueOf(random));
+    public void throwYut(YutDto.Request request){
+        int number = 100;
+        if(request.isLast()){
+            number = 85;
+        }
+        int random = (int)(Math.random() * number);
 
         // 도 15%, 개 35%, 걸 35%, 윷 13%, 모 3%
         String result = "";
@@ -167,6 +171,7 @@ public class GameService {
     }
 
     /**
+<<<<<<< back-yut/src/main/java/com/ssafy/yut/service/GameService.java
      * 말 이동
      *
      * @param request
@@ -461,4 +466,38 @@ public class GameService {
         template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("responsemd" +
                 ""));
     }
+=======
+     * 이벤트 발생하기
+     *
+     * @param request
+     */
+    public void occurrenceEvent(RequestDto request) {
+        // 이벤트 종류 : 0:꽝, 1:한번 던지기, 2:말 업고가기, 3:출발했던 자리로, 4:처음으로 돌아가기
+
+        // 이벤트 발생
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
+
+        int eventNum = random.nextInt(4);
+
+        // 이벤트 발생한 것 카프카로 보내기
+        kafkaTemplate.send(TOPIC + ".event", request.getRoomCode(),
+                EventDto.builder()
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .event(eventNum)
+                        .build());
+    }
+
+    /**
+     * 이벤트 보내기
+     *
+     * @param EventDto
+     */
+    @KafkaListener(topics = TOPIC + ".event", groupId = GROUP_ID)
+    public void sendEvent(EventDto eventDto) {
+        template.convertAndSend("/topic/game/event" + eventDto.getRoomCode(), eventDto);
+    }
+
+>>>>>>> back-yut/src/main/java/com/ssafy/yut/service/GameService.java
 }
