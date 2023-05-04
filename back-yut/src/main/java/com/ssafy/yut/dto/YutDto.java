@@ -11,6 +11,18 @@ import lombok.NoArgsConstructor;
  * @author 김정은
  */
 public class YutDto {
+
+    /**
+     * 윷 던지기 요청
+     */
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class Request extends RequestDto{
+        private boolean last;
+    }
+
     /**
      * 윷 던진 후 응답
      */
