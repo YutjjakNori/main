@@ -29,7 +29,7 @@ public class ChatService {
      * @param message 유저가 작성한 매시지
      */
     public void sendMessage(ChatDto.Request message){
-        kafkaTemplate.send(TOPIC, message);
+        kafkaTemplate.send(TOPIC, message.getRoomCode(), message);
     }
 
     /**

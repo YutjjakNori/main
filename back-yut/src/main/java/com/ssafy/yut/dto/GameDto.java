@@ -7,17 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * 대기방 관련 DTO
- *
- * @author 김정은
+ * 게임 상태 DTO
+ * 
+ * @author 이준
  */
-
-public class RoomDto extends RequestDto{
+public class GameDto {
 
     /**
-     * 방 입장
+     * 게임 유저
      */
     @Getter
     @Setter
@@ -25,31 +25,32 @@ public class RoomDto extends RequestDto{
     @AllArgsConstructor
     @Builder
     public static class User {
-        private String userId;
+        private String id;
+        private List<Integer> pieceNum;
     }
 
     /**
-     * 대기방 입장 요청
+     * 게임 방 요청
      */
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class RoomCode {
+    public static class Request {
         private String roomCode;
     }
 
     /**
-     * 대기방 입장 응답
+     * 게임 방 응답
      */
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class EnterResponse {
+    public static class Response {
         private List<User> users;
-        private String ready;
+        private Set<Integer> event;
     }
 }
