@@ -13,7 +13,7 @@ const userReadySelector = selector<UserIsReadyProps>({
     return {
       userId: userInfo.userId,
       playerName: userInfo.playerName,
-      profileImage: userInfo.profileImage,
+      // profileImage: userInfo.profileImage,
       isReady: false,
     };
   },

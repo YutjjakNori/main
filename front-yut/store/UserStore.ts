@@ -1,5 +1,6 @@
 import { atom } from "recoil";
 import { StaticImageData } from "next/image";
+import { CompatClient } from "@stomp/stompjs";
 
 interface UserInfoProps {
   userId?: string;
@@ -16,5 +17,10 @@ const userInfoState = atom<UserInfoProps>({
   },
 });
 
+const roomCode = atom<string>({
+  key: "roomCode",
+  default: "",
+});
+
 export type { UserInfoProps };
-export { userInfoState };
+export { userInfoState, roomCode };
