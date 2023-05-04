@@ -9,10 +9,10 @@ const API = axios.create({ baseURL: "" });
   @param config Axios 요청 관련 config(AxiosRequestConfig)
   @returns 요청 결과와 결과값 리턴
 */
-export async function getAsync(
+const getAsync = async (
   url: string,
   config?: AxiosRequestConfig,
-): Promise<ApiResult> {
+): Promise<ApiResult> => {
   try {
     const response = await API.get(url, {
       responseType: "json",
@@ -23,7 +23,7 @@ export async function getAsync(
   } catch (err) {
     return { isSuccess: false, result: err };
   }
-}
+};
 
 /**
   POST HTTP 요청을 처리하는 API 유틸 함수
@@ -32,11 +32,11 @@ export async function getAsync(
   @param config Axios 요청 관련 config(AxiosRequestConfig)
   @returns 요청 결과와 결과값 리턴
 */
-export async function postAsync<D>(
+const postAsync = async <D>(
   url: string,
   data?: D,
   config?: AxiosRequestConfig,
-): Promise<ApiResult> {
+): Promise<ApiResult> => {
   try {
     const response = await API.post(url, data, {
       responseType: "json",
@@ -47,7 +47,7 @@ export async function postAsync<D>(
   } catch (err) {
     return { isSuccess: false, result: err };
   }
-}
+};
 
 /**
   patch HTTP 요청을 처리하는 API 유틸 함수
@@ -56,11 +56,11 @@ export async function postAsync<D>(
   @param config Axios 요청 관련 config(AxiosRequestConfig)
   @returns 요청 결과와 결과값 리턴
 */
-export async function patchAsync<D>(
+const patchAsync = async <D>(
   url: string,
   data: D,
   config?: AxiosRequestConfig,
-): Promise<ApiResult> {
+): Promise<ApiResult> => {
   try {
     const response = await API.patch(url, data, {
       responseType: "json",
@@ -71,7 +71,7 @@ export async function patchAsync<D>(
   } catch (err) {
     return { isSuccess: false, result: err };
   }
-}
+};
 
 /**
   put HTTP 요청을 처리하는 API 유틸 함수
@@ -80,11 +80,11 @@ export async function patchAsync<D>(
   @param config Axios 요청 관련 config(AxiosRequestConfig)
   @returns 요청 결과와 결과값 리턴
 */
-export async function putAsync<D>(
+const putAsync = async <D>(
   url: string,
   data: D,
   config?: AxiosRequestConfig,
-): Promise<ApiResult> {
+): Promise<ApiResult> => {
   try {
     const response = await API.put(url, data, {
       responseType: "json",
@@ -95,7 +95,7 @@ export async function putAsync<D>(
   } catch (err) {
     return { isSuccess: false, result: err };
   }
-}
+};
 
 /**
     delete HTTP 요청을 처리하는 API 유틸 함수
@@ -104,10 +104,10 @@ export async function putAsync<D>(
     @param config Axios 요청 관련 config(AxiosRequestConfig)
     @returns 요청 결과와 결과값 리턴
   */
-export async function deleteAsync<D>(
+const deleteAsync = async <D>(
   url: string,
   config?: AxiosRequestConfig,
-): Promise<ApiResult> {
+): Promise<ApiResult> => {
   try {
     const response = await API.delete(url, {
       responseType: "json",
@@ -120,4 +120,6 @@ export async function deleteAsync<D>(
   } catch (err) {
     return { isSuccess: false, result: err };
   }
-}
+};
+
+export { getAsync, postAsync, putAsync, deleteAsync };
