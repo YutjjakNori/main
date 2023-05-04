@@ -74,12 +74,10 @@ public class RoomService {
         else {
             // 게임 중인 경우
             if(room.getGameStatus().equals("start")) {
-                // TODO: 2023-05-01 게임 중
                 throw new CustomException(ErrorCode.GAME_ON);
             }
             // 게임 중은 아니나, 정원 초과인 경우
             else if(room.getUsers().size() == 4) {
-                // TODO: 2023-05-01 정원 초과
                 throw new CustomException(ErrorCode.FULL_ROOM);
             }
 
@@ -94,7 +92,6 @@ public class RoomService {
      * @param enterDto 입장 정보
      */
     public void enterRoom(RequestDto enterDto) {
-        // TODO: Redis 조회 후 대기방 정보(대기인원, 준비 상태) 넘겨주기
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
         String key = "game:"+roomCode;
@@ -115,7 +112,7 @@ public class RoomService {
             game = Game.builder()
                     .users(users)
                     .gameStatus("0")
-                    .plate(new LinkedHashMap<>())
+                    .plate(new HashMap<>())
                     .build();
             redisMapper.saveData(key, game);
         } else {
@@ -227,5 +224,33 @@ public class RoomService {
     @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
     public void sendReady(Map<String, Object> response) {
         template.convertAndSend("/topic/room/prepare/" + response.get("roomCode"), response.get("response"));
+    }
+
+    /**
+     * 방 나가기 요청
+     *
+     * @param exitRequest
+     */
+    public void exitRoom(RequestDto exitRequest) {
+        Map<String, Object> response = new HashMap<>();
+        String roomCode = exitRequest.getRoomCode();
+        String userId = exitRequest.getUserId();
+        Game game = redisMapper.getData("game:" + roomCode, Game.class);
+
+        response.put("roomCode", roomCode);
+        response.put("response", RoomDto.User.builder().userId(userId).build());
+        kafkaTemplate.send(TOPIC_ROOM + ".exit", roomCode, response);
+        kafkaTemplate.send(TOPIC_CHAT, roomCode,
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(userId)
+                        .roomCode(roomCode)
+                        .content("님이 나갔습니다.")
+                        .build());
+    }
+
+    @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = GROUP_ID)
+    public void sendExit(Map<String, Object> response) {
+        template.convertAndSend("/topic/room/exit" + response.get("roomCode"), response.get("response"));
     }
 }
