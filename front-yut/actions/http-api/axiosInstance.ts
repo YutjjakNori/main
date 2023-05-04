@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { ApiResult } from "../../types/http-api/axiosInstanceTypes";
 
-const API = axios.create({ baseURL: "" });
+const API = axios.create({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL });
 
 /**
 * GET HTTP 요청을 처리하는 API 유틸 함수
