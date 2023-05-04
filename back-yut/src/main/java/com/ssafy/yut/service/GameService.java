@@ -186,18 +186,18 @@ public class GameService {
         String key = "game:" + roomCode;
         int direction = request.getDirection();
         int plateNum = request.getPlateNum();
-        int orgPlate = plateNum;
         int yut = request.getYut();
         List<Integer> selectPieces = request.getSelectPiece();
 
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> gameUsers = game.getUsers();
-        GameUser gameUser = new GameUser(request.getUserId(), null);
-        int gameUserIndex = gameUsers.indexOf(gameUser);
-        gameUser.setPieces(gameUsers.get(gameUserIndex).getPieces());
-        List<Integer> pieces = gameUser.getPieces();
+        GameUser turnUser = new GameUser(request.getUserId(), null);
+        int turnUserIndex = gameUsers.indexOf(turnUser);
+        turnUser.setPieces(gameUsers.get(turnUserIndex).getPieces());
+        List<Integer> pieces = turnUser.getPieces();
         Set<Integer> event = game.getEvent();
         Map<Integer, List<Integer>> plate = game.getPlate();
+        List<Integer> movePieces = plate.remove(plateNum);
 
         switch (direction) {
             // 순행
@@ -321,13 +321,29 @@ public class GameService {
                 break;
         }
         // 이동 끝 응답하기
+        data.put("move", move);
+        data.put("event", event.contains(plateNum));
+
+        if(event.contains(plateNum)) {
+            kafkaTemplate.send("chat", roomCode,
+                    ChatDto.Request.builder()
+                    .type(ChatType.SYSTEM)
+                    .userId(request.getUserId())
+                    .roomCode(roomCode)
+                    .content("님이 이벤트 칸으로 이동했습니다.")
+                    .build());
+        }
+
+        data.put("userId", request.getUserId());
 
         // 말 동나기
         if(plateNum == -1) {
+            type = 4;
+            data.put("selectPiece", selectPieces);
             boolean end = true;
-            List<Integer> finishPieces = plate.remove(orgPlate);
+
             // 윷 판에서 말지우고 완주상태로 바꾸기
-            for(Integer finishPiece : finishPieces) {
+            for(Integer finishPiece : movePieces) {
                 pieces.set(finishPiece - 1, 0);
             }
 
@@ -338,42 +354,111 @@ public class GameService {
                 }
             }
 
-            type = 4;
-            data.put("userId", request.getUserId());
-            data.put("selectPiece", selectPieces);
-            data.put("move", move);
+
             data.put("end", end);
-            pieceResponse = PieceDto.Response.builder()
-                    .type(type)
-                    .data(data)
-                    .build();
+            if(end) {
+                kafkaTemplate.send("chat", roomCode,
+                        ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(roomCode)
+                        .content("님이 승리했습니다!")
+                        .build());
+            }
         }
         // 말이 동나는 경우 아닐 때
         else {
+            // 시작 전인 말 시작으로 바꿔주기
+            if(selectPieces.size() == 1 && pieces.get(selectPieces.get(0) - 1) == -1) {
+                pieces.set(0, 1);
+            }
+
             List<Integer> platePieces;
-            // 윷판에 말이 있는 지 검사 -> 없으면 NullPointException
+            // 윷판에 말이 있는 지 검사 -> get()은 없으면 NullPointException
             // 있으면 내 말인지 아닌지 판단
             if(plate.containsKey(plateNum)) {
+                // 이동 위치의 말 정보 가져오기
                 platePieces = plate.get(plateNum);
                 int platePieceIndex = platePieces.get(0) / 3;
 
                 // 내 말이 아닐 때
-                if(platePieceIndex != gameUserIndex) {
-                    // 윷판에 있는 말 지우기 -> 시작 전 상태로 돌리기.
-                    for(Integer removePieces : platePieces) {
-                        gameUsers.get(removePieces / 3).getPieces().set(removePieces % 3, -1) ;
+                if(platePieceIndex != turnUserIndex) {
+                    type = 2;
+                    String caughtUserId = gameUsers.get(platePieceIndex).getUserId();
+                    data.put("caughtUserId", caughtUserId);
+                    List<Integer> caughtPieces = new ArrayList<>();
+                    // 이동 위치의 말 시작 전 상태로 돌리기.
+                    for(Integer platePiece : platePieces) {
+                        int caughtPiece = platePiece % 3;
+                        gameUsers.get(platePieceIndex).getPieces().set(caughtPiece, -1);
+                        caughtPieces.add(caughtPiece + 1);
+                    }
+
+                    data.put("caughtPiece", caughtPieces);
+                    platePieces.clear();
+
+                    // 선택된 말 이동 위치에 옮기기.
+                    for(Integer selectPiece : selectPieces) {
+                        platePieces.add((turnUserIndex * 3) + (selectPiece - 1));
+                    }
+                    data.put("selectPiece", selectPieces);
+                    plate.put(plateNum, platePieces);
+
+                    kafkaTemplate.send("chat", roomCode,
+                            ChatDto.Request.builder()
+                            .type(ChatType.SYSTEM)
+                            .userId(request.getUserId())
+                            .roomCode(roomCode)
+                            .content("님의 말이 " + caughtUserId+ "님의 말을 잡았습니다!")
+                            .build());
+                }
+
+                // 내 말일때
+                else {
+                    type = 3;
+                    // 이동 위치에 선택한 말 합치기
+                    for(Integer platePiece : platePieces) {
+                        selectPieces.add((platePiece % 3) + 1);
                     }
                     platePieces.clear();
+
+                    // 선택된 말 이동 위치에 옮기기.
+                    for(Integer selectPiece : selectPieces) {
+                        platePieces.add((turnUserIndex * 3) + (selectPiece - 1));
+                    }
+                    data.put("selectPiece", selectPieces);
+                    plate.put(plateNum, platePieces);
                 }
             }
-            // 없으면 이동 시킬 말을 놓는다.
+            // 없으면 말 이동한다.
             else {
                 platePieces = new ArrayList<>();
+                for(Integer selectPiece : selectPieces) {
+                    platePieces.add((turnUserIndex * 3) + (selectPiece - 1));
+                }
+                data.put("selectPiece", selectPieces);
+                plate.put(plateNum, platePieces);
             }
 
-            platePieces.add((gameUserIndex * 3) + (selectPieces.get(0) - 1));
-            plate.put(yut, platePieces);
         }
 
+        pieceResponse = PieceDto.Response.builder()
+                .type(type)
+                .data(data)
+                .build();
+        response.put("roomCode", roomCode);
+        response.put("response", pieceResponse);
+        kafkaTemplate.send(TOPIC+".piece", roomCode, response);
+    }
+
+    /**
+     * 말 이동 응답
+     *
+     * @param response
+     */
+    @KafkaListener(topics = TOPIC + ".piece", groupId = GROUP_ID)
+    public void movePiece(Map<String, Object> response) {
+        template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("responsemd" +
+                ""));
     }
 }
