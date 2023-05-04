@@ -31,7 +31,7 @@ const LobbyLayout = () => {
         <BackgroundTextCompo />
         <style.ButtonContainer>
           {buttonInfoList.map((button) => (
-            <LobbyButtonCompo {...button} />
+            <LobbyButtonCompo key={button.text} {...button} />
           ))}
         </style.ButtonContainer>
       </style.Container>
