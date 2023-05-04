@@ -18,10 +18,8 @@ public class ReadyDto {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Request {
-        private String userId;
+    public static class Request extends RequestDto{
         private boolean ready;
-        private String roomCode;
     }
 
     /**
