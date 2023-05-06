@@ -441,7 +441,9 @@ public class GameService {
             }
 
         }
-
+        game.setUsers(gameUsers);
+        game.setPlate(plate);
+        redisMapper.saveData(key, game);
         pieceResponse = PieceDto.Response.builder()
                 .type(type)
                 .data(data)
