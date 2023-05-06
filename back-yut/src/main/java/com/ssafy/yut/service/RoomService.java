@@ -74,12 +74,10 @@ public class RoomService {
         else {
             // 게임 중인 경우
             if(room.getGameStatus().equals("start")) {
-                // TODO: 2023-05-01 게임 중
                 throw new CustomException(ErrorCode.GAME_ON);
             }
             // 게임 중은 아니나, 정원 초과인 경우
             else if(room.getUsers().size() == 4) {
-                // TODO: 2023-05-01 정원 초과
                 throw new CustomException(ErrorCode.FULL_ROOM);
             }
 
@@ -94,7 +92,6 @@ public class RoomService {
      * @param enterDto 입장 정보
      */
     public void enterRoom(RequestDto enterDto) {
-        // TODO: Redis 조회 후 대기방 정보(대기인원, 준비 상태) 넘겨주기
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
         String key = "game:"+roomCode;
@@ -115,10 +112,10 @@ public class RoomService {
             game = Game.builder()
                     .users(users)
                     .gameStatus("0")
-                    .plate(new LinkedHashMap<>())
+                    .plate(new HashMap<>())
                     .build();
             redisMapper.saveData(key, game);
-        } else {
+        } else if(game.getUsers().size() < 4) {
             users = game.getUsers();
             users.add(user);
             String ready = game.getGameStatus();
@@ -126,6 +123,11 @@ public class RoomService {
             game.setGameStatus(ready + "0");
 
             redisMapper.saveData(key, game);
+        }
+        // TODO: 2023/05/06 입장 요청을 그냥 보낼 경우
+        else if(game.getUsers().size() == 4) {
+
+            //에러 처리
         }
 
         List<RoomDto.User> userResponse = new ArrayList<>();
