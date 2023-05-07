@@ -9,7 +9,6 @@ import {
   subscribeTopic,
 } from "@/actions/socket-api/socketInstance";
 import { userInfoState } from "@/store/UserStore";
-import * as socketUtil from "@/utils/socketUtils";
 import { roomCodeAtom } from "@/store/UserStore";
 
 interface LogCompoProps {
@@ -28,64 +27,52 @@ const ChatCompo2 = () => {
     }
   }, []);
 
-  const topics: Array<(key: string, value: (a: any) => void) => void> = [
-    (key, value) => {
-      if (key === "/topic/chat/" + roomCode) {
-        chattingMessage(value);
+  async function initConnection() {
+    await connect();
+
+    subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
+
+    sendEvent(
+      `/room/enter`,
+      {},
+      {
+        userId: userInfo.userId,
+        roomCode: roomCode,
       }
-    },
-  ];
+    );
+  }
 
   useEffect(() => {
-    if (topics) {
-      for (const topic of topics) {
-        if (typeof topic === "function") {
-          subscribeTopic("/topic/chat/" + roomCode, topic);
-        }
-      }
-    }
+    initConnection();
   }, []);
 
   const sendMessage = (e: any) => {
     e.preventDefault();
     if (message) {
-      // stompClient?.send(
-      //   `/chat`,
-      //   {},
-      //   JSON.stringify({
-      //     type: "CHAT",
-      //     userId: userInfo.userId,
-      //     roomCode: "abcde",
-      //     content: message,
-      //   })
-      // );
-
-      sendEvent(
+      stompClient?.send(
         `/chat`,
         {},
-        {
+        JSON.stringify({
           type: "CHAT",
           userId: userInfo.userId,
-          // TODO: roomCode 변수로 바꾸기
           roomCode: roomCode,
           content: message,
-        }
+        })
       );
+      // sendEvent(
+      //   `/chat`,
+      //   {},
+      //   {
+      //     type: "CHAT",
+      //     userId: userInfo.userId,
+      //     roomCode: roomCode,
+      //     content: message,
+      //   }
+      // );
       setMessage("");
-      console.log(`${userInfo.userId} message:`, message);
+      console.log(userInfo.userId + " message:", message);
     }
   };
-
-  useEffect(() => {
-    for (const topic of topics) {
-      if (typeof topic === "function") {
-        subscribeTopic("/topic/chat/" + roomCode, topic);
-      }
-    }
-    let userId = userInfo.userId;
-    //유저 전역 관리
-    console.log("chatting userId: ", userId);
-  }, []);
 
   return (
     <>
