@@ -16,6 +16,7 @@ import {
 import { UserIsReadyProps } from "@/store/ReadyStore";
 import { roomCodeAtom, userInfoState } from "@/store/UserStore";
 import { useRecoilState, useRecoilValue } from "recoil";
+import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 
 const Ready = () => {
   const { openModal, closeModal } = useModal(); //모달 열기
@@ -42,7 +43,7 @@ const Ready = () => {
 
   const settingMembers = (data: any) => {
     console.log("현재까지 들어온 멤버: ", data);
-    data.users.userId;
+    //TODO : 멤버 전역 관리
   };
 
   const topics: any = {
@@ -64,6 +65,7 @@ const Ready = () => {
       playerName: localStorage.getItem("playerName") ?? "",
     });
 
+    //현재까지 들어온 멤버가 옴
     sendEvent(
       `/room/enter`,
       {},
@@ -100,6 +102,8 @@ const Ready = () => {
           }}
         />
       </Modal>
+      <ChatCompo></ChatCompo>
+      -----
       <ChatCompo2></ChatCompo2>
     </>
   );

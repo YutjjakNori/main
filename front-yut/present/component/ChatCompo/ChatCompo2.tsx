@@ -27,19 +27,8 @@ const ChatCompo2 = () => {
     }
   }, []);
 
-  async function initConnection() {
-    await connect();
-
+  function initConnection() {
     subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
-
-    sendEvent(
-      `/room/enter`,
-      {},
-      {
-        userId: userInfo.userId,
-        roomCode: roomCode,
-      }
-    );
   }
 
   useEffect(() => {
@@ -49,26 +38,27 @@ const ChatCompo2 = () => {
   const sendMessage = (e: any) => {
     e.preventDefault();
     if (message) {
-      stompClient?.send(
-        `/chat`,
-        {},
-        JSON.stringify({
-          type: "CHAT",
-          userId: userInfo.userId,
-          roomCode: roomCode,
-          content: message,
-        })
-      );
-      // sendEvent(
+      // stompClient?.send(
       //   `/chat`,
       //   {},
-      //   {
+      //   JSON.stringify({
       //     type: "CHAT",
       //     userId: userInfo.userId,
       //     roomCode: roomCode,
       //     content: message,
-      //   }
+      //   })
       // );
+
+      sendEvent(
+        `/chat`,
+        {},
+        {
+          type: "CHAT",
+          userId: userInfo.userId,
+          roomCode: roomCode,
+          content: message,
+        }
+      );
       setMessage("");
       console.log(userInfo.userId + " message:", message);
     }
