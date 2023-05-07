@@ -115,7 +115,7 @@ public class RoomService {
                     .plate(new HashMap<>())
                     .build();
             redisMapper.saveData(key, game);
-        } else {
+        } else if(game.getUsers().size() < 4) {
             users = game.getUsers();
             users.add(user);
             String ready = game.getGameStatus();
@@ -123,6 +123,11 @@ public class RoomService {
             game.setGameStatus(ready + "0");
 
             redisMapper.saveData(key, game);
+        }
+        // TODO: 2023/05/06 입장 요청을 그냥 보낼 경우
+        else if(game.getUsers().size() == 4) {
+
+            //에러 처리
         }
 
         List<RoomDto.User> userResponse = new ArrayList<>();
