@@ -3,7 +3,7 @@ import { CompatClient } from "@stomp/stompjs";
 // stomp 연결 객체
 let readySocketObject: CompatClient | null = null;
 
-const readyTopic = {
+const readyTopics = {
   //구독 토픽
   chatSubscribe: `/topic/chat`, //채팅
   roomExit: "/topic/room/exit", //방 나가기
@@ -15,4 +15,4 @@ const readyTopic = {
   // readyUserList: `/topic/room/enter/${roomCode}`,
 };
 
-export { readySocketObject, readyTopic };
+export { readySocketObject, readyTopics };

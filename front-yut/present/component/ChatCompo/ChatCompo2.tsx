@@ -2,50 +2,48 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import * as style from "./ChatCompo.style";
-import { connect, stompClient } from "@/actions/socket-api/socketInstance";
+import {
+  connect,
+  sendEvent,
+  stompClient,
+  subscribeTopic,
+} from "@/actions/socket-api/socketInstance";
 import { userInfoState } from "@/store/UserStore";
-// import { readyTopic } from "@/actions/socket-api/readySocketInstance";
 import * as socketUtil from "@/utils/socketUtils";
+import { roomCodeAtom } from "@/store/UserStore";
 
 interface LogCompoProps {
   userId: string;
   message: string;
 }
-const ChatCompo = () => {
+const ChatCompo2 = () => {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<string[]>([]);
+  const roomCode = useRecoilValue(roomCodeAtom);
 
-  // const chatLog = useCallback((chats: Array<any>) => {
-  //   const log: Array<LogCompoProps> = chats.map((chat, index) => {
-  //     return {
-  //       userId: chat.userId,
-  //       message: chat.message,
-  //     };
-  //   });
-  //   setMessages([...log]);
-  // }, []);
-
-  const subscribeTopics = useCallback(() => {
-    console.log("chatting~~");
+  const chattingMessage = useCallback((value: any) => {
     if (stompClient) {
-      socketUtil.subscribeEvent(
-        readyTopic.chatSubscribe + "/abcde",
-        socketUtil.obj
-      );
-      // socketUtil.subscribeEvent(readyTopic.chatSubscribe + "/abcde", chatLog);
-      // socketUtil.obj;
-      console.log("chatting:", socketUtil.obj);
+      console.log("chatting data:", value);
     }
   }, []);
 
+  const topics: Array<(key: string, value: (a: any) => void) => void> = [
+    (key, value) => {
+      if (key === "/topic/chat/" + roomCode) {
+        chattingMessage(value);
+      }
+    },
+  ];
+
   useEffect(() => {
-    // connect(subscribeTopics);
-    // subscribeTopics();
-    let userId = localStorage.getItem("userId");
-    //유저 전역 관리
-    setUserInfo({ ...userInfo, userId: `${userId}` });
-    console.log("chatting userId: ", userId);
+    if (topics) {
+      for (const topic of topics) {
+        if (typeof topic === "function") {
+          subscribeTopic("/topic/chat/" + roomCode, topic);
+        }
+      }
+    }
   }, []);
 
   const sendMessage = (e: any) => {
@@ -62,24 +60,31 @@ const ChatCompo = () => {
       //   })
       // );
 
-      socketUtil.sendEvent(
+      sendEvent(
         `/chat`,
         {},
         {
           type: "CHAT",
           userId: userInfo.userId,
           // TODO: roomCode 변수로 바꾸기
-          roomCode: "abcde",
+          roomCode: roomCode,
           content: message,
         }
       );
       setMessage("");
-      console.log("message:", message);
+      console.log(`${userInfo.userId} message:`, message);
     }
   };
 
   useEffect(() => {
-    //전역으로 관리할 변수,
+    for (const topic of topics) {
+      if (typeof topic === "function") {
+        subscribeTopic("/topic/chat/" + roomCode, topic);
+      }
+    }
+    let userId = userInfo.userId;
+    //유저 전역 관리
+    console.log("chatting userId: ", userId);
   }, []);
 
   return (
@@ -113,4 +118,4 @@ const ChatCompo = () => {
   );
 };
 
-export default ChatCompo;
+export default ChatCompo2;

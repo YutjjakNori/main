@@ -17,10 +17,10 @@ const userInfoState = atom<UserInfoProps>({
   },
 });
 
-const roomCode = atom<string>({
-  key: "roomCode",
-  default: "",
+const roomCodeAtom = atom<string>({
+  key: "roomCodeAtom",
+  default: "abcde",
 });
 
 export type { UserInfoProps };
-export { userInfoState, roomCode };
+export { userInfoState, roomCodeAtom };

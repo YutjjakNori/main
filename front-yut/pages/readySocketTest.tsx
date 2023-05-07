@@ -4,22 +4,25 @@ import GameProfile from "@/present/common/GameProfile/GameProfile";
 import Modal from "@/present/common/Modal/Modal";
 import Timer from "@/present/common/Timer/Timer";
 import useModal from "@/actions/hook/controlModal";
-import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
+import ChatCompo2 from "@/present/component/ChatCompo/ChatCompo";
 import { useCallback, useEffect, useState } from "react";
-import * as socketUtil from "@/utils/socketUtils";
-import { readyTopic } from "@/actions/socket-api/readySocketInstance";
 import {
   connect,
   onError,
   stompClient,
+  sendEvent,
+  subscribeTopic,
 } from "@/actions/socket-api/socketInstance";
 import { UserIsReadyProps } from "@/store/ReadyStore";
+import { roomCodeAtom, userInfoState } from "@/store/UserStore";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 const Ready = () => {
   const { openModal, closeModal } = useModal(); //모달 열기
+  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [userList, setUserList] = useState<Array<UserIsReadyProps>>([]);
   const [userIsReadyList, setUserIsReadyList] = useState<Array<number>>([]);
-
+  const roomCode = useRecoilValue(roomCodeAtom);
   // const saveUser = useCallback((users: Array<any>, isReady: Array<number>) => {
   //   const isReadyList: Array<number> = isReady.map((ready, index) => {
   //     return {
@@ -37,17 +40,44 @@ const Ready = () => {
   //   setUserIsReadyList([...isReadyList]);
   // }, []);
 
-  const subscribeTopics = useCallback(() => {
-    if (stompClient) {
-      socketUtil.subscribeEvent(readyTopic.roomExit);
-      socketUtil.subscribeEvent(readyTopic.readyState);
-      // socketUtil.subscribeEvent(readyTopic.readyUserList, saveUser);
+  const settingMembers = (data: any) => {
+    console.log("현재까지 들어온 멤버: ", data);
+    data.users.userId;
+  };
+
+  const topics: any = {
+    "/topic/room/enter/": settingMembers,
+    "/topic/room/exit/": (a: any) => {},
+    "/topic/room/preparation/": (a: any) => {},
+  };
+
+  async function initConnection() {
+    await connect();
+
+    for (let key in topics) {
+      subscribeTopic(key + roomCode, topics[key]);
     }
-  }, []);
+
+    setUserInfo({
+      ...userInfo,
+      userId: localStorage.getItem("userId") ?? "",
+      playerName: localStorage.getItem("playerName") ?? "",
+    });
+
+    sendEvent(
+      `/room/enter`,
+      {},
+      {
+        userId: userInfo.userId,
+        roomCode: roomCode,
+      }
+    );
+  }
 
   useEffect(() => {
-    connect(subscribeTopics);
+    initConnection();
   }, []);
+
   return (
     <>
       <GameProfile
@@ -70,7 +100,7 @@ const Ready = () => {
           }}
         />
       </Modal>
-      <ChatCompo></ChatCompo>
+      <ChatCompo2></ChatCompo2>
     </>
   );
 };
