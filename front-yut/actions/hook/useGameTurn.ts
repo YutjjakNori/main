@@ -12,7 +12,7 @@ import useGameActionQueue from "./useGameActionQueue";
 //사용자의 초기 말 3개 생성
 const createUserPieceList = (
   userId: string,
-  pieceType: YutPieceType,
+  pieceType: YutPieceType
 ): Array<YutPieceCompoProps> => {
   const list: Array<YutPieceCompoProps> = [];
   for (let i = 1; i <= 3; i++) {

@@ -8,6 +8,7 @@ import { YutPieceListState } from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
 import EventPoint from "./EventPoint";
+
 import Nothing from "@/public/icon/gameItems/Nothing.svg";
 import styled from "styled-components";
 
@@ -62,36 +63,33 @@ const createCornerPoint = (
   />
 );
 
-const Image = styled.object<{ opacity: number }>`
-  opacity: ${(props) => props.opacity};
-  transition: opacity 5s ease-in-out;
-`;
+// const Image = styled.object<{ opacity: number }>`
+//   opacity: ${(props) => props.opacity};
+//   transition: opacity 5s ease-in-out;
+// `;
 
 const YutBoardCompo = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
-  // const [opacity, setOpacity] = useState(1);
+  const [opacity, setOpacity] = useState(1);
 
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setOpacity(0);
-  //   }, 5000);
-  //   return () => clearTimeout(timer);
-  // }, []);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setOpacity(0);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
-  // const takeAction = useCallback((index: number) => {
-  //   /*
-  //   0: 꽝 / 1: 한번더던지기
-  //   2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
-  //   */
-  //   switch (index) {
-  //     case 0:
-  //       <Image
-  //         data={"@/public/icon/gameItems/Nothing.svg"}
-  //         type="image/svg+xml"
-  //         opacity={opacity}
-  //       />;
-  //   }
-  // }, []);
+  const takeAction = (index: number) => {
+    /*
+    0: 꽝 / 1: 한번더던지기
+    2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
+    */
+    console.log(index);
+    switch (index) {
+      case 0:
+        <Nothing width={"100%"} height={"100%"} />;
+    }
+  };
 
   const request = {
     roomCode: "abcde",
@@ -102,15 +100,18 @@ const YutBoardCompo = () => {
   const getEventResult = () => {
     // 응답 데이터에 따라 함수 실행하기
     const result = 0;
-
-    // takeAction(result);
+    takeAction(result);
   };
 
   return (
     <>
       {/* <button onClick={() => "getEventResult"}>이벤트칸</button> */}
-      <button onClick={getEventResult}>이벤트칸</button>
+      {/* <button onClick={getEventResult}>이벤트칸</button> */}
+
       <style.Container>
+        <StyledKKwangContainer onClick={getEventResult}>
+          <Nothing width={"100%"} height={"100%"} />
+        </StyledKKwangContainer>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
         {/* 분기점 */}
         <ArrowIconCompo classStr={"cornerLeftTop1"} position={10} />
@@ -126,6 +127,7 @@ const YutBoardCompo = () => {
         {/* 분기점 */}
         <ArrowIconCompo classStr={"cornerCenter1"} position={22} />
         <ArrowIconCompo classStr={"cornerCenter2"} position={22} />
+
         <style.MiniList className="miniTop">
           {createMiniPoint(9, "", pieceList)}
           {createMiniPoint(8, "", pieceList)}
@@ -164,5 +166,14 @@ const YutBoardCompo = () => {
     </>
   );
 };
+
+const StyledKKwangContainer = styled.div`
+  margin: auto;
+  z-index: 1;
+  position: relative;
+  width: 80%;
+`;
+
+const StyledCompo = styled.div``;
 
 export default YutBoardCompo;
