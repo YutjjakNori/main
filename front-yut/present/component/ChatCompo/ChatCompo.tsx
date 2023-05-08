@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import * as style from "./ChatCompo.style";
 import {
-  connect,
   sendEvent,
   stompClient,
   subscribeTopic,
@@ -18,11 +17,23 @@ interface LogCompoProps {
 const ChatCompo = () => {
   const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  // const [messages, setMessages] = useState<string[]>([]);
   const roomCode = useRecoilValue(roomCodeAtom);
+  const [messages, setMessages] = useState<{ [key: string]: string }>({});
+  // 서버로 부터 받아온 내용
+  const [chat, setChat] = useState([]);
 
   async function initConnection() {
     await subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
+    // //서버에 입장하겠다는 메시지 보내기
+    // sendEvent(
+    //   `/room/enter`,
+    //   {},
+    //   {
+    //     userId: userInfo.userId,
+    //     roomCode: roomCode,
+    //   }
+    // );
   }
 
   useEffect(() => {
@@ -32,17 +43,6 @@ const ChatCompo = () => {
   const sendMessage = (e: any) => {
     e.preventDefault();
     if (message) {
-      // stompClient?.send(
-      //   `/chat`,
-      //   {},
-      //   JSON.stringify({
-      //     type: "CHAT",
-      //     userId: userInfo.userId,
-      //     roomCode: roomCode,
-      //     content: message,
-      //   })
-      // );
-
       sendEvent(
         `/chat`,
         {},
@@ -57,11 +57,46 @@ const ChatCompo = () => {
       console.log(userInfo.userId + " message:", message);
     }
   };
-  const chattingMessage = useCallback((value: any) => {
-    if (stompClient) {
-      console.log("chatting data:", value);
-    }
-  }, []);
+
+  const renderChat = () => {
+    console.log(messages);
+    return chat.map(({ userId, message }, index) => (
+      <div key={index}>
+        <>
+          {userId}: <>{message}</>
+        </>
+      </div>
+    ));
+  };
+
+  const chattingMessage = useCallback(
+    (value: any) => {
+      if (stompClient) {
+        console.log("chatting data:", value);
+        console.log("data.userId :", value.userId);
+        console.log("data.content :", value.content);
+        const nextMessages = { [value.userId]: value.content };
+        // setMessages((prevMessages) => {
+        //   return { ...prevMessages, [value.userId]: value.content };
+        // });
+        setMessages((prevMessages) =>
+          Object.assign({}, prevMessages, nextMessages)
+        );
+
+        // console.log("message>>>>>>", messages);
+      }
+    },
+    [stompClient]
+  );
+
+  // function chattingMessage(data: any) {
+  //   // const newMessage = JSON.parse(data.body);
+  //   console.log("data.userId :", data.userId);
+  //   console.log("data.content :", data.content);
+  //   // setMessages((prevMessages) => {
+  //   //   // return { ...prevMessages, [newMessage.userId]: newMessage.content };
+  //   // });
+  // }
 
   // const chattingLog = useCallback((value: any) => {
   //   if (stompClient) {
@@ -84,11 +119,34 @@ const ChatCompo = () => {
           {/* 채팅창 로그 */}
           <style.ChatLogBox>
             {/* <div>
-              {messages.map((message, index) => (
-                <div key={index}>{message}</div>
+              {Object.keys(messages).map(([userId, content], index) => (
+                <li key={index}>
+                  <>
+                    <strong>{userId}:</strong> <>{content}</>
+                  </>
+                </li>
               ))}
             </div> */}
-            {}
+            <div>
+              {Object.keys(messages).map((userId) => (
+                <div key={userId}>
+                  <strong>{userId}:</strong> {messages[userId]}
+                </div>
+              ))}
+            </div>
+            {/* <ul>
+              {Object.entries(messages).map(([userId, content], index) => (
+                <li key={index}>
+                  <>
+                    <strong>{userId}:</strong> <>{content}</>
+                  </>
+                </li>
+                // <li key={userId}>
+                //   <strong>{userId}: </strong>
+                //   {content}
+                // </li>
+              ))}
+            </ul> */}
           </style.ChatLogBox>
           {/* 채팅 입력창 */}
           <style.ChatInoutBox>

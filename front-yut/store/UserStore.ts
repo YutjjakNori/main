@@ -3,7 +3,7 @@ import { StaticImageData } from "next/image";
 import { CompatClient } from "@stomp/stompjs";
 
 interface UserInfoProps {
-  userId?: string;
+  userId: string;
   playerName?: string;
   profileImage?: string | StaticImageData;
 }
@@ -19,7 +19,7 @@ const userInfoState = atom<UserInfoProps>({
 
 const roomCodeAtom = atom<string>({
   key: "roomCodeAtom",
-  default: "abcde",
+  default: "ccccd",
 });
 
 export type { UserInfoProps };

@@ -17,33 +17,30 @@ import { UserIsReadyProps } from "@/store/ReadyStore";
 import { roomCodeAtom, userInfoState } from "@/store/UserStore";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
+import { memberListAtom } from "@/store/MemberStore";
 
 const Ready = () => {
   const { openModal, closeModal } = useModal(); //모달 열기
-  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
   const [userList, setUserList] = useState<Array<UserIsReadyProps>>([]);
   const [userIsReadyList, setUserIsReadyList] = useState<Array<number>>([]);
+  const [userInfo, setUserInfo] = useRecoilState(userInfoState);
+  const [memberList, setMemberList] = useRecoilState(memberListAtom);
   const roomCode = useRecoilValue(roomCodeAtom);
-  // const saveUser = useCallback((users: Array<any>, isReady: Array<number>) => {
-  //   const isReadyList: Array<number> = isReady.map((ready, index) => {
-  //     return {
-  //       isReady: ready,
-  //     };
-  //   });
-  //   const saveUserList: Array<UserIsReadyProps> = users.map((user, index) => {
-  //     return {
-  //       userId: user.userId,
-  //       playerName: user.userId,
-  //       isReady: user.ready,
-  //     };
-  //   });
-  //   setUserList([...saveUserList]);
-  //   setUserIsReadyList([...isReadyList]);
-  // }, []);
 
-  const settingMembers = (data: any) => {
-    console.log("현재까지 들어온 멤버: ", data);
-    //TODO : 멤버 전역 관리
+  // const settingMembers = (data: any) => {
+  //   setMemberList([]);
+  //   console.log("현재까지 들어온 멤버: ", data);
+  //   const userIds = data.users.map((users: any) => users.userId);
+  //   const newMemberList = [...memberList, userInfo.userId, ...userIds];
+  //   setMemberList(newMemberList);
+  // };
+  const settingMembers = async (data: any) => {
+    const userIds = data.users.map((users: any) => users.userId);
+    console.log("현재까지 들어온 멤버: ", userIds);
+    const newMemberList = [...userIds];
+    // console.log("나 포함 : ", newMemberList);
+    await setMemberList(newMemberList);
+    // console.log("memberList : ", memberList);
   };
 
   const topics: any = {
@@ -55,10 +52,10 @@ const Ready = () => {
   async function initConnection() {
     await connect();
 
-    // for (let key in topics) {
-    //   subscribeTopic(key + roomCode, topics[key]);
-    // }
-    // Object.keys(topics).forEach((k) => subscribeTopic(k + roomCode, k));
+    setUserInfo({
+      ...userInfo,
+      userId: localStorage.getItem("userId") ?? "",
+    });
 
     const topicSubscriptions = Object.keys(topics).map((key) =>
       subscribeTopic(key + roomCode, topics[key])
@@ -66,60 +63,30 @@ const Ready = () => {
 
     await Promise.all(topicSubscriptions);
 
-    console.log("localStorage 안에 userId", localStorage.getItem("userId"));
-    setUserInfo({
-      ...userInfo,
-      userId: localStorage.getItem("userId") ?? "",
-      playerName: localStorage.getItem("playerName") ?? "",
-    });
+    // console.log("localStorage 안에 userId", localStorage.getItem("userId"));
 
-    //서버에 입장하겠다는 메시지 보내기 << 안되는 중;;;
-
-    // stompClient?.send(
-    //   `/room/enter`,
-    //   {},
-    //   JSON.stringify({
-    //     userId: userInfo.userId,
-    //     roomCode: roomCode,
-    //   })
-    // );
     //현재까지 들어온 멤버가 옴
     sendEvent(
       `/room/enter`,
       {},
       {
-        userId: userInfo.userId,
+        userId: localStorage.getItem("userId"),
         roomCode: roomCode,
       }
     );
   }
 
-  // function initConnection() {
-  //   connect().then(() => {
-  //     for (let key in topics) {
-  //       subscribeTopic(key + roomCode, topics[key]);
-  //     }
-
-  //     setUserInfo({
-  //       ...userInfo,
-  //       userId: localStorage.getItem("userId") ?? "",
-  //       playerName: localStorage.getItem("playerName") ?? "",
-  //     });
-
-  //     sendEvent(
-  //       `/room/enter`,
-  //       {},
-  //       {
-  //         userId: userInfo.userId,
-  //         roomCode: roomCode,
-  //       }
-  //     );
-  //   });
-  // }
-
   useEffect(() => {
     initConnection();
   }, []);
+
+  useEffect(() => {
+    console.log("useEffect memberList >>>>  ", memberList);
+  }, []);
+
+  useEffect(() => {
+    console.log(memberList);
+  }, [memberList]);
 
   return (
     <>
@@ -128,7 +95,7 @@ const Ready = () => {
           "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
         }
         isReady={true}
-        playerName={"박재희"}
+        playerName={userInfo.userId ?? ""}
       />
       <button onClick={() => openModal()} className="btn">
         준비
