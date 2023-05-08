@@ -1,9 +1,6 @@
 package com.ssafy.yut.controller;
 
-import com.ssafy.yut.dto.GameDto;
-import com.ssafy.yut.dto.PieceDto;
-import com.ssafy.yut.dto.RequestDto;
-import com.ssafy.yut.dto.YutDto;
+import com.ssafy.yut.dto.*;
 import com.ssafy.yut.service.GameService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -63,11 +60,19 @@ public class GameController {
     }
 
     /**
-     * 이벤트 실행하기
+     * 이벤트 발생하기
      *
      * @param request
      */
     @MessageMapping("/event")
     public void event(RequestDto request) { gameService.occurrenceEvent(request); }
+
+    /**
+     * 이벤트 실행하기
+     *
+     * @param request
+     */
+    @MessageMapping("/event/result")
+    public void eventResult(EventDto.requestResult request) { gameService.executeEvent(request); }
 
 }
