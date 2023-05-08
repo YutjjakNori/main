@@ -478,7 +478,7 @@ public class GameService {
 
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event", request.getRoomCode(),
-                EventDto.builder()
+                EventDto.response.builder()
                         .userId(request.getUserId())
                         .roomCode(request.getRoomCode())
                         .event(eventNum)
@@ -486,12 +486,13 @@ public class GameService {
     }
 
     /**
-     * 이벤트 보내기
+     * 이벤트 발생 보내기
      *
      * @param eventDto
      */
     @KafkaListener(topics = TOPIC + ".event", groupId = GROUP_ID)
-    public void sendEvent(EventDto eventDto) {
+    public void sendEvent(EventDto.response eventDto) {
         template.convertAndSend("/topic/game/event" + eventDto.getRoomCode(), eventDto);
     }
+
 }
