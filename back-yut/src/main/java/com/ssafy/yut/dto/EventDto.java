@@ -34,7 +34,6 @@ public class EventDto {
         private List<Integer> selectPiece;  // 선택된 말
         private int plateNum;   // 현재 자리 위치
         private int event;  // 이벤트 종류 (0 : 말업기 / 1 : 자리이동)
-        private int pieceNum;   // 해당 사용자의 남은 말의 개수
         private int prevPosition;   // 자리 이동 시 이전 자리 위치
     }
 
