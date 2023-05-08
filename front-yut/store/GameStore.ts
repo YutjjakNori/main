@@ -2,6 +2,11 @@ import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCo
 import { CornerType, GameActionType } from "@/types/game/YutGameTypes";
 import { atom } from "recoil";
 
+const RoomCodeState = atom<string>({
+  key: "GamRoomCode",
+  default: "",
+});
+
 //사용자들의 모든 말 정보
 const YutPieceListState = atom<Array<YutPieceCompoProps>>({
   key: "PlayerPieceList",
@@ -36,7 +41,14 @@ const ActiveCornerArrowState = atom<CornerType>({
   default: "none",
 });
 
+// 이벤트/윷 결과에 따라 윷 던지기 버튼 활성화
+const YutThrowBtnState = atom<boolean>({
+  key: "YutThrowBtn",
+  default: false,
+});
+
 export {
+  RoomCodeState,
   YutPieceListState,
   NowTurnPlayerIdState,
   PlayTurnState,

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { CircleButtonProps } from "@/present/common/Button/CircleButton";
+import { CircleButtonProps } from "./CircleButton";
 
 const StyledButton = styled.button<CircleButtonProps>`
   width: 100%; //${(props) => props.width || "0.5 em"};

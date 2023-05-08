@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { RectStyleInfo } from "@/component/YutBoardCompo/YutThrow";
+import { RectStyleInfo } from "@/present/component/YutThrowCompo/YutThrowCompo";
 
 const StyledContainer = styled.div`
   position: relative;

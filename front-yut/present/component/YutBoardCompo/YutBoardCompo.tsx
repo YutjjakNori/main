@@ -1,15 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
 import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
-import CornerPoint from "./CornerPoint";
-import MiniPoint from "./MiniPoint";
+import CornerPoint from "./Point/CornerPointCompo";
+import MiniPoint from "./Point/MiniPointCompo";
 import * as style from "./YutBoardCompo.style";
 import { useRecoilState } from "recoil";
 import { YutPieceListState } from "@/store/GameStore";
-import ArrowIconCompo from "./ArrowCompo";
+import ArrowIconCompo from "./ArrowCompo/ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
 import EventPoint from "./EventPoint";
 
-import Nothing from "@/public/icon/gameItems/Nothing.svg";
+import Option0 from "@/public/icon/eventItems/0.svg";
+import Option1 from "@/public/icon/eventItems/1.svg";
+import Option2 from "@/public/icon/eventItems/2.svg";
+import Option3 from "@/public/icon/eventItems/3.svg";
+import Option4 from "@/public/icon/eventItems/4.svg";
 import styled from "styled-components";
 
 // TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
@@ -63,31 +67,61 @@ const createCornerPoint = (
   />
 );
 
-// const Image = styled.object<{ opacity: number }>`
-//   opacity: ${(props) => props.opacity};
-//   transition: opacity 5s ease-in-out;
-// `;
-
 const YutBoardCompo = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
-  const [opacity, setOpacity] = useState(1);
+  const [showOption0, setShowOption0] = useState(false);
+  const [showOption1, setShowOption1] = useState(false);
+  const [showOption2, setShowOption2] = useState(false);
+  const [showOption3, setShowOption3] = useState(false);
+  const [showOption4, setShowOption4] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setOpacity(0);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, []);
+  function toggleOption0() {
+    console.log(true);
+    setShowOption0(true);
+    // 2초 후 false로 바꾸기.
+    setTimeout(() => setShowOption0(false), 2000);
+  }
+  function toggleOption1() {
+    setShowOption1(true);
+    // 2초 후 false로 바꾸기.
+    setTimeout(() => setShowOption1(false), 2000);
+  }
+  function toggleOption2() {
+    console.log(true);
+    setShowOption2(true);
+    // 2초 후 false로 바꾸기.
+    setTimeout(() => setShowOption2(false), 2000);
+  }
+  function toggleOption3() {
+    console.log(true);
+    setShowOption3(true);
+    // 2초 후 false로 바꾸기.
+    setTimeout(() => setShowOption3(false), 2000);
+  }
+  function toggleOption4() {
+    console.log(true);
+    setShowOption4(true);
+    // 2초 후 false로 바꾸기.
+    setTimeout(() => setShowOption4(false), 2000);
+  }
 
   const takeAction = (index: number) => {
-    /*
-    0: 꽝 / 1: 한번더던지기
-    2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
-    */
-    console.log(index);
     switch (index) {
       case 0:
-        <Nothing width={"100%"} height={"100%"} />;
+        toggleOption0();
+        break;
+      case 1:
+        toggleOption1();
+        break;
+      case 2:
+        toggleOption2();
+        break;
+      case 3:
+        toggleOption3();
+        break;
+      case 4:
+        toggleOption4();
+        break;
     }
   };
 
@@ -99,18 +133,28 @@ const YutBoardCompo = () => {
   // 서버에 요청 전송
   const getEventResult = () => {
     // 응답 데이터에 따라 함수 실행하기
-    const result = 0;
+    /*
+    0: 꽝 / 1: 한번더던지기
+    2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
+    */
+    const result = 1;
     takeAction(result);
   };
 
   return (
     <>
       {/* <button onClick={() => "getEventResult"}>이벤트칸</button> */}
-      {/* <button onClick={getEventResult}>이벤트칸</button> */}
+      <button onClick={getEventResult}>이벤트칸</button>
 
       <style.Container>
-        <StyledKKwangContainer onClick={getEventResult}>
-          <Nothing width={"100%"} height={"100%"} />
+        {/* eventContainer로 명칭 바꾸기 */}
+        <StyledKKwangContainer>
+          {/* <Nothing width={"100%"} height={"100%"} /> */}
+          {showOption0 ? <Option0 width={"100%"} height={"100%"} /> : null}
+          {showOption1 ? <Option1 width={"100%"} height={"100%"} /> : null}
+          {showOption2 ? <Option2 width={"100%"} height={"100%"} /> : null}
+          {showOption3 ? <Option3 width={"100%"} height={"100%"} /> : null}
+          {showOption4 ? <Option4 width={"100%"} height={"100%"} /> : null}
         </StyledKKwangContainer>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
         {/* 분기점 */}
@@ -172,6 +216,7 @@ const StyledKKwangContainer = styled.div`
   z-index: 1;
   position: relative;
   width: 80%;
+  /* display: none; */
 `;
 
 const StyledCompo = styled.div``;
