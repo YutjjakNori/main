@@ -31,6 +31,11 @@ const CarouselCompo = ({ contents }: CarouselCompoProps) => {
     setIndicatorActiveList(newArr);
   }, [nowItemIndex]);
 
+  useEffect(() => {
+    //새로운 컨텐츠가 들어오면 index reset
+    setNowItemIndex(0);
+  }, [contents]);
+
   return (
     <>
       <style.Container
