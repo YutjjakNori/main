@@ -40,6 +40,7 @@ public class EventDto {
     /**
      * 이벤트 실행 responseDTO
      */
+    @Getter
     @AllArgsConstructor
     @Builder
     public static class responseResult {
