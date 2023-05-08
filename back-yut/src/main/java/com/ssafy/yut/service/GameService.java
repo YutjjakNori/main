@@ -495,4 +495,102 @@ public class GameService {
         template.convertAndSend("/topic/game/event" + eventDto.getRoomCode(), eventDto);
     }
 
+    /**
+     * 이벤트 실행하기
+     *
+     * @param request
+     */
+    public void executeEvent(EventDto.requestResult request) {
+        // 이벤트 실행하기
+        // 0 : 말 업고가기 / 1 : 자리 이동 (출발했던 자리로, 시작 전으로)
+
+        // 게임 데이터 들고오기
+        Game game = redisMapper.getData(request.getRoomCode(), Game.class);
+        // 게임 이용자 중 해당 유저 들고오기
+        List<GameUser> gameUsers = game.getUsers();
+        GameUser gameUser = new GameUser(request.getUserId(), null);
+        int turnUserIndex = gameUsers.indexOf(gameUser);
+        gameUser = gameUsers.get(turnUserIndex);    // 해당 turn의 유저
+        List<Integer> resultPieceRedis = null;   // 반환값 : selectPiece
+        List<Integer> resultPieceKafka = null;   // 반환값 : selectPiece
+        int move = -1;  // 반환값 : move (이동 위치)
+
+        if (request.getEvent() == 0) {
+            // event == 0 -> 말 업고 가기
+
+            int pieceIndex = -1;    // 얹힐 말의 인덱스
+            // 말 업고가기 - 말 사용 상태 변경
+            for (int i = 2; i >= 0; i--) {
+                if (gameUser.getPieces().get(i) == -1) {
+                    // 말 상태가 사용전이라면
+                    pieceIndex = i;
+                    break;
+                }
+            }
+            gameUser.getPieces().set(pieceIndex, 1);    // 해당 말 사용 중으로 변경
+            int resultPieceIndex = turnUserIndex * 3 + pieceIndex;    // 말 인덱스를 사용해 실제 말 번호 가져오기
+
+            // 말 업고가기 - 위치 변경 (Redis ver)
+            resultPieceRedis = game.getPlate().get(request.getPlateNum());
+            resultPieceRedis.add(resultPieceIndex);
+
+            // 변경 데이터 반영하기
+            game.getPlate().replace(request.getPlateNum(), resultPieceRedis);
+            gameUsers.set(turnUserIndex, gameUser);
+            game.setUsers(gameUsers);
+
+            // 말 업고가기 - 위치 변경 (Kafka ver)
+            resultPieceKafka = request.getSelectPiece();
+            resultPieceKafka.add(pieceIndex);
+        } else {
+            // event == 1 -> 자리 이동
+
+            if (request.getPrevPosition() == -1) {
+                // 말 상태를 사용전으로 바꿔야 하는 경우
+
+                // 말이 위치한 자리(이벤트 칸)를 삭제
+                game.getPlate().remove(request.getPlateNum());
+                // 해당 말의 상태를 시작 전으로 되돌리기
+                resultPieceRedis = request.getSelectPiece();
+                for (int piece : resultPieceRedis) {
+                    gameUser.getPieces().set(piece, -1); // 해당 말 시작 전으로 변경
+                }
+            } else {
+                // 말이 출발했던 자리로 이동하는 경우
+
+                // 기존 이벤트 위치에서 말 없애기
+                resultPieceRedis = game.getPlate().get(request.getPlateNum());
+                game.getPlate().remove(request.getPlateNum());
+                // 출발 했던 자리로 이동 (Redis ver)
+                game.getPlate().put(move, resultPieceRedis);
+                // 출발 했던 자리로 이동 (Kafka ver)
+                resultPieceKafka = request.getSelectPiece();
+                // 출발 했던 자리로 이동
+                move = request.getPrevPosition();
+            }
+        }
+
+        // 변경 데이터 redis로 저장하기
+        redisMapper.saveData(request.getRoomCode(), game);
+        // 변경 데이터 kafka로 보내기
+        kafkaTemplate.send(TOPIC + ".eventResult", request.getRoomCode(),
+                EventDto.responseResult.builder()
+                        .roomCode(request.getRoomCode())
+                        .userId(request.getUserId())
+                        .selectPiece(resultPieceKafka)
+                        .event(request.getEvent())
+                        .move(move)
+                        .build());
+    }
+
+    /**
+     * 이벤트 실행 보내기
+     *
+     * @param eventDto
+     */
+    @KafkaListener(topics = TOPIC + ".eventResult", groupId = GROUP_ID)
+    public void sendEvent(EventDto.responseResult eventDto) {
+        template.convertAndSend("/topic/game/event/result" + eventDto.getRoomCode(), eventDto);
+    }
+
 }
