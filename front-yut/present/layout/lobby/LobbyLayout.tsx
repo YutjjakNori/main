@@ -27,7 +27,7 @@ const LobbyLayout = () => {
 
   // 게임 설명 onClick
   const onClickGameRule = useCallback(() => {
-    router.push("/game/rules");
+    router.push("/game/rule");
   }, [router]);
 
   const onInputRoomCode = useCallback(
