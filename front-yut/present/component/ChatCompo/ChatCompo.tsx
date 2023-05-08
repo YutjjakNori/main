@@ -37,7 +37,9 @@ const ChatCompo = () => {
   }
 
   useEffect(() => {
-    initConnection();
+    if (stompClient) {
+      initConnection();
+    }
   }, []);
 
   const sendMessage = (e: any) => {

@@ -12,7 +12,6 @@ const userReadySelector = selector<UserIsReadyProps>({
     const userInfo = get(userInfoState);
     return {
       userId: userInfo.userId,
-      playerName: userInfo.playerName,
       // profileImage: userInfo.profileImage,
       isReady: false,
     };
