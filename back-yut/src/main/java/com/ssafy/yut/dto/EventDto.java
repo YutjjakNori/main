@@ -17,7 +17,7 @@ public class EventDto {
     @Getter
     @AllArgsConstructor
     @Builder
-    public static class resquest {
+    public static class response {
         private String roomCode;
         private String userId;
         private int event;
