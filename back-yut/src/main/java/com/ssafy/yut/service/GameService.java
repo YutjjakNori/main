@@ -589,7 +589,7 @@ public class GameService {
      * @param eventDto
      */
     @KafkaListener(topics = TOPIC + ".eventResult", groupId = GROUP_ID)
-    public void sendEvent(EventDto.responseResult eventDto) {
+    public void sendEventResult(EventDto.responseResult eventDto) {
         template.convertAndSend("/topic/game/event/result" + eventDto.getRoomCode(), eventDto);
     }
 
