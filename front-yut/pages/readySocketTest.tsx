@@ -55,16 +55,34 @@ const Ready = () => {
   async function initConnection() {
     await connect();
 
-    for (let key in topics) {
-      subscribeTopic(key + roomCode, topics[key]);
-    }
+    // for (let key in topics) {
+    //   subscribeTopic(key + roomCode, topics[key]);
+    // }
+    // Object.keys(topics).forEach((k) => subscribeTopic(k + roomCode, k));
 
+    const topicSubscriptions = Object.keys(topics).map((key) =>
+      subscribeTopic(key + roomCode, topics[key])
+    );
+
+    await Promise.all(topicSubscriptions);
+
+    console.log("localStorage 안에 userId", localStorage.getItem("userId"));
     setUserInfo({
       ...userInfo,
       userId: localStorage.getItem("userId") ?? "",
       playerName: localStorage.getItem("playerName") ?? "",
     });
 
+    //서버에 입장하겠다는 메시지 보내기 << 안되는 중;;;
+
+    // stompClient?.send(
+    //   `/room/enter`,
+    //   {},
+    //   JSON.stringify({
+    //     userId: userInfo.userId,
+    //     roomCode: roomCode,
+    //   })
+    // );
     //현재까지 들어온 멤버가 옴
     sendEvent(
       `/room/enter`,
@@ -75,6 +93,29 @@ const Ready = () => {
       }
     );
   }
+
+  // function initConnection() {
+  //   connect().then(() => {
+  //     for (let key in topics) {
+  //       subscribeTopic(key + roomCode, topics[key]);
+  //     }
+
+  //     setUserInfo({
+  //       ...userInfo,
+  //       userId: localStorage.getItem("userId") ?? "",
+  //       playerName: localStorage.getItem("playerName") ?? "",
+  //     });
+
+  //     sendEvent(
+  //       `/room/enter`,
+  //       {},
+  //       {
+  //         userId: userInfo.userId,
+  //         roomCode: roomCode,
+  //       }
+  //     );
+  //   });
+  // }
 
   useEffect(() => {
     initConnection();
@@ -103,8 +144,8 @@ const Ready = () => {
         />
       </Modal>
       <ChatCompo></ChatCompo>
-      -----
-      <ChatCompo2></ChatCompo2>
+      <p>----------</p>
+      {/* <ChatCompo2></ChatCompo2> */}
     </>
   );
 };

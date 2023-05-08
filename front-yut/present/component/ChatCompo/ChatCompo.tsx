@@ -21,14 +21,8 @@ const ChatCompo = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const roomCode = useRecoilValue(roomCodeAtom);
 
-  const chattingMessage = useCallback((value: any) => {
-    if (stompClient) {
-      console.log("chatting data:", value);
-    }
-  }, []);
-
-  function initConnection() {
-    subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
+  async function initConnection() {
+    await subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
   }
 
   useEffect(() => {
@@ -63,6 +57,24 @@ const ChatCompo = () => {
       console.log(userInfo.userId + " message:", message);
     }
   };
+  const chattingMessage = useCallback((value: any) => {
+    if (stompClient) {
+      console.log("chatting data:", value);
+    }
+  }, []);
+
+  // const chattingLog = useCallback((value: any) => {
+  //   if (stompClient) {
+  //     console.log("chatting data:", value);
+  //     return value.map(({ userId: string, message: string }, index:number) => (
+  //       <div key={index}>
+  //         <>
+  //           {value.userId}: <>{value.message}</>
+  //         </>
+  //       </div>
+  //     ));
+  //   }
+  // }, []);
 
   return (
     <>
@@ -71,11 +83,12 @@ const ChatCompo = () => {
         <style.ChatBox>
           {/* 채팅창 로그 */}
           <style.ChatLogBox>
-            <div>
+            {/* <div>
               {messages.map((message, index) => (
                 <div key={index}>{message}</div>
               ))}
-            </div>
+            </div> */}
+            {}
           </style.ChatLogBox>
           {/* 채팅 입력창 */}
           <style.ChatInoutBox>

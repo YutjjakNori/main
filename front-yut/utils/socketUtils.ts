@@ -19,7 +19,7 @@ const subscribeEvent = (eventName: string, callback?: any) => {
   });
 };
 
-const sendEvent = (
+const sendEventTest = (
   eventName: string,
   header: any,
   contents: any,
@@ -29,4 +29,4 @@ const sendEvent = (
   if (callback) callback();
 };
 
-export { stringify, parse, subscribeEvent, sendEvent, obj };
+export { stringify, parse, subscribeEvent, sendEventTest, obj };

@@ -6,16 +6,16 @@ import { CompatClient, Stomp } from "@stomp/stompjs";
 let stompClient: CompatClient | null = null;
 let sessionId: string = "";
 //닉네임 만들기
-const firstNames = ["평화주의자", "인성파탄자", "윷판지배자", "윷수호신"];
-const lastNames = ["개떡이", "철수", "유리", "짱구", "찰떡이", "맹구"];
-let playerName = "";
+// const firstNames = ["평화주의자", "인성파탄자", "윷판지배자", "윷수호신"];
+// const lastNames = ["개떡이", "철수", "유리", "짱구", "찰떡이", "맹구"];
+// let playerName = "";
 
-function randomPlayerName() {
-  const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-  const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-  playerName = firstName + " " + lastName;
-  return playerName;
-}
+// function randomPlayerName() {
+//   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+//   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+//   playerName = firstName + " " + lastName;
+//   return playerName;
+// }
 
 //STOMP over SockJS 연결
 async function connect(): Promise<void> {
@@ -30,7 +30,8 @@ async function connect(): Promise<void> {
         //@ts-ignore
         sessionId = socket._transport.url.split("/")[5];
         localStorage.setItem("userId", sessionId);
-        localStorage.setItem("playerName", randomPlayerName());
+        // localStorage.setItem("playerName", randomPlayerName());
+        console.log("connect 함수 안에서 userId: ", sessionId);
         resolve();
       },
       // onError
@@ -50,7 +51,10 @@ async function connect(): Promise<void> {
  */
 function subscribeTopic(topic: string, callback?: any) {
   stompClient?.subscribe(topic, (body: any) => {
-    if (callback) callback(JSON.parse(body.body));
+    // if (callback) callback(JSON.parse(body.body));
+    if (typeof callback === "function") {
+      callback(JSON.parse(body.body));
+    }
   });
 }
 
@@ -64,7 +68,9 @@ function sendEvent(
   callback?: any
 ) {
   stompClient?.send(eventName, header, JSON.stringify(contents));
-  if (callback) callback();
+  if (typeof callback === "function") {
+    if (callback) callback();
+  }
 }
 
 /**
