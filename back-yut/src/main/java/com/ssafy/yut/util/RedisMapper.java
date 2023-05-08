@@ -39,4 +39,14 @@ public class RedisMapper {
             return null;
         }
     }
+
+    public boolean deleteDate(String key) {
+        try {
+            redisTemplate.delete(key);
+            return true;
+        }
+        catch(Exception e) {
+            return false;
+        }
+    }
 }
