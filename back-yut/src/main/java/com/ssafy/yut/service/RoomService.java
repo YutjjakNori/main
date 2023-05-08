@@ -7,6 +7,7 @@ import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
+import com.ssafy.yut.entity.User;
 import com.ssafy.yut.exception.CustomException;
 import com.ssafy.yut.exception.ErrorCode;
 import com.ssafy.yut.util.RedisMapper;
@@ -94,7 +95,8 @@ public class RoomService {
     public void enterRoom(RequestDto enterDto) {
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
-        String key = "game:"+roomCode;
+        String userKey = "user:" + userId;
+        String gameKey = "game:" + roomCode;
         log.info("Enter Room : " + roomCode + " USER : " + userId);
 
         List<GameUser> users = new ArrayList<>();
@@ -103,31 +105,44 @@ public class RoomService {
         pieces.add(-1);
         pieces.add(-1);
 
-        GameUser user = GameUser.builder().userId(userId).pieces(pieces).build();
+        GameUser gameUser = GameUser.builder().userId(userId).pieces(pieces).build();
 
-        Game game = redisMapper.getData(key, Game.class);
-
+        Game game = redisMapper.getData(gameKey, Game.class);
         if (game == null) {
-            users.add(user);
+            users.add(gameUser);
             game = Game.builder()
                     .users(users)
                     .gameStatus("0")
                     .plate(new HashMap<>())
                     .build();
-            redisMapper.saveData(key, game);
-        } else if(game.getUsers().size() < 4) {
+
+            User user = User.builder()
+                    .userId(userId)
+                    .roomCode(roomCode)
+                    .build();
+
+            redisMapper.saveData(userKey, user);
+            redisMapper.saveData(gameKey, game);
+        }
+        else if(game.getUsers().size() < 4) {
             users = game.getUsers();
-            users.add(user);
+            users.add(gameUser);
             String ready = game.getGameStatus();
             game.setUsers(users);
             game.setGameStatus(ready + "0");
 
-            redisMapper.saveData(key, game);
+            User user = User.builder()
+                    .userId(userId)
+                    .roomCode(roomCode)
+                    .build();
+
+            redisMapper.saveData(userKey, user);
+            redisMapper.saveData(gameKey, game);
         }
         // TODO: 2023/05/06 입장 요청을 그냥 보낼 경우
         else if(game.getUsers().size() == 4) {
-
             //에러 처리
+            return;
         }
 
         List<RoomDto.User> userResponse = new ArrayList<>();
@@ -241,6 +256,13 @@ public class RoomService {
         String roomCode = exitRequest.getRoomCode();
         String userId = exitRequest.getUserId();
         Game game = redisMapper.getData("game:" + roomCode, Game.class);
+
+        redisMapper.deleteDate("user:" + userId);
+        game.getUsers().remove(new GameUser(userId, null));
+
+        if(game.getUsers().size() == 0) {
+            redisMapper.deleteDate(roomCode);
+        }
 
         response.put("roomCode", roomCode);
         response.put("response", RoomDto.User.builder().userId(userId).build());
