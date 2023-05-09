@@ -1,6 +1,5 @@
 import SockJS from "sockjs-client";
 import { CompatClient, Stomp } from "@stomp/stompjs";
-// import  from "@/utils/socketUtils";
 
 // stomp 연결 객체
 let stompClient: CompatClient | null = null;
@@ -21,7 +20,6 @@ let sessionId: string = "";
 async function connect(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     let socket = new SockJS("https://k8d109.p.ssafy.io/yut");
-    //stomp.js를 사용하여 SockJS와 웹 소켓 통신을 수행
     stompClient = Stomp.over(socket);
     stompClient.connect(
       {},
@@ -31,7 +29,6 @@ async function connect(): Promise<void> {
         sessionId = socket._transport.url.split("/")[5];
         localStorage.setItem("userId", sessionId);
         // localStorage.setItem("playerName", randomPlayerName());
-        console.log("connect 함수 안에서 userId: ", sessionId);
         resolve();
       },
       // onError

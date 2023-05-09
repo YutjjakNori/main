@@ -6,18 +6,18 @@ interface UserInfoProps {
   profileImage?: string | StaticImageData;
 }
 
-const userInfoState = atom<UserInfoProps>({
-  key: "userInfoState",
+const UserInfoState = atom<UserInfoProps>({
+  key: "UserInfoState",
   default: {
     userId: "",
     profileImage: "",
   },
 });
 
-const roomCodeAtom = atom<string>({
-  key: "roomCodeAtom",
-  default: "ccccg",
+const RoomCodeState = atom<string>({
+  key: "RoomCodeState",
+  default: "",
 });
 
 export type { UserInfoProps };
-export { userInfoState, roomCodeAtom };
+export { UserInfoState, RoomCodeState };
