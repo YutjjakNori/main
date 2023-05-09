@@ -1,5 +1,5 @@
 //모달 컨트롤 커스텀 훅
-import { ShowState } from "@/store/ModalState";
+import { ShowState } from "@/store/ModalStore";
 import { useRecoilState } from "recoil";
 
 const useModal = () => {
