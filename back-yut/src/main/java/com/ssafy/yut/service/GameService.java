@@ -87,7 +87,7 @@ public class GameService {
      */
     @KafkaListener(topics = TOPIC + ".start", groupId = GROUP_ID)
     public void startGame(Map<String, Object> response) {
-        template.convertAndSend("/topic/game/start"+response.get("roomCode"), response.get("response"));
+        template.convertAndSend("/topic/game/start/"+response.get("roomCode"), response.get("response"));
     }
 
     /**
