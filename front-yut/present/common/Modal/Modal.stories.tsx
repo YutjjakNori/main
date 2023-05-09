@@ -1,10 +1,10 @@
 import Modal, { ReadyModalProps } from "./Modal";
 import type { Meta, StoryObj } from "@storybook/react";
 import { RecoilRoot, useRecoilState, useSetRecoilState } from "recoil";
-import { showState } from "@/store/modalStore";
+import { ShowState } from "@/store/ModalStore";
 
 const TestModal = ({ title = "test", children }: ReadyModalProps) => {
-  const setIsShow = useSetRecoilState(showState);
+  const setIsShow = useSetRecoilState(ShowState);
 
   return (
     <>

@@ -10,7 +10,7 @@ import Yut from "@/public/icon/yutImage/yut.svg";
 import Mo from "@/public/icon/yutImage/mo.svg";
 import BackDo from "@/public/icon/yutImage/backDo.svg";
 
-import { connect, sending } from "@/actions/socket-api/socketInstance";
+import { connect, sendEvent } from "@/actions/socket-api/socketInstance";
 
 import RectButton, {
   RectButtonProps,
@@ -84,7 +84,7 @@ const YutThrow = () => {
     // userId, roomCode 를 전역변수에서 나중에 가져와야함.
     // 아래는 임시 dummy 코드.
     const request = { userId: "lewis", roomCode: "abcde" };
-    // sending("/game/stick", request);
+    // sendEvent("/game/stick", request);
 
     const temp = ["윷", "모", "윷", "개"]; // 임시 결과 리스트
     const getYutResult = () => {};
@@ -120,7 +120,7 @@ const YutThrow = () => {
           return { ...item, res: temp[count] }; // 원하는 index를 새로운 값으로 변경
         }
         return item; // 다른 item들은 그대로 유지
-      }),
+      })
     );
 
     setBtnDisplay("none");
