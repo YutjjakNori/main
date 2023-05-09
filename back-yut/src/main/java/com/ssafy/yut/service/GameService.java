@@ -51,6 +51,7 @@ public class GameService {
         Map<String, Object> response = new HashMap<>();
         String roomCode = request.getRoomCode();
         String key = "game:" + roomCode;
+        log.info("GAME START FROM : " + roomCode);
 
         Game game = redisMapper.getData(key, Game.class);
 
@@ -58,7 +59,7 @@ public class GameService {
         List<GameDto.User> users = new ArrayList<>();
         for(GameUser gameUser : gameUsers) {
             users.add(GameDto.User.builder()
-                    .id(gameUser.getUserId())
+                    .userId(gameUser.getUserId())
                     .pieceNum(gameUser.getPieces())
                     .build());
         }
@@ -87,7 +88,8 @@ public class GameService {
      */
     @KafkaListener(topics = TOPIC + ".start", groupId = GROUP_ID)
     public void startGame(Map<String, Object> response) {
-        template.convertAndSend("/topic/game/start"+response.get("roomCode"), response.get("response"));
+        log.info("GAME START SEND : " + response.get("roomCode"));
+        template.convertAndSend("/topic/game/start/" + response.get("roomCode"), response.get("response"));
     }
 
     /**
@@ -452,7 +454,7 @@ public class GameService {
                 .build();
         response.put("roomCode", roomCode);
         response.put("response", pieceResponse);
-        kafkaTemplate.send(TOPIC+".piece", roomCode, response);
+        kafkaTemplate.send(TOPIC + ".piece", roomCode, response);
     }
 
     /**
