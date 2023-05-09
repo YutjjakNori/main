@@ -1,30 +1,33 @@
 import styled from "styled-components";
 
 const Container = styled.div`
-  * {
-    font-family: Consolas, monospace;
-    font-size: 16px;
-  }
-  .jb-text {
-    width: 120px;
-    height: 48px;
-    padding: 15px 15px;
-    /* padding: 0.5rem calc((100vw-1000px) / 2); */
-    background-color: #444444;
-    border-radius: 5px;
-    color: #ffffff;
-    position: absolute;
-    opacity: 0;
-    transition: all ease 0.5s;
-  }
-  .jb-title:hover + .jb-text {
-    opacity: 1;
-  }
+  position: relative;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
 `;
 
-const Container2 = styled.div`
+const ExitContainer = styled.div`
   position: relative;
   width: 30px;
 `;
 
-export { Container, Container2 };
+const ExitAlertContainer = styled.div`
+  .btn-alert-text {
+    width: 110px;
+    height: 48px;
+    padding: 15px 19px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    color: #ffffff;
+    position: absolute;
+    opacity: 0;
+    transition: all ease 0.5s;
+    margin: 0px 15px;
+  }
+  .btn-alert:hover + .btn-alert-text {
+    opacity: 1;
+  }
+`;
+
+export { Container, ExitContainer, ExitAlertContainer };

@@ -208,57 +208,59 @@ const ReadyLayout = () => {
   }
   return (
     <>
-      {memberReadyList.map((member, index) => (
-        <GameProfile
-          key={index}
-          profileImage={
-            "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
-          }
-          isReady={member.isReady}
-          playerName={member.userId}
-        />
-      ))}
+      <style.Container>
+        {memberReadyList.map((member, index) => (
+          <GameProfile
+            key={index}
+            profileImage={
+              "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
+            }
+            isReady={member.isReady}
+            playerName={member.userId}
+          />
+        ))}
 
-      <button
-        onClick={() => {
-          handleIsReady();
-        }}
-        className="btn"
-      >
-        준비
-      </button>
-      <Modal title={"게임을 시작합니다"}>
-        <Timer
-          ss={5}
-          size={65}
-          color={"#000"}
-          handleOver={() => {
-            closeModal();
+        <button
+          onClick={() => {
+            handleIsReady();
           }}
-        />
-      </Modal>
-      <ChatCompo></ChatCompo>
+          className="btn"
+        >
+          준비
+        </button>
+        <Modal title={"게임을 시작합니다"}>
+          <Timer
+            ss={5}
+            size={65}
+            color={"#000"}
+            handleOver={() => {
+              closeModal();
+            }}
+          />
+        </Modal>
+        <ChatCompo></ChatCompo>
 
-      <style.Container2
-        onClick={() => {
-          handleIsExit();
-        }}
-      >
-        <style.Container>
-          <div className="jb-title">
-            <CircleButton
-              Icon={exitBtnInfo.Icon}
-              fontSize={exitBtnInfo.fontSize}
-              text={exitBtnInfo.text}
-              color={exitBtnInfo.color}
-              backgroundColor={exitBtnInfo.backgroundColor}
-              borderColor={exitBtnInfo.borderColor}
-              margin={exitBtnInfo.margin}
-            />
-          </div>
-          <div className="jb-text">방 나가기</div>
-        </style.Container>
-      </style.Container2>
+        <style.ExitContainer
+          onClick={() => {
+            handleIsExit();
+          }}
+        >
+          <style.ExitAlertContainer>
+            <div className="btn-alert">
+              <CircleButton
+                Icon={exitBtnInfo.Icon}
+                fontSize={exitBtnInfo.fontSize}
+                text={exitBtnInfo.text}
+                color={exitBtnInfo.color}
+                backgroundColor={exitBtnInfo.backgroundColor}
+                borderColor={exitBtnInfo.borderColor}
+                margin={exitBtnInfo.margin}
+              />
+            </div>
+            <div className="btn-alert-text">방 나가기</div>
+          </style.ExitAlertContainer>
+        </style.ExitContainer>
+      </style.Container>
     </>
   );
 };
