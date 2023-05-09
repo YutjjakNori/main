@@ -1,8 +1,8 @@
 import { atom } from "recoil";
 
-const showState = atom({
-  key: "showState",
+const ShowState = atom({
+  key: "ShowState",
   default: false,
 });
 
-export { showState };
+export { ShowState };

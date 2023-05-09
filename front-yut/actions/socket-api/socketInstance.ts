@@ -3,53 +3,71 @@ import { CompatClient, Stomp } from "@stomp/stompjs";
 
 // stomp 연결 객체
 let stompClient: CompatClient | null = null;
-// session ID
 let sessionId: string = "";
+//닉네임 만들기
+// const firstNames = ["평화주의자", "인성파탄자", "윷판지배자", "윷수호신"];
+// const lastNames = ["개떡이", "철수", "유리", "짱구", "찰떡이", "맹구"];
+// let playerName = "";
 
-/**
- * STOMP over SockJS 연결
- */
-export function connect() {
-  let socket = new SockJS("http://localhost:8888/yut");
-  stompClient = Stomp.over(socket);
+// function randomPlayerName() {
+//   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+//   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+//   playerName = firstName + " " + lastName;
+//   return playerName;
+// }
 
-  stompClient.connect(
-    {},
-    // onConnected
-    () => {
-      //@ts-ignore
-      sessionId = socket._transport.url.split("/")[5];
-      onConnected(sessionId);
-    },
-    // onError
-    (frame: any) => {
-      onError(frame);
-    }
-  );
-}
-/**
- * Socket 연결에 성공했을 때 실행하는 함수
- *
- * @param sessionId socket을 연결한 sessionID
- */
-function onConnected(sessionId: string) {
-  console.log("success");
-  console.log();
-  // TODO: roomCode를 변수로 바꾸기!
-  stompClient?.subscribe("/topic/chat/{roomCode}", (body: any) => {
-    const data = JSON.parse(body.body);
-    console.log(data);
+//STOMP over SockJS 연결
+async function connect(): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    let socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/yut`);
+    stompClient = Stomp.over(socket);
+    stompClient.connect(
+      {},
+      // onConnected
+      () => {
+        //@ts-ignore
+        sessionId = socket._transport.url.split("/")[5];
+        localStorage.setItem("userId", sessionId);
+        // localStorage.setItem("playerName", randomPlayerName());
+        resolve();
+      },
+      // onError
+      (frame: any) => {
+        onError(frame);
+        reject(frame);
+      }
+    );
   });
+}
 
-  // 서버에 입장한다는 메시지 전송
-  stompClient?.send(
-    `/room/enter`,
-    {},
-    JSON.stringify({
-      userId: sessionId,
-      roomCode: "abcde",
-    })
-  );
+/**
+ * Socket 연결 후 Topic 구독할 때 실행하는 함수
+ *
+ * @param topic 원하는 topic 주소 parameter
+ * @callback 서버에서 준 데이터를 돌려받을 함수
+ */
+function subscribeTopic(topic: string, callback?: any) {
+  stompClient?.subscribe(topic, (body: any) => {
+    // if (callback) callback(JSON.parse(body.body));
+    if (typeof callback === "function") {
+      callback(JSON.parse(body.body));
+    }
+  });
+}
+
+/**
+ * Socket 연결 후 send 요청할 때 실행하는 함수
+ */
+function sendEvent(
+  eventName: string,
+  header: any,
+  contents: any,
+  callback?: any
+) {
+  stompClient?.send(eventName, header, JSON.stringify(contents));
+  if (typeof callback === "function") {
+    if (callback) callback();
+  }
 }
 
 /**
@@ -61,23 +79,4 @@ function onError(frame: any) {
   console.log(frame.headers);
 }
 
-/**
- * 채팅 메시지 보내기
- *
- * @param content 사용자가 보내는 메시지
- */
-export function sending(content: string) {
-  stompClient?.send(
-    // TOPIC
-    `/chat`,
-    {},
-    // CONTENT
-    JSON.stringify({
-      type: "CHAT",
-      userId: sessionId,
-      // TODO: roomCode 변수로 바꾸기
-      roomCode: "abcde",
-      content: content,
-    })
-  );
-}
+export { connect, onError, stompClient, subscribeTopic, sendEvent };
