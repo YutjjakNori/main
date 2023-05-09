@@ -4,7 +4,6 @@ import FlowerRiceIcon from "@/public/icon/flowerrice.svg";
 import SongpyeonIcon from "@/public/icon/songpyeon.svg";
 import SsukRiceIcon from "@/public/icon/ssukrice.svg";
 
-// TODO : 각 icon 추가되면 수정하기
 const PieceIcon = (type: YutPieceType): any => {
   switch (type) {
     case "yakgwa":
