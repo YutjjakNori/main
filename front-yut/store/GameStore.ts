@@ -42,9 +42,14 @@ const ActiveCornerArrowState = atom<CornerType>({
 });
 
 // 이벤트/윷 결과에 따라 윷 던지기 버튼 활성화
-const YutThrowBtnState = atom<boolean>({
+const YutThrowBtnState = atom<string>({
   key: "YutThrowBtn",
-  default: false,
+  default: "none",
+});
+
+const selectedPieceIndex = atom<number>({
+  key: "SelectedYutPiece",
+  default: -1,
 });
 
 export {
@@ -55,4 +60,6 @@ export {
   GameActionState,
   GameActionQueueState,
   ActiveCornerArrowState,
+  YutThrowBtnState,
+  selectedPieceIndex,
 };

@@ -3,8 +3,12 @@ import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
 import CornerPoint from "./Point/CornerPointCompo";
 import MiniPoint from "./Point/MiniPointCompo";
 import * as style from "./YutBoardCompo.style";
-import { useRecoilState } from "recoil";
-import { YutPieceListState } from "@/store/GameStore";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  YutPieceListState,
+  NowTurnPlayerIdState,
+  selectedPieceIndex,
+} from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo/ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
 import EventPoint from "./EventPoint";
@@ -15,6 +19,9 @@ import Option2 from "@/public/icon/eventItems/2.svg";
 import Option3 from "@/public/icon/eventItems/3.svg";
 import Option4 from "@/public/icon/eventItems/4.svg";
 import styled from "styled-components";
+
+import { YutThrowBtnState } from "@/store/GameStore";
+import usePieceMove from "@/actions/hook/usePieceMove";
 
 // TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
 // 임시 정보
@@ -74,47 +81,73 @@ const YutBoardCompo = () => {
   const [showOption2, setShowOption2] = useState(false);
   const [showOption3, setShowOption3] = useState(false);
   const [showOption4, setShowOption4] = useState(false);
+  const curUserId = useRecoilValue(NowTurnPlayerIdState);
+
+  const [btnDisplay, setBtnDisplay] = useRecoilState(YutThrowBtnState);
+  //선택된 piece의 index
+  const [movePieceIndex, setMovePieceIndex] =
+    useRecoilState(selectedPieceIndex);
+  const { appendPiece } = usePieceMove();
 
   function toggleOption0() {
-    console.log(true);
     setShowOption0(true);
-    // 2초 후 false로 바꾸기.
     setTimeout(() => setShowOption0(false), 2000);
   }
   function toggleOption1() {
-    setShowOption1(true);
-    // 2초 후 false로 바꾸기.
     setTimeout(() => setShowOption1(false), 2000);
   }
   function toggleOption2() {
-    console.log(true);
     setShowOption2(true);
-    // 2초 후 false로 바꾸기.
     setTimeout(() => setShowOption2(false), 2000);
   }
   function toggleOption3() {
-    console.log(true);
     setShowOption3(true);
-    // 2초 후 false로 바꾸기.
     setTimeout(() => setShowOption3(false), 2000);
   }
   function toggleOption4() {
-    console.log(true);
     setShowOption4(true);
-    // 2초 후 false로 바꾸기.
     setTimeout(() => setShowOption4(false), 2000);
   }
 
-  const takeAction = (index: number) => {
+  // 이벤트) 말 업고 가기
+  // 1. 시작 안한 말이 있는지 확인.
+  // 1-1. 없다면(-1) 꽝으로 치환
+  // 1-2. 있다면(>0) 첫 말번호 알아내기.
+  //
+  function appendEvent() {
+    // recoil에서 curUserId 받아옴
+    console.log(pieceList);
+    const piece = pieceList.find((piece) => {
+      return piece.userId === curUserId && piece.state === "NotStarted";
+    });
+    console.log("curUserId:" + curUserId + " piece:" + piece?.pieceId);
+    // 시작안한 말이 없다면 꽝으로 치환.
+    if (piece!.pieceId === -1) {
+      setTimeout(() => {
+        toggleOption0();
+      }, 2000);
+    } else {
+      const list = [piece!.pieceId, movePieceIndex];
+      appendPiece(curUserId, list);
+    }
+  }
+
+  useEffect(() => {
+    console.log("curUserId", curUserId);
+  }, [curUserId]);
+
+  const takeAction = async (index: number) => {
     switch (index) {
       case 0:
         toggleOption0();
         break;
       case 1:
         toggleOption1();
+        await setBtnDisplay("block");
         break;
       case 2:
         toggleOption2();
+        appendEvent();
         break;
       case 3:
         toggleOption3();
@@ -137,15 +170,24 @@ const YutBoardCompo = () => {
     0: 꽝 / 1: 한번더던지기
     2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
     */
-    const result = 1;
+    // 임시  --- (소켓통신이 되면 나중에 지울것) ---------- ( 2 )
+    const result = 2;
+    console.log(curUserId + " , " + movePieceIndex);
     takeAction(result);
   };
 
   return (
     <>
-      {/* <button onClick={() => "getEventResult"}>이벤트칸</button> */}
-      <button onClick={getEventResult}>이벤트칸</button>
-
+      <button
+        onClick={getEventResult}
+        style={{
+          position: "absolute",
+          top: "0",
+          left: "0",
+        }}
+      >
+        이벤트칸
+      </button>
       <style.Container>
         {/* eventContainer로 명칭 바꾸기 */}
         <StyledKKwangContainer>
@@ -216,9 +258,6 @@ const StyledKKwangContainer = styled.div`
   z-index: 1;
   position: relative;
   width: 80%;
-  /* display: none; */
 `;
-
-const StyledCompo = styled.div``;
 
 export default YutBoardCompo;

@@ -11,6 +11,8 @@ import Mo from "@/public/icon/yutImage/mo.svg";
 import BackDo from "@/public/icon/yutImage/backDo.svg";
 
 import { connect, sending } from "@/actions/socket-api/socketInstance";
+import { useRecoilState } from "recoil";
+import { YutThrowBtnState } from "@/store/GameStore";
 
 import RectButton, {
   RectButtonProps,
@@ -25,7 +27,7 @@ interface ListItem {
   res: string;
 }
 
-const YutThrow = () => {
+const YutThrowCompo = () => {
   const [currentImage, setCurrentImage] = useState(0);
 
   // resList를 쌓기. --------------------------------- (2)
@@ -38,9 +40,13 @@ const YutThrow = () => {
     { id: 5, res: "" },
   ]);
 
-  // 윷 던지기 순서 idx를 관리하는 count 변수
+  // 윷 던지기 누적 개수를 관리하는 count 변수
+  // -> 만약 윷을 리스트에 넣고 난뒤의 값이 4라면 서버에 isLast: true 로 알려주기.
   const [count, setCount] = useState(0);
-  const [btnDisplay, setBtnDisplay] = useState<"block" | "none">("block");
+
+  // const [btnDisplay, setBtnDisplay] = useState<"block" | "none">("block");
+  const [btnDisplay, setBtnDisplay] = useRecoilState(YutThrowBtnState);
+
   const getYutSvgByIndex = useCallback((index: number) => {
     //    배열로 만들어서 하나씩 꺼내도록 리팩토링 가능.
     switch (index) {
@@ -70,13 +76,11 @@ const YutThrow = () => {
 
   const yutThrowBtnInfo: RectButtonProps = {
     text: "윷 던지기",
-    fontSize: "18px",
+    fontSize: "15px",
     backgroundColor: "#6EBA91",
   };
 
   function throwYut() {
-    setBtnDisplay(btnDisplay === "block" ? "none" : "block");
-
     // 소켓 연결해서 결과를 받기 --------------------------(1)
     // userId, roomCode 를 전역변수에서 나중에 가져와야함.
     // 아래는 임시 dummy 코드.
@@ -142,6 +146,7 @@ const YutThrow = () => {
               backgroundColor={yutResultInfo.backgroundColor}
               borderColor={yutResultInfo.borderColor}
               margin={yutResultInfo.margin}
+              key={index}
             />
           );
         })}
@@ -169,4 +174,4 @@ const YutThrow = () => {
 };
 
 export type { RectStyleInfo };
-export default YutThrow;
+export default YutThrowCompo;

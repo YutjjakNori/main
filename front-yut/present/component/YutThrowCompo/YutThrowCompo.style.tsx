@@ -5,8 +5,9 @@ const StyledContainer = styled.div`
   position: relative;
   text-align: center;
   background-color: #f0f6ff;
-  width: 30%;
-  margin: auto;
+  width: 45%;
+  right: 15%;
+  /* margin: auto;  */
 `;
 
 const StyledResultList = styled.div`
@@ -17,7 +18,7 @@ const StyledResultList = styled.div`
   color: red;
   margin: auto;
   display: grid;
-  gap: 1rem;
+  gap: 0rem;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr; // 최대 5개
   justify-content: space-around;
 `;
@@ -31,7 +32,7 @@ const RectContainer = styled.div<RectStyleInfo>`
   position: absolute;
   width: 70%;
   height: 40%;
-  top: 35%;
+  top: 30%;
   left: 50%;
   transform: translateY(0%) translateX(-50%);
   display: ${(props) => props.display || "block"};
