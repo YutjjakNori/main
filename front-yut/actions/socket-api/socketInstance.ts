@@ -19,7 +19,12 @@ let sessionId: string = "";
 //STOMP over SockJS 연결
 async function connect(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    let socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/yut`);
+    // let socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/yut`);
+    let socket = new SockJS(`https://k8d109.p.ssafy.io/yut`);
+    console.log(
+      "process.env.NEXT_PUBLIC_SERVER_URL >>> ",
+      process.env.NEXT_PUBLIC_SERVER_URL
+    );
     stompClient = Stomp.over(socket);
     stompClient.connect(
       {},
