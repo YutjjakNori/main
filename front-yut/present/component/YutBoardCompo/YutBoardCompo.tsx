@@ -7,25 +7,15 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   YutPieceListState,
   NowTurnPlayerIdState,
-  selectedPieceIndex,
+  SelectedPieceIndex,
+  YutThrowBtnState,
 } from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo/ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
 import EventPoint from "./EventPoint";
+import EventCard from "./EventCard";
 
-import Option0 from "@/public/icon/eventItems/0.svg";
-import Option1 from "@/public/icon/eventItems/1.svg";
-import Option2 from "@/public/icon/eventItems/2.svg";
-import Option3 from "@/public/icon/eventItems/3.svg";
-import Option4 from "@/public/icon/eventItems/4.svg";
-import styled from "styled-components";
-
-import { YutThrowBtnState } from "@/store/GameStore";
 import usePieceMove from "@/actions/hook/usePieceMove";
-
-// TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
-// 임시 정보
-const eventPointList = [2, 7]; // -------------------- (1)
 
 const pieceFilterByIndex = (
   index: number,
@@ -35,6 +25,10 @@ const pieceFilterByIndex = (
     (piece) => piece.state === "InBoard" && piece.position === index
   );
 };
+
+// TODO: 소켓 통신하여 이벤트칸 위치정보 2개 받아오기.
+// 임시 정보
+const eventPointList = [2, 7]; // -------------------- (1)
 
 const createMiniPoint = (
   cornerIndex: number,
@@ -76,38 +70,18 @@ const createCornerPoint = (
 
 const YutBoardCompo = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
-  const [showOption0, setShowOption0] = useState(false);
-  const [showOption1, setShowOption1] = useState(false);
-  const [showOption2, setShowOption2] = useState(false);
-  const [showOption3, setShowOption3] = useState(false);
-  const [showOption4, setShowOption4] = useState(false);
   const curUserId = useRecoilValue(NowTurnPlayerIdState);
 
   const [btnDisplay, setBtnDisplay] = useRecoilState(YutThrowBtnState);
   //선택된 piece의 index
   const [movePieceIndex, setMovePieceIndex] =
-    useRecoilState(selectedPieceIndex);
+    useRecoilState(SelectedPieceIndex);
   const { appendPiece } = usePieceMove();
 
-  function toggleOption0() {
-    setShowOption0(true);
-    setTimeout(() => setShowOption0(false), 2000);
-  }
-  function toggleOption1() {
-    setShowOption1(true);
-    setTimeout(() => setShowOption1(false), 2000);
-  }
-  function toggleOption2() {
-    setShowOption2(true);
-    setTimeout(() => setShowOption2(false), 2000);
-  }
-  function toggleOption3() {
-    setShowOption3(true);
-    setTimeout(() => setShowOption3(false), 2000);
-  }
-  function toggleOption4() {
-    setShowOption4(true);
-    setTimeout(() => setShowOption4(false), 2000);
+  const [eventIdx, setEventIdx] = useState(-1);
+
+  function hideEventCard() {
+    setTimeout(() => setEventIdx(-1), 2000);
   }
 
   // 이벤트) 말 업고 가기
@@ -116,44 +90,53 @@ const YutBoardCompo = () => {
   // 1-2. 있다면(>0) 첫 말번호 알아내기.
   //
   function appendEvent() {
-    // recoil에서 curUserId 받아옴
     const pieceIdx = pieceList.findIndex((piece) => {
       return piece.userId === curUserId && piece.state === "NotStarted";
     });
-    console.log(curUserId + " , " + pieceIdx);
     // 시작안한 말이 없다면 꽝으로 치환.
     if (pieceIdx === -1) {
       setTimeout(() => {
-        toggleOption0();
+        setEventIdx(0);
+        hideEventCard();
       }, 2000);
     } else {
       const list = [pieceIdx, movePieceIndex];
-
       setTimeout(() => {
         appendPiece(curUserId, list);
       }, 2000);
     }
   }
 
-  const takeAction = async (index: number) => {
-    switch (index) {
-      case 0:
-        toggleOption0();
-        break;
-      case 1:
-        toggleOption1();
-        await setBtnDisplay("block");
-        break;
-      case 2:
-        toggleOption2();
-        appendEvent();
-        break;
-      case 3:
-        toggleOption3();
-        break;
-      case 4:
-        toggleOption4();
-        break;
+  const takeAction = (index: number) => {
+    try {
+      switch (index) {
+        case 0:
+          setEventIdx(0);
+          hideEventCard();
+          break;
+        case 1:
+          setEventIdx(1);
+          setBtnDisplay("block");
+          hideEventCard();
+          break;
+        case 2:
+          setEventIdx(2);
+          appendEvent();
+          // hideEventCard(); // 일부로: 그래야 정상작동함
+          break;
+        case 3:
+          setEventIdx(3);
+          hideEventCard();
+          break;
+        case 4:
+          setEventIdx(4);
+          hideEventCard();
+          break;
+      }
+    } catch (err) {
+      throw err;
+    } finally {
+      //hideEventCard();
     }
   };
 
@@ -170,6 +153,7 @@ const YutBoardCompo = () => {
     */
     // result: 임시  --- (소켓통신이 되면 나중에 수정할것) ---------- ( 2 )
     const result = 2;
+    // setEventIdx(result);
     console.log(curUserId + " , " + movePieceIndex);
     takeAction(result);
   };
@@ -188,14 +172,9 @@ const YutBoardCompo = () => {
       </button>
       <style.Container>
         {/* eventContainer로 명칭 바꾸기 */}
-        <StyledKKwangContainer>
-          {/* <Nothing width={"100%"} height={"100%"} /> */}
-          {showOption0 ? <Option0 width={"100%"} height={"100%"} /> : null}
-          {showOption1 ? <Option1 width={"100%"} height={"100%"} /> : null}
-          {showOption2 ? <Option2 width={"100%"} height={"100%"} /> : null}
-          {showOption3 ? <Option3 width={"100%"} height={"100%"} /> : null}
-          {showOption4 ? <Option4 width={"100%"} height={"100%"} /> : null}
-        </StyledKKwangContainer>
+        <style.StyledEventContainer>
+          <EventCard eventIdx={eventIdx} />
+        </style.StyledEventContainer>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
         {/* 분기점 */}
         <ArrowIconCompo classStr={"cornerLeftTop1"} position={10} />
@@ -250,12 +229,5 @@ const YutBoardCompo = () => {
     </>
   );
 };
-
-const StyledKKwangContainer = styled.div`
-  margin: auto;
-  z-index: 1;
-  position: relative;
-  width: 80%;
-`;
 
 export default YutBoardCompo;

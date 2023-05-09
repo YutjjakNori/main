@@ -39,7 +39,7 @@ const Game = () => {
   }, []);
 
   const testMove1 = () => {
-    pieceMove("1", 1, [0, 1, 2]);
+    pieceMove("2", 1, [0, 1, 2]);
   };
   const testMove2 = () => {
     pieceMove("1", 2, [0, 1, 2, 3, 4]);

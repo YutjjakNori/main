@@ -232,6 +232,13 @@ const EventPoint = styled.div`
   ${PieceSize}
 `;
 
+const StyledEventContainer = styled.div`
+  margin: auto;
+  z-index: 1;
+  position: relative;
+  width: 80%;
+`;
+
 //--------------------
 export {
   Container,
@@ -240,4 +247,5 @@ export {
   MiniList,
   ArrowWrapper,
   EventPoint,
+  StyledEventContainer,
 };

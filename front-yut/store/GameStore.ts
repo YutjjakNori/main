@@ -47,7 +47,7 @@ const YutThrowBtnState = atom<string>({
   default: "none",
 });
 
-const selectedPieceIndex = atom<number>({
+const SelectedPieceIndex = atom<number>({
   key: "SelectedYutPiece",
   default: -1,
 });
@@ -61,5 +61,5 @@ export {
   GameActionQueueState,
   ActiveCornerArrowState,
   YutThrowBtnState,
-  selectedPieceIndex,
+  SelectedPieceIndex,
 };

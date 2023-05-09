@@ -1,7 +1,7 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
 import {
   ActiveCornerArrowState,
-  selectedPieceIndex,
+  SelectedPieceIndex,
   YutPieceListState,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
@@ -14,7 +14,7 @@ const usePieceMove = () => {
   const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
   //움직여야할 piece의 index
   const [movePieceIndex, setMovePieceIndex] =
-    useRecoilState(selectedPieceIndex);
+    useRecoilState(SelectedPieceIndex);
   //움직일 경로
   const [movePathList, setMovePathList] = useState<Array<number>>([]);
   //모서리 분기점 활성화
@@ -110,21 +110,10 @@ const usePieceMove = () => {
 
   const appendAToB = (
     userId: string,
-    movePieceId: number, //움직여서 합칠 말
-    targetPieceId: number //원래 말 판에 있던 말
+    movePieceIndex: number, //움직여서 합칠 말
+    targetPieceIndex: number //원래 말 판에 있던 말
   ) => {
-    let basePieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === movePieceId + 1
-    );
-    let targetPieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === targetPieceId + 1
-    );
-
-    if (basePieceIndex === -1 || targetPieceIndex === -1) {
-      throw Error("usePieceMove/appendPiece : piece 정보를 찾을 수 없음");
-    }
-
-    let basePiece = pieceList[basePieceIndex];
+    let basePiece = pieceList[movePieceIndex];
     let targetPiece = pieceList[targetPieceIndex];
 
     if (
@@ -137,10 +126,10 @@ const usePieceMove = () => {
     }
 
     if (basePiece.state === "InBoard" && targetPiece.state === "NotStarted") {
-      const tmpIndex = basePieceIndex;
+      const tmpIndex = movePieceIndex;
       const tmpPiece = basePiece;
 
-      basePieceIndex = targetPieceIndex;
+      movePieceIndex = targetPieceIndex;
       basePiece = targetPiece;
 
       targetPieceIndex = tmpIndex;
@@ -152,14 +141,14 @@ const usePieceMove = () => {
       if (idx !== targetPieceIndex) return p;
 
       const tmpP = { ...p };
-      const baseTmpP = { ...pieceList[basePieceIndex] };
+      const baseTmpP = { ...pieceList[movePieceIndex] };
       baseTmpP.state = "Appended";
       baseTmpP.position = tmpP.position;
       tmpP.appendArray = [...tmpP.appendArray, baseTmpP];
       return tmpP;
     });
 
-    newArr.splice(basePieceIndex, 1);
+    newArr.splice(movePieceIndex, 1);
     setPieceList(newArr);
   };
 
