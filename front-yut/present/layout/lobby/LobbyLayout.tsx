@@ -10,7 +10,6 @@ import * as style from "./LobbyLayout.style";
 
 const LobbyLayout = () => {
   const router = useRouter();
-  // TODO : room code state 하나만 쓰도록 고치기
   const setRoomCode = useSetRecoilState(RoomCodeState);
 
   // 방 만들기 onClick
@@ -21,7 +20,8 @@ const LobbyLayout = () => {
       throw Error("방 생성에 실패했습니다");
     } else {
       setRoomCode(result.roomCode);
-      router.push("/ready");
+      // router.push("/ready");
+      router.push("/readySocketTest");
     }
   }, [router]);
 
@@ -51,10 +51,11 @@ const LobbyLayout = () => {
           }
         }
         setRoomCode(code);
-        router.push("/ready");
+        // router.push("/ready");
+        router.push("/readySocketTest");
       });
     },
-    [router],
+    [router]
   );
 
   const buttonInfoList = [

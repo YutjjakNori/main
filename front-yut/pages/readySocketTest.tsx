@@ -1,7 +1,7 @@
 import ReadyLayout from "@/present/layout/ready/ReadyLayout";
 
 //로비 페이지
-const ready = () => {
+const readySocketTest = () => {
   return (
     <>
       <ReadyLayout />
@@ -9,4 +9,4 @@ const ready = () => {
   );
 };
 
-export default ready;
+export default readySocketTest;
