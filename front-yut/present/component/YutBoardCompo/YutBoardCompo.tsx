@@ -94,6 +94,7 @@ const YutBoardCompo = () => {
     setTimeout(() => setShowOption0(false), 2000);
   }
   function toggleOption1() {
+    setShowOption1(true);
     setTimeout(() => setShowOption1(false), 2000);
   }
   function toggleOption2() {
