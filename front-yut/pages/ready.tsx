@@ -100,12 +100,6 @@ const Ready = () => {
 
   useEffect(() => {
     initConnection();
-    console.log(
-      "process.env.NEXT_PUBLIC_SERVER_URL >>> ",
-      process.env.NEXT_PUBLIC_SERVER_URL
-    );
-    console.log("process.env.NEXT_PUBLIC_SERVER_URL >>> ");
-    console.log(process.env.NEXT_PUBLIC_SERVER_URL);
   }, []);
 
   // 준비 이벤트 전송

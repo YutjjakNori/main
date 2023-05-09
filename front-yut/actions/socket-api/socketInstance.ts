@@ -19,10 +19,6 @@ let sessionId: string = "";
 //STOMP over SockJS 연결
 async function connect(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
-    // const url: string = `${process.env.NEXT_PUBLIC_SERVER_URL}/yut`;
-    // console.log(url);
-    // let socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/yut`);
-    // let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut");
     let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut", null, {
       transports: ["websocket", "xhr-streaming", "xhr-polling"],
     });
