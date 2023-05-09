@@ -27,7 +27,7 @@ public class GameController {
      * 
      * @param request
      */
-    @MessageMapping("start")
+    @MessageMapping("/start")
     public void startGame(GameDto.Request request) {
         gameService.startGame(request);
     }
