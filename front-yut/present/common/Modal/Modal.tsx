@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import * as style from "./Modal.style";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { showState } from "@/store/modalStore";
+import { ShowState } from "@/store/ModalStore";
 
 interface ReadyModalProps {
   title: string;
@@ -11,7 +11,7 @@ interface ReadyModalProps {
 
 function Modal({ title, children }: ReadyModalProps) {
   const [mounted, setMounted] = useState(false);
-  const isShow = useRecoilValue(showState);
+  const isShow = useRecoilValue(ShowState);
 
   useEffect(() => {
     setMounted(true);

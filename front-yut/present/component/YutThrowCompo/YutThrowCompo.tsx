@@ -10,7 +10,7 @@ import Yut from "@/public/icon/yutImage/yut.svg";
 import Mo from "@/public/icon/yutImage/mo.svg";
 import BackDo from "@/public/icon/yutImage/backDo.svg";
 
-import { connect, sending } from "@/actions/socket-api/socketInstance";
+import { connect, sendEvent } from "@/actions/socket-api/socketInstance";
 import { useRecoilState } from "recoil";
 import { YutThrowBtnState } from "@/store/GameStore";
 
@@ -84,6 +84,7 @@ const YutThrowCompo = () => {
     // 소켓 연결해서 결과를 받기 --------------------------(1)
     // userId, roomCode 를 전역변수에서 나중에 가져와야함.
     // 아래는 임시 dummy 코드.
+
     const request = {
       roomCode: "abcde",
       userId: "lewis",

@@ -33,11 +33,11 @@ const createAllPieceList = (userList: Array<string>) => {
   let pieceTmp: Array<YutPieceCompoProps> = [];
 
   userList.forEach((userId, index) => {
-    let type: YutPieceType = "flowerRice";
+    let type: YutPieceType = "yakgwa";
 
     if (index == 1) type = "songpyeon";
     else if (index === 2) type = "ssukRice";
-    else if (index === 3) type = "yakgwa";
+    else if (index === 3) type = "flowerRice";
 
     const pieces = createUserPieceList(userId, type);
     pieceTmp = pieceTmp.concat(pieces);
