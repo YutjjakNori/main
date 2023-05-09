@@ -40,7 +40,6 @@ const Game = () => {
 
   const testMove1 = () => {
     pieceMove("1", 1, [0, 1, 2]);
-    
   };
   const testMove2 = () => {
     pieceMove("1", 2, [0, 1, 2, 3, 4]);
@@ -71,7 +70,6 @@ const Game = () => {
       <button onClick={testPieceAppend}>말 합치기</button>
       <button onClick={testPieceAppend2}>말 3개 합치기</button>
       <button onClick={testCatchPiece}>말 잡기</button>
-      {/* <button onClick={() => "getEventResult"}>이벤트칸</button> */}
     </>
   );
 };

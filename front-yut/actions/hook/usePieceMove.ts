@@ -114,10 +114,10 @@ const usePieceMove = () => {
     targetPieceId: number //원래 말 판에 있던 말
   ) => {
     let basePieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === movePieceId
+      (p) => p.userId === userId && p.pieceId === movePieceId + 1
     );
     let targetPieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === targetPieceId
+      (p) => p.userId === userId && p.pieceId === targetPieceId + 1
     );
 
     if (basePieceIndex === -1 || targetPieceIndex === -1) {

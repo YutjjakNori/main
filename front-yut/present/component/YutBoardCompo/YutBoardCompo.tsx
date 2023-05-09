@@ -116,25 +116,23 @@ const YutBoardCompo = () => {
   //
   function appendEvent() {
     // recoil에서 curUserId 받아옴
-    console.log(pieceList);
-    const piece = pieceList.find((piece) => {
+    const pieceIdx = pieceList.findIndex((piece) => {
       return piece.userId === curUserId && piece.state === "NotStarted";
     });
-    console.log("curUserId:" + curUserId + " piece:" + piece?.pieceId);
+    console.log(curUserId + " , " + pieceIdx);
     // 시작안한 말이 없다면 꽝으로 치환.
-    if (piece!.pieceId === -1) {
+    if (pieceIdx === -1) {
       setTimeout(() => {
         toggleOption0();
       }, 2000);
     } else {
-      const list = [piece!.pieceId, movePieceIndex];
-      appendPiece(curUserId, list);
+      const list = [pieceIdx, movePieceIndex];
+
+      setTimeout(() => {
+        appendPiece(curUserId, list);
+      }, 2000);
     }
   }
-
-  useEffect(() => {
-    console.log("curUserId", curUserId);
-  }, [curUserId]);
 
   const takeAction = async (index: number) => {
     switch (index) {
@@ -163,14 +161,13 @@ const YutBoardCompo = () => {
     userId: "lewis",
   };
 
-  // 서버에 요청 전송
+  // 서버에 이벤트 요청 전송
   const getEventResult = () => {
-    // 응답 데이터에 따라 함수 실행하기
     /*
     0: 꽝 / 1: 한번더던지기
     2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
     */
-    // 임시  --- (소켓통신이 되면 나중에 지울것) ---------- ( 2 )
+    // result: 임시  --- (소켓통신이 되면 나중에 수정할것) ---------- ( 2 )
     const result = 2;
     console.log(curUserId + " , " + movePieceIndex);
     takeAction(result);
