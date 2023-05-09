@@ -22,7 +22,10 @@ async function connect(): Promise<void> {
     // const url: string = `${process.env.NEXT_PUBLIC_SERVER_URL}/yut`;
     // console.log(url);
     // let socket = new SockJS(`${process.env.NEXT_PUBLIC_SERVER_URL}/yut`);
-    let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut");
+    // let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut");
+    let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut", null, {
+      transports: ["websocket", "xhr-streaming", "xhr-polling"],
+    });
 
     stompClient = Stomp.over(socket);
     stompClient.connect(
