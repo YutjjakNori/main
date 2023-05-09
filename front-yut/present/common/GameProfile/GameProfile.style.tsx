@@ -7,6 +7,7 @@ const Container = styled.div<{ color: string }>`
   display: inline-block;
   position: relative;
   border: 3px solid ${({ color }) => color ?? "white"};
+  background-color: ${colors.achromaticColor.white};
   width: 10rem;
   height: auto;
   aspect-ratio: 4/3;
@@ -77,7 +78,8 @@ const PlayerName = styled.div`
   position: absolute;
   display: flex;
   justify-content: center;
-  padding-top: 2%;
+  align-items: center !important;
+  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   bottom: 0;
@@ -85,7 +87,6 @@ const PlayerName = styled.div`
   color: ${colors.achromaticColor.darkBlack};
   width: 80%;
   height: 30%;
-  text-align: center;
   font-size: 1rem;
   font-weight: bold;
 `;

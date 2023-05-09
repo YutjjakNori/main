@@ -1,8 +1,8 @@
 //로비 페이지
-import CircleButton from "@/present/common/Button/CircleButton";
-import RectButton from "@/present/common/Button/RectButton";
-import { CircleButtonProps } from "@/present/common/Button/CircleButton";
-import { RectButtonProps } from "@/present/common/Button/RectButton";
+import CircleButton from "@/present/common/Button/Circle/CircleButton";
+import RectButton from "@/present/common/Button/Rect/RectButton";
+import { CircleButtonProps } from "@/present/common/Button/Circle/CircleButton";
+import { RectButtonProps } from "@/present/common/Button/Rect/RectButton";
 import styled from "styled-components";
 
 import Svg from "@/public/icon/close.svg";
@@ -16,9 +16,12 @@ const CompoTest = () => {
   };
   const exitBtnInfo: CircleButtonProps = {
     Icon: Svg,
+    fontSize: "",
     text: "",
+    color: "#575757",
     backgroundColor: "#EA857C",
     borderColor: "transparent",
+    margin: "1rem",
   };
 
   return (
@@ -34,9 +37,12 @@ const CompoTest = () => {
       <StyledContainer2>
         <CircleButton
           Icon={exitBtnInfo.Icon}
+          fontSize={exitBtnInfo.fontSize}
           text={exitBtnInfo.text}
+          color={exitBtnInfo.color}
           backgroundColor={exitBtnInfo.backgroundColor}
           borderColor={exitBtnInfo.borderColor}
+          margin={exitBtnInfo.margin}
         />
       </StyledContainer2>
     </StyledContainer>

@@ -20,7 +20,7 @@ const GameProfile = ({
   timerSeconds,
 }: GameProfileProps) => {
   const [profileColor, setProfileColor] = useState<string>(
-    colors.readyPage.notReady,
+    colors.readyPage.notReady
   );
   const [seconds, setSeconds] = useState<number>(0);
 

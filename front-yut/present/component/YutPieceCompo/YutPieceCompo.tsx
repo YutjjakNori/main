@@ -1,7 +1,9 @@
+import usePieceMove from "@/actions/hook/usePieceMove";
 import { NowTurnPlayerIdState } from "@/store/GameStore";
+import { colors } from "@/styles/theme";
 import { PieceStateType } from "@/types/game/YutGameTypes";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import PieceIcon from "./PieceIcon";
 import * as style from "./YutPieceCompo.style";
@@ -19,7 +21,7 @@ interface YutPieceCompoProps {
   pieceId: number;
   pieceType: YutPieceType;
   state: PieceStateType;
-  appendedCount: number;
+  appendArray: Array<YutPieceCompoProps>;
   position: number;
 }
 
@@ -28,16 +30,31 @@ const YutPieceCompo = ({
   pieceId,
   pieceType,
   state = "NotStarted",
-  appendedCount = 1,
+  appendArray = [],
 }: YutPieceCompoProps) => {
+  const { selectPiece } = usePieceMove();
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const isClickable = nowTurnPlayerId === userId;
+  const appendedCount = useMemo(() => appendArray.length, [appendArray]);
 
   const onClick = () => {
     if (!isClickable) return;
 
-    //TODO : 서버에 요청
+    selectPiece(userId, pieceId);
   };
+
+  const color = useMemo(() => {
+    switch (pieceType) {
+      case "flowerRice":
+        return colors.gamePlayer[0];
+      case "songpyeon":
+        return colors.gamePlayer[1];
+      case "ssukRice":
+        return colors.gamePlayer[2];
+      default:
+        return colors.gamePlayer[3];
+    }
+  }, [pieceType]);
 
   return (
     <style.SvgContainer
@@ -47,9 +64,11 @@ const YutPieceCompo = ({
     >
       {/* player type에 맞는 svg icon */}
       {PieceIcon(pieceType)}
-      <style.AppendCount>
-        {appendedCount > 1 ? appendedCount : null}
-      </style.AppendCount>
+      {appendedCount > 0 ? (
+        <style.AppendCount color={color}>
+          <span>{appendedCount + 1}</span>
+        </style.AppendCount>
+      ) : null}
     </style.SvgContainer>
   );
 };

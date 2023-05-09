@@ -1,15 +1,21 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
+import { CornerType, GameActionType } from "@/types/game/YutGameTypes";
 import { atom } from "recoil";
+
+const RoomCodeState = atom<string>({
+  key: "GamRoomCode",
+  default: "",
+});
 
 //사용자들의 모든 말 정보
 const YutPieceListState = atom<Array<YutPieceCompoProps>>({
-  key: "PlayerPieceListAtom",
+  key: "PlayerPieceList",
   default: [],
 });
 
 //현재 턴 플레이어 id
 const NowTurnPlayerIdState = atom<string>({
-  key: "TurnPlayerIdAtom",
+  key: "TurnPlayerId",
   default: "-1",
 });
 
@@ -19,4 +25,28 @@ const PlayTurnState = atom<Array<string>>({
   default: [],
 });
 
-export { YutPieceListState, NowTurnPlayerIdState, PlayTurnState };
+const GameActionState = atom<GameActionType>({
+  key: "GameAction",
+  default: "Started",
+});
+
+const GameActionQueueState = atom<Array<GameActionType>>({
+  key: "GameActionQueue",
+  default: [],
+});
+
+//코너에서 분기점을 선택해야할때 활성화
+const ActiveCornerArrowState = atom<CornerType>({
+  key: "ActiveCornerArrow",
+  default: "none",
+});
+
+export {
+  RoomCodeState,
+  YutPieceListState,
+  NowTurnPlayerIdState,
+  PlayTurnState,
+  GameActionState,
+  GameActionQueueState,
+  ActiveCornerArrowState,
+};
