@@ -226,6 +226,6 @@ public class RoomService {
     @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
     public void sendReady(Map<String, Object> response) {
         log.info("Ready Send To : " + response.get("roomCode"));
-        template.convertAndSend("/topic/room/prepare/" + response.get("roomCode"), response.get("response"));
+        template.convertAndSend("/topic/room/preparation/" + response.get("roomCode"), response.get("response"));
     }
 }
