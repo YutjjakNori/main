@@ -177,22 +177,13 @@ public class RoomService {
         List<GameUser> users = game.getUsers();
         int userSize = users.size();
 
-        int userIndex = 0;
-        for(int i=0; i < userSize; i++) {
-            if(users.get(i).getUserId().equals(request.getUserId())) {
-                userIndex = i;
-            }
-        }
-        String[] readyArray = game.getGameStatus().split("");
+        int userIndex = users.indexOf(new GameUser(request.getUserId(), null));
 
-        readyArray[userIndex] = readyChange;
-
-        String ready = String.join("", readyArray);
-
+        String ready = game.getGameStatus().replace(String.valueOf(game.getGameStatus().charAt(userIndex)), readyChange);
         game.setGameStatus(ready);
 
-        boolean canStart = ((1 << userSize) - 1) == Integer.parseInt(ready,2);
-        if((userSize > 1 && userSize < 5) && canStart) {
+        boolean canStart = userSize > 1 && userSize < 5 && ((1 << userSize) - 1) == Integer.parseInt(ready, 2);
+        if(canStart) {
             Collections.shuffle(users);
             game.setUsers(users);
             game.setGameStatus("start");
