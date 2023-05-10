@@ -95,9 +95,7 @@ public class RoomService {
     public void enterRoom(RequestDto enterDto) {
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
-        String userKey = "user:" + userId;
-        String gameKey = "game:" + roomCode;
-        log.info("Enter Room : " + roomCode + " USER : " + userId);
+        String key = "game:"+roomCode;
 
         List<GameUser> users = new ArrayList<>();
         List<Integer> pieces = new ArrayList<>();
@@ -166,7 +164,7 @@ public class RoomService {
         Map<String, Object> response = new HashMap<>();
         response.put("roomCode", roomCode);
         response.put("response", enterResponse);
-
+        log.info("Enter Room From : " + roomCode + " User : " + userId);
         kafkaTemplate.send(TOPIC_ROOM + ".enter", roomCode, response);
         kafkaTemplate.send(TOPIC_CHAT, roomCode, chatRequestDto);
     }
@@ -178,7 +176,7 @@ public class RoomService {
      */
     @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = GROUP_ID)
     public void sendRoomState(Map<String, Object> response) {
-        log.info("Announce Enter Room : " + response.get("roomCode"));
+        log.info("Enter Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
     }
 
@@ -189,28 +187,19 @@ public class RoomService {
      */
     public void readyGame(ReadyDto.Request request) {
         String roomCode = request.getRoomCode();
-        boolean isReady = request.isReady();
+        String readyChange = request.getReady();
         String key = "game:"+roomCode;
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> users = game.getUsers();
         int userSize = users.size();
 
-        int userIndex = 0;
-        for(int i=0; i < userSize; i++) {
-            if(users.get(i).getUserId().equals(request.getUserId())) {
-                userIndex = i;
-            }
-        }
-        String[] readyArray = game.getGameStatus().split("");
+        int userIndex = users.indexOf(new GameUser(request.getUserId(), null));
 
-        readyArray[userIndex] = isReady ? "1" : "0";
-
-        String ready = String.join("", readyArray);
-
+        String ready = game.getGameStatus().replace(String.valueOf(game.getGameStatus().charAt(userIndex)), readyChange);
         game.setGameStatus(ready);
 
-        boolean canStart = ((1 << userSize) - 1) == Integer.parseInt(ready,2);
-        if((userSize > 1 && userSize < 5) && canStart) {
+        boolean canStart = userSize > 1 && userSize < 5 && ((1 << userSize) - 1) == Integer.parseInt(ready, 2);
+        if(canStart) {
             Collections.shuffle(users);
             game.setUsers(users);
             game.setGameStatus("start");
@@ -225,14 +214,14 @@ public class RoomService {
 
         ReadyDto.Response readyResponse = ReadyDto.Response.builder()
                 .userId(request.getUserId())
-                .ready(isReady)
+                .ready(readyChange)
                 .start(canStart)
                 .build();
 
         Map<String, Object> response= new HashMap<>();
         response.put("roomCode", roomCode);
         response.put("response", readyResponse);
-
+        log.info("Ready From : " + roomCode + " User : " + request.getUserId());
         kafkaTemplate.send(TOPIC_ROOM + ".prepare", response);
     }
 
@@ -243,7 +232,8 @@ public class RoomService {
      */
     @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
     public void sendReady(Map<String, Object> response) {
-        template.convertAndSend("/topic/room/prepare/" + response.get("roomCode"), response.get("response"));
+        log.info("Ready Send To : " + response.get("roomCode"));
+        template.convertAndSend("/topic/room/preparation/" + response.get("roomCode"), response.get("response"));
     }
 
     /**
