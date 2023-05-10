@@ -149,7 +149,7 @@ public class RoomService {
         Map<String, Object> response = new HashMap<>();
         response.put("roomCode", roomCode);
         response.put("response", enterResponse);
-
+        log.info("Enter Room From : " + roomCode + " User : " + userId);
         kafkaTemplate.send(TOPIC_ROOM + ".enter", roomCode, response);
         kafkaTemplate.send(TOPIC_CHAT, roomCode, chatRequestDto);
     }
@@ -161,7 +161,6 @@ public class RoomService {
      */
     @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = GROUP_ID)
     public void sendRoomState(Map<String, Object> response) {
-        log.info("Announce Enter Room : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
     }
 
@@ -215,7 +214,7 @@ public class RoomService {
         Map<String, Object> response= new HashMap<>();
         response.put("roomCode", roomCode);
         response.put("response", readyResponse);
-
+        log.info("Ready From : " + roomCode + " User : " + request.getUserId());
         kafkaTemplate.send(TOPIC_ROOM + ".prepare", response);
     }
 
