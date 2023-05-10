@@ -98,7 +98,6 @@ public class RoomService {
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
         String key = "game:"+roomCode;
-        log.info("Enter Room : " + roomCode + " USER : " + userId);
 
         List<GameUser> users = new ArrayList<>();
         List<Integer> pieces = new ArrayList<>();
@@ -161,6 +160,7 @@ public class RoomService {
      */
     @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = GROUP_ID)
     public void sendRoomState(Map<String, Object> response) {
+        log.info("Enter Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
     }
 
@@ -225,6 +225,7 @@ public class RoomService {
      */
     @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
     public void sendReady(Map<String, Object> response) {
+        log.info("Ready Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/prepare/" + response.get("roomCode"), response.get("response"));
     }
 }
