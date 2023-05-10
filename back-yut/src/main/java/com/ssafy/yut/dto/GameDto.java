@@ -25,7 +25,7 @@ public class GameDto {
     @AllArgsConstructor
     @Builder
     public static class User {
-        private String userId;
+        private String id;
         private List<Integer> pieceNum;
     }
 

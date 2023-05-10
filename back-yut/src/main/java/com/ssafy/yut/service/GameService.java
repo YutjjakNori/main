@@ -59,7 +59,7 @@ public class GameService {
         List<GameDto.User> users = new ArrayList<>();
         for(GameUser gameUser : gameUsers) {
             users.add(GameDto.User.builder()
-                    .userId(gameUser.getUserId())
+                    .id(gameUser.getUserId())
                     .pieceNum(gameUser.getPieces())
                     .build());
         }
