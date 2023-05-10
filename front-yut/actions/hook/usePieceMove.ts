@@ -1,5 +1,9 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
-import { ActiveCornerArrowState, YutPieceListState } from "@/store/GameStore";
+import {
+  ActiveCornerArrowState,
+  SelectedPieceIndex,
+  YutPieceListState,
+} from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import * as gameUtil from "@/utils/gameUtils";
@@ -9,18 +13,19 @@ const animationSeconds = 0.5;
 const usePieceMove = () => {
   const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
   //움직여야할 piece의 index
-  const [movePieceIndex, setMovePieceIndex] = useState(-1);
+  const [movePieceIndex, setMovePieceIndex] =
+    useRecoilState(SelectedPieceIndex);
   //움직일 경로
   const [movePathList, setMovePathList] = useState<Array<number>>([]);
   //모서리 분기점 활성화
   const [cornerSelectType, setCornerSelectType] = useRecoilState(
-    ActiveCornerArrowState,
+    ActiveCornerArrowState
   );
 
   //말 동내기
   const pieceOver = (userId: string, pieceId: number) => {
     const newArr = pieceList.filter(
-      (piece) => piece.userId !== userId || piece.pieceId !== pieceId,
+      (piece) => piece.userId !== userId || piece.pieceId !== pieceId
     );
     setPieceList(newArr);
   };
@@ -29,18 +34,18 @@ const usePieceMove = () => {
   const setMoveInfo = useCallback(
     (userId: string, pieceId: number, movePath: Array<number>) => {
       const pieceIndex = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === pieceId,
+        (p) => p.userId === userId && p.pieceId === pieceId
       );
       setMovePieceIndex(pieceIndex);
       setMovePathList(movePath);
     },
-    [pieceList],
+    [pieceList]
   );
 
   const pieceMove = (
     userId: string,
     pieceId: number,
-    movePath: Array<number>,
+    movePath: Array<number>
   ) => {
     setMoveInfo(userId, pieceId, movePath);
   };
@@ -61,7 +66,7 @@ const usePieceMove = () => {
   //말 선택
   const selectPiece = useCallback((userId: string, pieceId: number) => {
     const pieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === pieceId,
+      (p) => p.userId === userId && p.pieceId === pieceId
     );
     setMovePieceIndex(pieceIndex);
 
@@ -90,7 +95,7 @@ const usePieceMove = () => {
 
     const filteredIdList: Array<number> = targetPieceIdList.filter((id) => {
       const idx = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === id,
+        (p) => p.userId === userId && p.pieceId === id
       );
 
       return idx !== -1;
@@ -105,21 +110,10 @@ const usePieceMove = () => {
 
   const appendAToB = (
     userId: string,
-    movePieceId: number, //움직여서 합칠 말
-    targetPieceId: number, //원래 말 판에 있던 말
+    movePieceIndex: number, //움직여서 합칠 말
+    targetPieceIndex: number //원래 말 판에 있던 말
   ) => {
-    let basePieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === movePieceId,
-    );
-    let targetPieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === targetPieceId,
-    );
-
-    if (basePieceIndex === -1 || targetPieceIndex === -1) {
-      throw Error("usePieceMove/appendPiece : piece 정보를 찾을 수 없음");
-    }
-
-    let basePiece = pieceList[basePieceIndex];
+    let basePiece = pieceList[movePieceIndex];
     let targetPiece = pieceList[targetPieceIndex];
 
     if (
@@ -127,15 +121,15 @@ const usePieceMove = () => {
       targetPiece.state === "NotStarted"
     ) {
       throw Error(
-        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음",
+        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음"
       );
     }
 
     if (basePiece.state === "InBoard" && targetPiece.state === "NotStarted") {
-      const tmpIndex = basePieceIndex;
+      const tmpIndex = movePieceIndex;
       const tmpPiece = basePiece;
 
-      basePieceIndex = targetPieceIndex;
+      movePieceIndex = targetPieceIndex;
       basePiece = targetPiece;
 
       targetPieceIndex = tmpIndex;
@@ -147,26 +141,26 @@ const usePieceMove = () => {
       if (idx !== targetPieceIndex) return p;
 
       const tmpP = { ...p };
-      const baseTmpP = { ...pieceList[basePieceIndex] };
+      const baseTmpP = { ...pieceList[movePieceIndex] };
       baseTmpP.state = "Appended";
       baseTmpP.position = tmpP.position;
       tmpP.appendArray = [...tmpP.appendArray, baseTmpP];
       return tmpP;
     });
 
-    newArr.splice(basePieceIndex, 1);
+    newArr.splice(movePieceIndex, 1);
     setPieceList(newArr);
   };
 
   const catchPiece = (
     targetUserId: string,
-    targetPieceIdList: Array<number>,
+    targetPieceIdList: Array<number>
   ) => {
     //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
     let targetPieceIndex = -1;
     for (let i = 0; i < targetPieceIdList.length; i++) {
       const idx = pieceList.findIndex(
-        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i],
+        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i]
       );
 
       if (idx !== -1) {

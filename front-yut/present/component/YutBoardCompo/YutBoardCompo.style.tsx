@@ -223,5 +223,29 @@ const ArrowWrapper = styled.span<{ active: boolean }>`
   }
 `;
 
+const EventPoint = styled.div`
+  ${PointStyle}
+  position: relative;
+  box-sizing: border-box;
+  width: ${miniPointSize * 1.2}rem;
+
+  ${PieceSize}
+`;
+
+const StyledEventContainer = styled.div`
+  margin: auto;
+  z-index: 1;
+  position: relative;
+  width: 80%;
+`;
+
 //--------------------
-export { Container, CornerPoint, MiniPoint, MiniList, ArrowWrapper };
+export {
+  Container,
+  CornerPoint,
+  MiniPoint,
+  MiniList,
+  ArrowWrapper,
+  EventPoint,
+  StyledEventContainer,
+};

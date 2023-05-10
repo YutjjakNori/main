@@ -7,6 +7,10 @@ import * as style from "./GameLayout.style";
 import HanokBackgroundImage from "@/public/image/GameBackgroundHanok.png";
 import GameBackgroundCloudImage from "@/public/image/GameBackgroundCloud.png";
 
+import YutThrowCompo from "@/present/component/YutThrowCompo/YutThrowCompo";
+
+import styled from "styled-components";
+
 interface GameLayoutProps {
   userList: Array<PlayerCompoProps>;
 }
@@ -34,10 +38,25 @@ const GameLayout = ({ userList }: GameLayoutProps) => {
         </style.LeftLayout>
         <YutBoardCompo />
         {/* 윷 던지기, 채팅 */}
-        <div></div>
+        <div>
+          <RightLayout>
+            <YutThrowCompo />
+          </RightLayout>
+        </div>
       </style.Container>
     </>
   );
 };
+
+const RightLayout = styled.div`
+  position: relative;
+  /* left: 0; */
+  /* top: 0; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+`;
 
 export default GameLayout;
