@@ -67,7 +67,7 @@ public class RoomService {
         Game room = redisMapper.getData("game:"+roomDto.getRoomCode(), Game.class);
 
         // 방이 없을 때
-        if (room == null) {
+        if (room == null || roomDto.getRoomCode().equals("")) {
             throw new CustomException(ErrorCode.NOT_FOUND_ROOM);
         }
 
@@ -247,16 +247,12 @@ public class RoomService {
     }
 
     /**
-     * 방 나가기 요청
+     * 방 나가기 응답
      *
-     * @param exitRequest
+     * @param response
      */
-    public void exitRoom(RequestDto exitRequest) {
-
-    }
-
     @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = GROUP_ID)
     public void sendExit(Map<String, Object> response) {
-        template.convertAndSend("/topic/room/exit" + response.get("roomCode"), response.get("response"));
+        template.convertAndSend("/topic/room/exit/" + response.get("roomCode"), response.get("response"));
     }
 }
