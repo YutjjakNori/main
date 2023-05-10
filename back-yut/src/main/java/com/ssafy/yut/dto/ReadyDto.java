@@ -32,7 +32,7 @@ public class ReadyDto {
     @Builder
     public static class Response {
         private String userId;
-        private boolean ready;
+        private String ready;
         private boolean start;
     }
 }
