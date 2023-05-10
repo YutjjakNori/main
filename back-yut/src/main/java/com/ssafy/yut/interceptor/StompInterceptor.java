@@ -60,8 +60,13 @@ public class StompInterceptor implements ChannelInterceptor {
 
             Game game = redisMapper.getData("game:" + roomCode, Game.class);
 
+            if(game.getGameStatus().equals("start")) {
+                game.getUsers().remove(new GameUser(userId, null));
+            } else {
+                game.getUsers().remove(new GameUser(userId, null));
+            }
+
             redisMapper.deleteDate("user:" + userId);
-            game.getUsers().remove(new GameUser(userId, null));
 
             if(game.getUsers().size() == 0) {
                 redisMapper.deleteDate(roomCode);
