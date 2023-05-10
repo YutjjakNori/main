@@ -4,7 +4,7 @@ const nextConfig = {
   swcMinify: true,
   compiler: {
     styledComponents: true,
-    // removeConsole: process.env.NODE_ENV === "production",
+    removeConsole: process.env.NODE_ENV === "production",
   },
   webpack(config) {
     config.module.rules.push({
