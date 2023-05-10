@@ -492,7 +492,7 @@ public class GameService {
      */
     @KafkaListener(topics = TOPIC + ".event", groupId = GROUP_ID)
     public void sendEvent(EventDto.response eventDto) {
-        template.convertAndSend("/topic/game/event" + eventDto.getRoomCode(), eventDto);
+        template.convertAndSend("/topic/game/event/" + eventDto.getRoomCode(), eventDto);
     }
 
     /**
@@ -590,7 +590,7 @@ public class GameService {
      */
     @KafkaListener(topics = TOPIC + ".eventResult", groupId = GROUP_ID)
     public void sendEventResult(EventDto.responseResult eventDto) {
-        template.convertAndSend("/topic/game/event/result" + eventDto.getRoomCode(), eventDto);
+        template.convertAndSend("/topic/game/event/result/" + eventDto.getRoomCode(), eventDto);
     }
 
 }
