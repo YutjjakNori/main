@@ -19,7 +19,7 @@ public class ReadyDto {
     @AllArgsConstructor
     @Builder
     public static class Request extends RequestDto{
-        private boolean ready;
+        private String ready;
     }
 
     /**
