@@ -172,7 +172,7 @@ public class RoomService {
      */
     public void readyGame(ReadyDto.Request request) {
         String roomCode = request.getRoomCode();
-        boolean isReady = request.isReady();
+        String readyChange = request.isReady() ? "1" : "0";
         String key = "game:"+roomCode;
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> users = game.getUsers();
@@ -186,7 +186,7 @@ public class RoomService {
         }
         String[] readyArray = game.getGameStatus().split("");
 
-        readyArray[userIndex] = isReady ? "1" : "0";
+        readyArray[userIndex] = readyChange;
 
         String ready = String.join("", readyArray);
 
@@ -208,7 +208,7 @@ public class RoomService {
 
         ReadyDto.Response readyResponse = ReadyDto.Response.builder()
                 .userId(request.getUserId())
-                .ready(isReady)
+                .ready(readyChange)
                 .start(canStart)
                 .build();
 
