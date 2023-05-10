@@ -12,6 +12,16 @@ const ExitContainer = styled.div`
   width: 30px;
 `;
 
+const SoundContainer = styled.div`
+  position: relative;
+  width: 30px;
+`;
+
+const CopyContainer = styled.div`
+  position: relative;
+  width: 30px;
+`;
+
 const ExitAlertContainer = styled.div`
   .btn-alert-text {
     width: 110px;
@@ -30,4 +40,10 @@ const ExitAlertContainer = styled.div`
   }
 `;
 
-export { Container, ExitContainer, ExitAlertContainer };
+export {
+  Container,
+  ExitContainer,
+  CopyContainer,
+  ExitAlertContainer,
+  SoundContainer,
+};

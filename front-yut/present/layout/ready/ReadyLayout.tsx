@@ -17,26 +17,21 @@ import { RoomCodeState } from "@/store/GameStore";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 import { MemberListState, MemberReadyListState } from "@/store/MemberStore";
-import Svg from "@/public/icon/close.svg";
+import closeSvg from "@/public/icon/close.svg";
+import copySvg from "@/public/icon/copy.svg";
+import voiceOnSvg from "@/public/icon/voiceOn.svg";
+import voiceOffSvg from "@/public/icon/voiceOff.svg";
 import CircleButton, {
   CircleButtonProps,
 } from "@/present/common/Button/Circle/CircleButton";
 import * as style from "./ReadyLayout.style";
 import { useRouter } from "next/router";
+import { MessageLogProps, messageLogState } from "@/store/ChatStore";
 
 const ReadyLayout = () => {
-  const router = useRouter();
-  const { openModal, closeModal } = useModal(); //모달 Hook
-  const [userInfo, setUserInfo] = useRecoilState(UserInfoState); //내 정보 세팅
-  const [memberList, setMemberList] = useRecoilState(MemberListState); //멤버 아이디 배열
-  const [memberReadyList, setMemberReadyList] =
-    useRecoilState(MemberReadyListState); //멤버아이디 + 레디상태 관리 배열
-  const [isReadyState, setIsReadyState] = useState(Boolean);
-  const roomCode = useRecoilValue(RoomCodeState);
-
   //나가기버튼
   const exitBtnInfo: CircleButtonProps = {
-    Icon: Svg,
+    Icon: closeSvg,
     fontSize: "",
     text: "",
     color: "#575757",
@@ -44,50 +39,104 @@ const ReadyLayout = () => {
     borderColor: "transparent",
     margin: "1rem",
   };
-
-  //준비 값이 모두 1이면 모달 실행
-  const checkAllReady = (readyString: string): boolean => {
-    for (const char of readyString) {
-      if (char === "0") {
-        return false;
-      }
-    }
-    return true;
+  //소리버튼
+  const soundBtnInfo: CircleButtonProps = {
+    Icon: voiceOffSvg,
+    fontSize: "",
+    text: "",
+    color: "#575757",
+    backgroundColor: "#FFF",
+    borderColor: "gray",
+    margin: "1rem",
+  };
+  //복사버튼
+  const copyBtnInfo: CircleButtonProps = {
+    Icon: copySvg,
+    fontSize: "",
+    text: "",
+    color: "#575757",
+    backgroundColor: "#FFF",
+    borderColor: "gray",
+    margin: "1rem",
   };
 
-  //TODO: 하나의 함수 안에 지금 enter, preparation 토픽을 한번에 하려고 하고 있음, 분리하셈
+  const router = useRouter();
+  const { openModal, closeModal } = useModal(); //모달 Hook
+  const [userInfo, setUserInfo] = useRecoilState(UserInfoState); //내 정보 세팅
+  // const [isReady, setIsReady] = useState(false); //내 레디상태 관리
+  const [isReady, setIsReady] = useState("0"); //내 레디상태 관리
+
+  //멤버 아이디 배열
+  const [memberList, setMemberList] = useRecoilState(MemberListState);
+  //멤버아이디 + 레디상태 관리 배열
+  const [memberReadyList, setMemberReadyList] =
+    useRecoilState(MemberReadyListState);
+  //채팅
+  const [messageLog, setMessageLog] =
+    useRecoilState<MessageLogProps>(messageLogState);
+
+  const roomCode = useRecoilValue(RoomCodeState);
+
   //대기 - 방 입장 구독 콜백함수
-  const settingMembers = async (data: any) => {
+  const settingMembers = (data: any) => {
     const userIds = data.users.map((user: any) => user.userId);
     const newMemberList = [...userIds];
-    await setMemberList(newMemberList); //유저 아이디만 저장한 배열
+    setMemberList(newMemberList); //유저 아이디만 저장한 배열
 
     const readyString = data.ready;
-    const isAllReady = checkAllReady(readyString);
 
     // member 객체의 isReady 속성을 readyString 값에 따라 설정
     const members = userIds.map((userId: string, index: number) => ({
       userId: userId,
       isReady: readyString[index] === "1",
     }));
-    await setMemberReadyList(members);
-    // 모두 준비되어 있다면 openModal 함수 실행
-    if (isAllReady) {
-      openModal();
-    }
+    setMemberReadyList(members);
   };
 
   //대기 - 준비 구독 콜백함수
-  const preparation = async (data: any) => {
+  const preparation = (data: any) => {
+    console.log("준비구독 데이터:", data);
+
     const readyUserId = data.userId;
-    const readyString = data.ready;
-    const isAllReady = checkAllReady(readyString);
+    const ready = data.ready;
+    const start = data.start;
+
+    setMemberReadyList((prev) => {
+      // 이전 상태(prev)에서 해당 유저의 정보를 찾아 isReady 값을 업데이트합니다.
+      return prev.map((member) => {
+        if (member.userId === readyUserId) {
+          return {
+            ...member,
+            isReady: ready,
+          };
+        } else {
+          return member;
+        }
+      });
+    });
 
     // 모두 준비되어 있다면 openModal 함수 실행
-    if (isAllReady) {
-      openModal();
+    if (start) {
+      setTimeout(() => {
+        openModal();
+      }, 1000);
     }
   };
+
+  //채팅 구독
+  const chattingMessage = useCallback(
+    (value: any) => {
+      console.log("채팅 구독 성공 후 콜백 함수 호출");
+      console.log("chatting data", value);
+      if (stompClient) {
+        const nextMessages = { [value.userId]: value.content };
+        setMessageLog((prevMessages) =>
+          Object.assign({}, prevMessages, nextMessages)
+        );
+      }
+    },
+    [stompClient]
+  );
 
   //대기 - 나가기 구독 콜백함수
   const requestToLeave = useCallback(
@@ -107,6 +156,7 @@ const ReadyLayout = () => {
   const topics: any = {
     "/topic/room/enter/": settingMembers,
     "/topic/room/preparation/": preparation,
+    "/topic/chat/": chattingMessage,
     "/topic/room/exit/": requestToLeave,
   };
 
@@ -117,6 +167,7 @@ const ReadyLayout = () => {
       ...userInfo,
       userId: localStorage.getItem("userId") ?? "",
     });
+    setMessageLog({});
 
     const topicSubscriptions = Object.keys(topics).map((key) =>
       subscribeTopic(key + roomCode, topics[key])
@@ -124,7 +175,7 @@ const ReadyLayout = () => {
 
     await Promise.all(topicSubscriptions);
 
-    //현재까지 들어온 멤버가 옴
+    //서버에 입장한다고 전송
     sendEvent(
       `/room/enter`,
       {},
@@ -141,6 +192,14 @@ const ReadyLayout = () => {
     // };
   }
 
+  useEffect(() => {
+    initConnection();
+  }, []);
+
+  useEffect(() => {
+    console.log("useEffect memberReadyList >>>>  ", memberReadyList);
+  }, [memberReadyList]);
+
   //새로고침 시 소켓 해제
   useEffect(() => {
     if (!window) return;
@@ -152,62 +211,52 @@ const ReadyLayout = () => {
 
     return window?.removeEventListener("beforeunload", disconnectSocket);
   }, []);
+  function consoleIsReady() {
+    console.log("consoleIsReady", isReady);
+  }
+  //준비 or 준비취소 send
+  async function handleIsReady() {
+    let ready;
 
-  useEffect(() => {
-    initConnection();
-  }, []);
+    // isReady 값을 true로 변경
+    if (isReady === "1") {
+      setIsReady("0");
+      ready = "0";
+      console.log("준비 취소");
+    } else {
+      setIsReady("1");
+      ready = "1";
+      console.log("준비");
+    }
+    console.log("ready:", ready);
+    await setIsReady(ready);
 
-  useEffect(() => {
-    console.log("useEffect memberReadyList >>>>  ", memberReadyList);
-  }, [memberReadyList]);
-
-  // function handleIsReady() {
-  //   // isReady 값을 true로 변경
-  //   if (isReady) {
-  //     setIsReady(false);
-  //   } else {
-  //     setIsReady(true);
-  //   }
-
-  //   // 이벤트 전송
-  //   sendEvent(
-  //     "/room/preparation",
-  //     {},
-  //     {
-  //       roomCode: roomCode,
-  //       userId: userInfo.userId,
-  //       ready: isReady,
-  //     }
-  //   );
-  // }
-
-  //준비|준비취소 send
-  function handleIsReady() {
-    // 이벤트 전송
     sendEvent(
-      "/room/preparation",
+      `/room/preparation`,
       {},
       {
         roomCode: roomCode,
-        userId: userInfo.userId,
-        ready: true,
+        userId: localStorage.getItem("userId"),
+        ready: ready,
       }
     );
   }
+
   //나가기 send
   function handleIsExit() {
-    // 이벤트 전송
-    sendEvent(
-      "/room/exit",
-      {},
-      {
-        roomCode: roomCode,
-        userId: userInfo.userId,
-      }
-    );
+    if (stompClient !== null && stompClient !== undefined) {
+      stompClient.disconnect();
+      router.push("/lobby");
+    }
   }
+
   return (
     <>
+      <div>
+        <h1>방코드</h1>
+        <h2>{roomCode}</h2>
+        <h2>{userInfo.userId}님</h2>
+      </div>
       <style.Container>
         {memberReadyList.map((member, index) => (
           <GameProfile
@@ -219,27 +268,50 @@ const ReadyLayout = () => {
             playerName={member.userId}
           />
         ))}
-
         <button
           onClick={() => {
             handleIsReady();
           }}
-          className="btn"
         >
           준비
         </button>
-        <Modal title={"게임을 시작합니다"}>
-          <Timer
-            ss={5}
-            size={65}
-            color={"#000"}
-            handleOver={() => {
-              closeModal();
-            }}
+        <button
+          onClick={() => {
+            consoleIsReady();
+          }}
+        >
+          준비로그찍기
+        </button>
+        <style.SoundContainer
+          onClick={() => {
+            handleIsExit();
+          }}
+        >
+          <CircleButton
+            Icon={soundBtnInfo.Icon}
+            fontSize={soundBtnInfo.fontSize}
+            text={soundBtnInfo.text}
+            color={soundBtnInfo.color}
+            backgroundColor={soundBtnInfo.backgroundColor}
+            borderColor={soundBtnInfo.borderColor}
+            margin={soundBtnInfo.margin}
           />
-        </Modal>
-        <ChatCompo></ChatCompo>
-
+        </style.SoundContainer>
+        <style.CopyContainer
+          onClick={() => {
+            handleIsExit();
+          }}
+        >
+          <CircleButton
+            Icon={copyBtnInfo.Icon}
+            fontSize={copyBtnInfo.fontSize}
+            text={copyBtnInfo.text}
+            color={copyBtnInfo.color}
+            backgroundColor={copyBtnInfo.backgroundColor}
+            borderColor={copyBtnInfo.borderColor}
+            margin={copyBtnInfo.margin}
+          />
+        </style.CopyContainer>
         <style.ExitContainer
           onClick={() => {
             handleIsExit();
@@ -260,6 +332,18 @@ const ReadyLayout = () => {
             <div className="btn-alert-text">방 나가기</div>
           </style.ExitAlertContainer>
         </style.ExitContainer>
+        <Modal title={"게임을 시작합니다"}>
+          <Timer
+            ss={5}
+            size={65}
+            color={"#000"}
+            handleOver={() => {
+              closeModal();
+              router.push("game");
+            }}
+          />
+        </Modal>
+        <ChatCompo />
       </style.Container>
     </>
   );

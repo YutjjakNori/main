@@ -9,12 +9,28 @@ import {
 } from "@/actions/socket-api/socketInstance";
 import { UserInfoState } from "@/store/UserStore";
 import { RoomCodeState } from "@/store/GameStore";
+import { MessageLogProps, messageLogState } from "@/store/ChatStore";
 
 const ChatCompo = () => {
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState);
   const [message, setMessage] = useState("");
   const roomCode = useRecoilValue(RoomCodeState);
-  const [messages, setMessages] = useState<{ [key: string]: string }>({});
+  const [messageLog, setMessageLog] =
+    useRecoilState<MessageLogProps>(messageLogState);
+
+  // const chattingMessage = useCallback(
+  //   (value: any) => {
+  //     console.log("채팅 구독 성공 후 콜백 함수 호출");
+  //     console.log("chatting data", value);
+  //     if (stompClient) {
+  //       const nextMessages = { [value.userId]: value.content };
+  //       setMessageLog((prevMessages) =>
+  //         Object.assign({}, prevMessages, nextMessages)
+  //       );
+  //     }
+  //   },
+  //   [stompClient]
+  // );
 
   const sendMessage = (e: any) => {
     e.preventDefault();
@@ -32,19 +48,6 @@ const ChatCompo = () => {
       setMessage("");
     }
   };
-
-  const chattingMessage = useCallback(
-    (value: any) => {
-      console.log("채팅 구독 성공 후 콜백 함수 호출");
-      if (stompClient) {
-        const nextMessages = { [value.userId]: value.content };
-        setMessages((prevMessages) =>
-          Object.assign({}, prevMessages, nextMessages)
-        );
-      }
-    },
-    [stompClient]
-  );
 
   // const chattingMessage = async (data: any) => {
   //   const userIds = data.users.map((user: any) => user.userId);
@@ -66,21 +69,16 @@ const ChatCompo = () => {
   //   }
   // };
 
-  // async function initConnection() {
-  //   await subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
+  // useEffect(() => {
+  // initConnection();
+  // if (stompClient) {
+  //   initConnection();
   // }
+  // }, []);
 
-  const initConnection = async () => {
-    await subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
-  };
-
-  useEffect(() => {
-    initConnection();
-    // if (stompClient) {
-    //   initConnection();
-    // }
-  }, []);
-
+  // const initConnection = async () => {
+  //   await subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
+  // };
   return (
     <>
       <style.Container>
@@ -89,9 +87,9 @@ const ChatCompo = () => {
           {/* 채팅창 로그 */}
           <style.ChatLogBox>
             <div>
-              {Object.keys(messages).map((userId) => (
-                <div key={userId}>
-                  <strong>{userId}:</strong> {messages[userId]}
+              {Object.keys(messageLog).map((userId, index) => (
+                <div key={index}>
+                  <strong>{userId}:</strong> {messageLog[userId]}
                 </div>
               ))}
             </div>
