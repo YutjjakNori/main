@@ -171,7 +171,7 @@ public class RoomService {
      */
     public void readyGame(ReadyDto.Request request) {
         String roomCode = request.getRoomCode();
-        String readyChange = request.isReady() ? "1" : "0";
+        String readyChange = request.getReady();
         String key = "game:"+roomCode;
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> users = game.getUsers();
