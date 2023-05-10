@@ -3,16 +3,20 @@ import {
   ActiveCornerArrowState,
   NowTurnPlayerIdState,
   PlayTurnState,
+  RoomCodeState,
   YutPieceListState,
 } from "@/store/GameStore";
+import { UserInfoState } from "@/store/UserStore";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import useGameActionQueue from "./useGameActionQueue";
+import { useCallback, useEffect } from "react";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { sendEvent } from "../socket-api/socketInstance";
+import useGameAction from "./useGameAction";
 
 //사용자의 초기 말 3개 생성
 const createUserPieceList = (
   userId: string,
-  pieceType: YutPieceType
+  pieceType: YutPieceType,
 ): Array<YutPieceCompoProps> => {
   const list: Array<YutPieceCompoProps> = [];
   for (let i = 1; i <= 3; i++) {
@@ -50,8 +54,10 @@ const useGameTurn = () => {
   //게임 순서 배열
   const [playerTurnList, setPlayerTurnList] = useRecoilState(PlayTurnState);
   const setPlayerPieceList = useSetRecoilState(YutPieceListState);
-  const { initQueue, addAction } = useGameActionQueue();
+  const { startGame, turnStart, action } = useGameAction();
   const setCornerSelectType = useSetRecoilState(ActiveCornerArrowState);
+  const roomCode = useRecoilValue(RoomCodeState);
+  const myInfo = useRecoilValue(UserInfoState);
 
   //현재 순서인 플레이어 아이디
   const [nowTurnPlayerId, setNowTurnPlayerId] =
@@ -63,30 +69,69 @@ const useGameTurn = () => {
 
     const pieceList = createAllPieceList(turnInfoList);
     setPlayerPieceList(pieceList);
+
+    startGame();
   };
 
   //턴 시작
   const startTurn = () => {
-    initQueue();
     setCornerSelectType("none");
-    addAction("ThrowYut");
   };
 
-  // 턴 넘기기
-  const nextTurn = () => {
+  const getNextPlayerId = (): string => {
     if (nowTurnPlayerId === "-1") {
-      setNowTurnPlayerId(playerTurnList[0]);
-      return;
+      return playerTurnList[0];
     }
 
     const nowIndex = playerTurnList.findIndex((id) => id === nowTurnPlayerId);
     const nextIndex = (nowIndex + 1) % playerTurnList.length;
-
-    setNowTurnPlayerId(playerTurnList[nextIndex]);
-    startTurn();
+    return playerTurnList[nextIndex];
   };
 
-  return { initPlayerTurn, nextTurn };
+  // 턴 넘기기
+  const nextTurn = useCallback(
+    (userId: string) => {
+      setNowTurnPlayerId(userId);
+      startTurn();
+      turnStart();
+    },
+    [playerTurnList],
+  );
+
+  //다음 차례가 내 차례인 경우 알림
+  const ifNextTurnIsMe = () => {
+    const nextPlayerId = getNextPlayerId();
+
+    if (nextPlayerId === myInfo.userId) {
+      sendEvent(
+        "/game/turn",
+        {},
+        {
+          roomCode: roomCode,
+          userId: nextPlayerId,
+        },
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (action === "None") return;
+
+    switch (action) {
+      case "Started":
+        ifNextTurnIsMe();
+        break;
+      case "TurnStart":
+        break;
+      case "TurnEnd":
+        ifNextTurnIsMe();
+        break;
+    }
+  }, [action]);
+
+  useCallback(() => {}, [nowTurnPlayerId]);
+
+  return { initPlayerTurn, getNextPlayerId, nextTurn };
 };
 
 export default useGameTurn;

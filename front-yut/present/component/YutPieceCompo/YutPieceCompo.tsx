@@ -1,5 +1,6 @@
 import usePieceMove from "@/actions/hook/usePieceMove";
 import { NowTurnPlayerIdState } from "@/store/GameStore";
+import { UserInfoState } from "@/store/UserStore";
 import { colors } from "@/styles/theme";
 import { PieceStateType } from "@/types/game/YutGameTypes";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
@@ -34,7 +35,11 @@ const YutPieceCompo = ({
 }: YutPieceCompoProps) => {
   const { selectPiece } = usePieceMove();
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
-  const isClickable = nowTurnPlayerId === userId;
+  const myInfo = useRecoilValue(UserInfoState);
+  const isClickable = useMemo(
+    () => myInfo.userId === userId && nowTurnPlayerId === userId,
+    [nowTurnPlayerId, myInfo],
+  );
   const appendedCount = useMemo(() => appendArray.length, [appendArray]);
 
   const onClick = () => {
