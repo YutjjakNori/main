@@ -59,7 +59,7 @@ public class StompInterceptor implements ChannelInterceptor {
             String userKey = "user:" + userId;
 
             User user = redisMapper.getData(userKey, User.class);
-            redisMapper.deleteDate(userKey + userId);
+            redisMapper.deleteDate(userKey);
 
             String roomCode = user.getRoomCode();
             String gameKey = "game:" + roomCode;
@@ -71,6 +71,7 @@ public class StompInterceptor implements ChannelInterceptor {
 
             // 게임 시작
             if(gameStatus.equals("start")) {
+                gameUsers.set(exitUser, null);
                 boolean exitAll = true;
                 for(GameUser gameUser : gameUsers) {
                     if(gameUser != null) {
@@ -78,18 +79,38 @@ public class StompInterceptor implements ChannelInterceptor {
                         break;
                     }
                 }
-
+                // 모두 나감
+                if(exitAll) {
+                    redisMapper.deleteDate(gameKey);
+                    return message;
+                } else {
+                    Map<Integer, List<Integer>> plate = game.getPlate();
+                    /**
+                     * map.forEach((strKey, strValue)->{
+                     *System.out.println( strKey +":"+ strValue );
+                    });*/
+                    for(Integer point : plate.keySet()) {
+                        List<Integer> piecesInPlate = plate.get(point);
+                        int piece = piecesInPlate.get(0);
+                        if(exitUser == (piece / 3)) {
+                            plate.remove(point);
+                        }
+                    }
+                    game.setUsers(gameUsers);
+                    game.setPlate(plate);
+                }
             }
             // 게임 종료
             else if(gameStatus.equals("end")) {
-                redisMapper.deleteDate(roomCode);
+                redisMapper.deleteDate(gameKey);
                 return message;
             }
             // 게임 대기
             else {
                 gameUsers.remove(exitUser);
+                // 모두 나감
                 if(gameUsers.size() == 0) {
-                    redisMapper.deleteDate(roomCode);
+                    redisMapper.deleteDate(gameKey);
                     return message;
                 }
 
