@@ -100,15 +100,15 @@ const useGameTurn = () => {
 
   //다음 차례가 내 차례인 경우 알림
   const ifNextTurnIsMe = () => {
-    const nextPlyaerId = getNextPlayerId();
+    const nextPlayerId = getNextPlayerId();
 
-    if (nextPlyaerId === myInfo.userId) {
+    if (nextPlayerId === myInfo.userId) {
       sendEvent(
         "/game/turn",
         {},
         {
           roomCode: roomCode,
-          userId: nextPlyaerId,
+          userId: nextPlayerId,
         },
       );
     }
