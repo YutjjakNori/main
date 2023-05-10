@@ -1,5 +1,10 @@
 package com.ssafy.yut.interceptor;
 
+import com.ssafy.yut.dto.ChatDto;
+import com.ssafy.yut.dto.ChatType;
+import com.ssafy.yut.dto.RoomDto;
+import com.ssafy.yut.entity.Game;
+import com.ssafy.yut.entity.GameUser;
 import com.ssafy.yut.entity.User;
 import com.ssafy.yut.service.RoomService;
 import com.ssafy.yut.util.RedisMapper;
@@ -19,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,11 +52,31 @@ public class StompInterceptor implements ChannelInterceptor {
         }
 
         else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            String sessionId = (String) message.getHeaders().get("simpSessionId");
-
             log.info(accessor.toString());
-            message.getPayload();
-            User user = redisMapper.getData("user:" +  sessionId, User.class);
+            Map<String, Object> response = new HashMap<>();
+            String userId = (String) message.getHeaders().get("simpSessionId");
+            User user = redisMapper.getData("user:" +  userId, User.class);
+            String roomCode = user.getRoomCode();
+
+            Game game = redisMapper.getData("game:" + roomCode, Game.class);
+
+            redisMapper.deleteDate("user:" + userId);
+            game.getUsers().remove(new GameUser(userId, null));
+
+            if(game.getUsers().size() == 0) {
+                redisMapper.deleteDate(roomCode);
+            }
+
+            response.put("roomCode", roomCode);
+            response.put("response", RoomDto.User.builder().userId(userId).build());
+            kafkaTemplate.send("room" + ".exit", roomCode, response);
+            kafkaTemplate.send("chat", roomCode,
+                    ChatDto.Request.builder()
+                            .type(ChatType.SYSTEM)
+                            .userId(userId)
+                            .roomCode(roomCode)
+                            .content("님이 나갔습니다.")
+                            .build());
 
         }
         return message;

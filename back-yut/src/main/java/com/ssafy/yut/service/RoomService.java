@@ -252,28 +252,7 @@ public class RoomService {
      * @param exitRequest
      */
     public void exitRoom(RequestDto exitRequest) {
-        Map<String, Object> response = new HashMap<>();
-        String roomCode = exitRequest.getRoomCode();
-        String userId = exitRequest.getUserId();
-        Game game = redisMapper.getData("game:" + roomCode, Game.class);
 
-        redisMapper.deleteDate("user:" + userId);
-        game.getUsers().remove(new GameUser(userId, null));
-
-        if(game.getUsers().size() == 0) {
-            redisMapper.deleteDate(roomCode);
-        }
-
-        response.put("roomCode", roomCode);
-        response.put("response", RoomDto.User.builder().userId(userId).build());
-        kafkaTemplate.send(TOPIC_ROOM + ".exit", roomCode, response);
-        kafkaTemplate.send(TOPIC_CHAT, roomCode,
-                ChatDto.Request.builder()
-                        .type(ChatType.SYSTEM)
-                        .userId(userId)
-                        .roomCode(roomCode)
-                        .content("님이 나갔습니다.")
-                        .build());
     }
 
     @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = GROUP_ID)
