@@ -359,6 +359,7 @@ public class GameService {
 
             data.put("end", end);
             if(end) {
+                game.setGameStatus("end");
                 kafkaTemplate.send("chat", roomCode,
                         ChatDto.Request.builder()
                         .type(ChatType.SYSTEM)

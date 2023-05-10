@@ -25,6 +25,7 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,22 +56,48 @@ public class StompInterceptor implements ChannelInterceptor {
             log.info(accessor.toString());
             Map<String, Object> response = new HashMap<>();
             String userId = (String) message.getHeaders().get("simpSessionId");
-            User user = redisMapper.getData("user:" +  userId, User.class);
+            String userKey = "user:" + userId;
+
+            User user = redisMapper.getData(userKey, User.class);
+            redisMapper.deleteDate(userKey + userId);
+
             String roomCode = user.getRoomCode();
+            String gameKey = "game:" + roomCode;
 
-            Game game = redisMapper.getData("game:" + roomCode, Game.class);
+            Game game = redisMapper.getData(gameKey, Game.class);
+            List<GameUser> gameUsers = game.getUsers();
+            int exitUser = gameUsers.indexOf(new GameUser(userId, null));
+            String gameStatus = game.getGameStatus();
 
-            if(game.getGameStatus().equals("start")) {
-                game.getUsers().remove(new GameUser(userId, null));
-            } else {
-                game.getUsers().remove(new GameUser(userId, null));
+            // 게임 시작
+            if(gameStatus.equals("start")) {
+                boolean exitAll = true;
+                for(GameUser gameUser : gameUsers) {
+                    if(gameUser != null) {
+                        exitAll = false;
+                        break;
+                    }
+                }
+
             }
-
-            redisMapper.deleteDate("user:" + userId);
-
-            if(game.getUsers().size() == 0) {
+            // 게임 종료
+            else if(gameStatus.equals("end")) {
                 redisMapper.deleteDate(roomCode);
+                return message;
             }
+            // 게임 대기
+            else {
+                gameUsers.remove(exitUser);
+                if(gameUsers.size() == 0) {
+                    redisMapper.deleteDate(roomCode);
+                    return message;
+                }
+
+                gameStatus = gameStatus.replace(String.valueOf(gameStatus.charAt(exitUser)),"");
+                game.setGameStatus(gameStatus);
+            }
+
+            redisMapper.saveData(gameKey, game);
 
             response.put("roomCode", roomCode);
             response.put("response", RoomDto.User.builder().userId(userId).build());
@@ -82,7 +109,6 @@ public class StompInterceptor implements ChannelInterceptor {
                             .roomCode(roomCode)
                             .content("님이 나갔습니다.")
                             .build());
-
         }
         return message;
     }
