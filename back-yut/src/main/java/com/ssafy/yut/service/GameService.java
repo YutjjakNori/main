@@ -51,7 +51,7 @@ public class GameService {
         Map<String, Object> response = new HashMap<>();
         String roomCode = request.getRoomCode();
         String key = "game:" + roomCode;
-
+        log.info("Game Start From : " + roomCode);
         Game game = redisMapper.getData(key, Game.class);
 
         List<GameUser> gameUsers = game.getUsers();
@@ -185,6 +185,7 @@ public class GameService {
         int type = 1;
 
         String roomCode = request.getRoomCode();
+        log.info("Piece Move From : " + roomCode);
         String key = "game:" + roomCode;
         int direction = request.getDirection();
         int plateNum = request.getPlateNum();
