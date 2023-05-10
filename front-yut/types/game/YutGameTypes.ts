@@ -8,13 +8,18 @@ type PieceStateType = "NotStarted" | "InBoard" | "Done" | "Appended";
  * @ChoosePiece 윷 말을 고름
  * @MovePiece 윷 말을 움직임
  * @End 게임 끝
+ * @TurnStart 다음 턴 시작
+ * @TurnEnd 현재 턴 끝
  * */
 type GameActionType =
   | "Started"
   | "ThrowYut"
   | "ChoosePiece"
   | "MovePiece"
-  | "End";
+  | "End"
+  | "TurnStart"
+  | "TurnEnd"
+  | "None";
 
 /** 윷 판 모서리 타입
  * @leftTop 왼쪽 위 분기점

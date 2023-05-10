@@ -3,7 +3,7 @@ import { CornerType, GameActionType } from "@/types/game/YutGameTypes";
 import { atom } from "recoil";
 
 const RoomCodeState = atom<string>({
-  key: "GamRoomCode",
+  key: "GameRoomCode",
   default: "",
 });
 
@@ -27,7 +27,7 @@ const PlayTurnState = atom<Array<string>>({
 
 const GameActionState = atom<GameActionType>({
   key: "GameAction",
-  default: "Started",
+  default: "None",
 });
 
 const GameActionQueueState = atom<Array<GameActionType>>({
