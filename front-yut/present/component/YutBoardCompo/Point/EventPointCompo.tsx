@@ -1,7 +1,7 @@
 import YutPieceCompo, {
   YutPieceCompoProps,
-} from "../YutPieceCompo/YutPieceCompo";
-import * as style from "./YutBoardCompo.style";
+} from "../../YutPieceCompo/YutPieceCompo";
+import * as style from "../YutBoardCompo.style";
 
 import EventCard from "@/public/icon/EventCard.svg";
 import { useEffect } from "react";
@@ -15,7 +15,6 @@ interface MiniPointProps {
 const EventPoint = ({ id, classStr, pieceList }: MiniPointProps) => {
   useEffect(() => {
     if (pieceList.length === 0) return;
-    console.log(pieceList);
   }, [pieceList.length]);
 
   return (

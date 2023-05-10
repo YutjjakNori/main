@@ -52,6 +52,11 @@ const SelectedPieceIndex = atom<number>({
   default: -1,
 });
 
+const EventIndex = atom<number>({
+  key: "EventIdx",
+  default: -1,
+});
+
 export {
   RoomCodeState,
   YutPieceListState,
@@ -62,4 +67,5 @@ export {
   ActiveCornerArrowState,
   YutThrowBtnState,
   SelectedPieceIndex,
+  EventIndex,
 };

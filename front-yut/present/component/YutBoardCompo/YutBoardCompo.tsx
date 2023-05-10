@@ -3,19 +3,18 @@ import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
 import CornerPoint from "./Point/CornerPointCompo";
 import MiniPoint from "./Point/MiniPointCompo";
 import * as style from "./YutBoardCompo.style";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   YutPieceListState,
   NowTurnPlayerIdState,
   SelectedPieceIndex,
   YutThrowBtnState,
+  EventIndex,
 } from "@/store/GameStore";
 import ArrowIconCompo from "./ArrowCompo/ArrowCompo";
 import { cornerIndex } from "@/utils/gameUtils";
-import EventPoint from "./EventPoint";
-import EventCard from "./EventCard";
-
-import usePieceMove from "@/actions/hook/usePieceMove";
+import EventPoint from "./Point/EventPointCompo";
+import EventCard from "./EventCardCompo";
 
 const pieceFilterByIndex = (
   index: number,
@@ -70,75 +69,7 @@ const createCornerPoint = (
 
 const YutBoardCompo = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
-  const curUserId = useRecoilValue(NowTurnPlayerIdState);
-
-  const [btnDisplay, setBtnDisplay] = useRecoilState(YutThrowBtnState);
-  //선택된 piece의 index
-  const [movePieceIndex, setMovePieceIndex] =
-    useRecoilState(SelectedPieceIndex);
-  const { appendPiece } = usePieceMove();
-
-  const [eventIdx, setEventIdx] = useState(-1);
-
-  function hideEventCard() {
-    setTimeout(() => setEventIdx(-1), 2000);
-  }
-
-  // 이벤트) 말 업고 가기
-  // 1. 시작 안한 말이 있는지 확인.
-  // 1-1. 없다면(-1) 꽝으로 치환
-  // 1-2. 있다면(>0) 첫 말번호 알아내기.
-  //
-  function appendEvent() {
-    const pieceIdx = pieceList.findIndex((piece) => {
-      return piece.userId === curUserId && piece.state === "NotStarted";
-    });
-    // 시작안한 말이 없다면 꽝으로 치환.
-    if (pieceIdx === -1) {
-      setTimeout(() => {
-        setEventIdx(0);
-        hideEventCard();
-      }, 2000);
-    } else {
-      const list = [pieceIdx, movePieceIndex];
-      setTimeout(() => {
-        appendPiece(curUserId, list);
-      }, 2000);
-    }
-  }
-
-  const takeAction = (index: number) => {
-    try {
-      switch (index) {
-        case 0:
-          setEventIdx(0);
-          hideEventCard();
-          break;
-        case 1:
-          setEventIdx(1);
-          setBtnDisplay("block");
-          hideEventCard();
-          break;
-        case 2:
-          setEventIdx(2);
-          appendEvent();
-          // hideEventCard(); // 일부로: 그래야 정상작동함
-          break;
-        case 3:
-          setEventIdx(3);
-          hideEventCard();
-          break;
-        case 4:
-          setEventIdx(4);
-          hideEventCard();
-          break;
-      }
-    } catch (err) {
-      throw err;
-    } finally {
-      //hideEventCard();
-    }
-  };
+  const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
 
   const request = {
     roomCode: "abcde",
@@ -152,10 +83,8 @@ const YutBoardCompo = () => {
     2: 말 업고가기 / 3: 출발했던 자리로 / 4: 처음으로 돌아가기
     */
     // result: 임시  --- (소켓통신이 되면 나중에 수정할것) ---------- ( 2 )
-    const result = 2;
-    // setEventIdx(result);
-    console.log(curUserId + " , " + movePieceIndex);
-    takeAction(result);
+    const result = 1;
+    setEventIndex(result);
   };
 
   return (
@@ -171,9 +100,8 @@ const YutBoardCompo = () => {
         이벤트칸
       </button>
       <style.Container>
-        {/* eventContainer로 명칭 바꾸기 */}
         <style.StyledEventContainer>
-          <EventCard eventIdx={eventIdx} />
+          <EventCard />
         </style.StyledEventContainer>
         {createCornerPoint(10, "blue", "leftTop", pieceList)}
         {/* 분기점 */}
