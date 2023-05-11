@@ -150,8 +150,8 @@ public class RoomService {
         response.put("roomCode", roomCode);
         response.put("response", enterResponse);
 
-        kafkaTemplate.send(TOPIC_ROOM + ".enter", roomCode, response);
-        kafkaTemplate.send(TOPIC_CHAT, roomCode, chatRequestDto);
+        kafkaTemplate.send(TOPIC_ROOM + ".enter", response);
+        kafkaTemplate.send(TOPIC_CHAT, chatRequestDto);
     }
 
     /**
