@@ -496,8 +496,34 @@ public class GameService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
 
-        int eventNum = random.nextInt(4);
+        int eventNum = random.nextInt(5);
 
+        String eventName = "";
+        switch (eventNum){
+            case 0:
+                eventName = "꽝";
+                break;
+            case 1:
+                eventName = "한번 던지기";
+                break;
+            case 2:
+                eventName = "말 업고가기";
+                break;
+            case 3:
+                eventName = "출발했던 자리로 이동";
+                break;
+            case 4:
+                eventName = "처음으로 돌아가기";
+                break;
+        }
+
+        // 채팅으로 보내기
+        kafkaTemplate.send("chat",
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .content("[" + eventName + "]을(를) 뽑았습니다."));
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
                 EventDto.response.builder()
