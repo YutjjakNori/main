@@ -95,7 +95,8 @@ public class RoomService {
     public void enterRoom(RequestDto enterDto) {
         String userId = enterDto.getUserId();
         String roomCode = enterDto.getRoomCode();
-        String key = "game:"+roomCode;
+        String userKey = "user:" + userId;
+        String gameKey = "game:" + roomCode;
 
         List<GameUser> users = new ArrayList<>();
         List<Integer> pieces = new ArrayList<>();
