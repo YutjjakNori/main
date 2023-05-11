@@ -107,7 +107,7 @@ const ReadyLayout = () => {
         if (member.userId === readyUserId) {
           return {
             ...member,
-            isReady: ready,
+            isReady: ready === "1",
           };
         } else {
           return member;
@@ -130,6 +130,7 @@ const ReadyLayout = () => {
       console.log("chatting data", value);
       if (stompClient) {
         const nextMessages = { [value.userId]: value.content };
+
         setMessageLog((prevMessages) =>
           Object.assign({}, prevMessages, nextMessages)
         );
@@ -139,19 +140,16 @@ const ReadyLayout = () => {
   );
 
   //대기 - 나가기 구독 콜백함수
-  const requestToLeave = useCallback(
-    (data: any) => {
-      const exitUserId = data.userId;
-      // exitUserId가 null 또는 undefined가 아닌 경우 실행되는 코드
-      if (exitUserId !== null && exitUserId !== undefined) {
-        if (stompClient?.connected) {
-          stompClient?.disconnect();
-        }
-        router.push("/lobby");
-      }
-    },
-    [router]
-  );
+  const requestToLeave = useCallback((data: any) => {
+    const exitUserId = data.userId;
+    setMemberReadyList((prev) => {
+      // 이전 상태(prev)에서 해당 유저의 정보를 찾아 삭제
+      return prev.filter((member) => member.userId !== exitUserId);
+    });
+    setMemberList((prev) => {
+      return prev.filter((member) => member !== exitUserId);
+    });
+  }, []);
 
   const topics: any = {
     "/topic/room/enter/": settingMembers,
@@ -198,7 +196,7 @@ const ReadyLayout = () => {
 
   useEffect(() => {
     console.log("useEffect memberReadyList >>>>  ", memberReadyList);
-    console.log("useEffect 나의 isReady 상태 >>>>  ", isReady);
+    console.log("useEffect memberList >>>>  ", memberList);
   }, [memberReadyList, isReady]);
 
   //새로고침 시 소켓 해제
@@ -214,7 +212,7 @@ const ReadyLayout = () => {
   }, []);
 
   //준비 or 준비취소 send
-  async function handleIsReady() {
+  function handleIsReady() {
     let ready;
 
     // isReady 값을 true로 변경
@@ -227,15 +225,15 @@ const ReadyLayout = () => {
       ready = "1";
       console.log("준비");
     }
-    console.log("ready:", ready);
-    await setIsReady(ready);
+    console.log("ready 상태:", ready, "userID:", userInfo.userId);
+    setIsReady(ready);
 
     sendEvent(
       `/room/preparation`,
       {},
       {
         roomCode: roomCode,
-        userId: localStorage.getItem("userId"),
+        userId: userInfo.userId,
         ready: ready,
       }
     );
