@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -167,7 +165,7 @@ public class RoomService {
         response.put("roomCode", roomCode);
         response.put("response", enterResponse);
         log.info("Enter Room From : " + roomCode + " User : " + userId);
-        kafkaTemplate.send(TOPIC_ROOM + ".enter", 0, roomCode, response);
+        kafkaTemplate.send(TOPIC_ROOM + ".enter", response);
         kafkaTemplate.send(TOPIC_CHAT, chatRequestDto);
     }
 
@@ -177,7 +175,7 @@ public class RoomService {
      * @param response 대기방 정보
      */
     @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = "room-enter")
-    public void sendRoomState(@Payload Map<String, Object> response) {
+    public void sendRoomState(Map<String, Object> response) {
         log.info("Enter Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
     }
