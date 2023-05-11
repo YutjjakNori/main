@@ -133,7 +133,7 @@ public class StompInterceptor implements ChannelInterceptor {
                             .type(ChatType.SYSTEM)
                             .userId(userId)
                             .roomCode(roomCode)
-                            .content("님이 나갔습니다.")
+                            .content("나갔습니다.")
                             .build());
         }
         return message;
