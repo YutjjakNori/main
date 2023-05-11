@@ -13,15 +13,18 @@ import {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
+  YutThrowResponseType,
 } from "@/types/game/SocketResponseTypes";
 import useGameAction from "@/actions/hook/useGameAction";
+import useYutThrow from "@/actions/hook/useYutThrow";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
   const { turnEnd } = useGameAction();
   const { pieceMove, pieceOver, appendPiece, catchPiece } = usePieceMove();
-  const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
+  const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
+  const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
 
   //게임 시작시 사용자 정보 셋팅
   const gameStartCallback = useCallback((response: GameStartResponseType) => {
@@ -44,9 +47,20 @@ const Game = () => {
     nextTurn(response.userId);
   };
 
+  // 윷 던지기
+  const throwYutCallback = (response: YutThrowResponseType) => {
+    saveThrowResult(response.result);
+  };
+
+  const selectPieceCallback = (response: any) => {
+    // TODO : 말 움직이기 로직 연결
+  };
+
   const initSubscribe = () => {
     subscribeTopic(`/topic/game/start/${roomCode}`, gameStartCallback);
     subscribeTopic(`/topic/game/turn/${roomCode}`, startTurnCallback);
+    subscribeTopic(`/topic/game/stick/${roomCode}`, throwYutCallback);
+    subscribeTopic(`/topic/game/piece/${roomCode}`, selectPieceCallback);
 
     sendEvent(
       "/game/start",
