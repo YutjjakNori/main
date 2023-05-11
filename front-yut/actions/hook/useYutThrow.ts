@@ -40,7 +40,6 @@ const useYutThrow = () => {
 
   // 윷 던지기
   const throwYut = () => {
-    console.log("throwYut : ", roomCode);
     const request = {
       roomCode: roomCode,
       userId: myInfo.userId,
