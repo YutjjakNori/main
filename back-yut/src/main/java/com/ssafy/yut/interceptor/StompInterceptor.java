@@ -6,16 +6,23 @@ import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
 import com.ssafy.yut.entity.User;
+import com.ssafy.yut.service.RoomService;
 import com.ssafy.yut.util.RedisMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.server.HandshakeInterceptor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +67,7 @@ public class StompInterceptor implements ChannelInterceptor {
             String userKey = "user:" + userId;
 
             User user = redisMapper.getData(userKey, User.class);
-            redisMapper.deleteData(userKey);
+            redisMapper.deleteDate(userKey);
 
             String roomCode = user.getRoomCode();
             String gameKey = "game:" + roomCode;
@@ -82,7 +89,7 @@ public class StompInterceptor implements ChannelInterceptor {
                 }
                 // 모두 나감
                 if(exitAll) {
-                    redisMapper.deleteData(gameKey);
+                    redisMapper.deleteDate(gameKey);
                     return message;
                 } else {
                     Map<Integer, List<Integer>> plate = game.getPlate();
@@ -100,7 +107,7 @@ public class StompInterceptor implements ChannelInterceptor {
             }
             // 게임 종료
             else if(gameStatus.equals("end")) {
-                redisMapper.deleteData(gameKey);
+                redisMapper.deleteDate(gameKey);
                 return message;
             }
             // 게임 대기
@@ -108,7 +115,7 @@ public class StompInterceptor implements ChannelInterceptor {
                 gameUsers.remove(exitUser);
                 // 모두 나감
                 if(gameUsers.size() == 0) {
-                    redisMapper.deleteData(gameKey);
+                    redisMapper.deleteDate(gameKey);
                     return message;
                 }
 
