@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * HandShake 인터셉터
+ * STOMP 인터셉터
  * 
  * @author 이준
  */
@@ -40,6 +40,14 @@ public class StompInterceptor implements ChannelInterceptor {
 
     private final RedisMapper redisMapper;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+
+    /**
+     * 들어오는 메시지 인터셉터.
+     *
+     * @param message
+     * @param channel
+     * @return
+     */
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
