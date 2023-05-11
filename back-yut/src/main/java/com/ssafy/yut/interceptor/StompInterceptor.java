@@ -93,10 +93,7 @@ public class StompInterceptor implements ChannelInterceptor {
                     return message;
                 } else {
                     Map<Integer, List<Integer>> plate = game.getPlate();
-                    /**
-                     * map.forEach((strKey, strValue)->{
-                     *System.out.println( strKey +":"+ strValue );
-                    });*/
+
                     for(Integer point : plate.keySet()) {
                         List<Integer> piecesInPlate = plate.get(point);
                         int piece = piecesInPlate.get(0);
