@@ -111,8 +111,7 @@ public class StompInterceptor implements ChannelInterceptor {
                     redisMapper.deleteData(gameKey);
                     return message;
                 }
-
-                gameStatus = gameStatus.replace(String.valueOf(gameStatus.charAt(exitUser)),"");
+                gameStatus = gameStatus.substring(0, exitUser) + gameStatus.substring(exitUser + 1);
                 game.setGameStatus(gameStatus);
             }
 
