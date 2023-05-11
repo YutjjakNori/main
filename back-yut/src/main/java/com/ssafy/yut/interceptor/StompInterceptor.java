@@ -67,7 +67,7 @@ public class StompInterceptor implements ChannelInterceptor {
             String userKey = "user:" + userId;
 
             User user = redisMapper.getData(userKey, User.class);
-            redisMapper.deleteDate(userKey);
+            redisMapper.deleteData(userKey);
 
             String roomCode = user.getRoomCode();
             String gameKey = "game:" + roomCode;
@@ -89,7 +89,7 @@ public class StompInterceptor implements ChannelInterceptor {
                 }
                 // 모두 나감
                 if(exitAll) {
-                    redisMapper.deleteDate(gameKey);
+                    redisMapper.deleteData(gameKey);
                     return message;
                 } else {
                     Map<Integer, List<Integer>> plate = game.getPlate();
@@ -107,7 +107,7 @@ public class StompInterceptor implements ChannelInterceptor {
             }
             // 게임 종료
             else if(gameStatus.equals("end")) {
-                redisMapper.deleteDate(gameKey);
+                redisMapper.deleteData(gameKey);
                 return message;
             }
             // 게임 대기
@@ -115,7 +115,7 @@ public class StompInterceptor implements ChannelInterceptor {
                 gameUsers.remove(exitUser);
                 // 모두 나감
                 if(gameUsers.size() == 0) {
-                    redisMapper.deleteDate(gameKey);
+                    redisMapper.deleteData(gameKey);
                     return message;
                 }
 
