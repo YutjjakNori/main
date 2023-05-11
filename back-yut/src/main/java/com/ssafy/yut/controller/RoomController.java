@@ -70,9 +70,4 @@ public class RoomController {
     public void readyGame(@RequestBody ReadyDto.Request request) {
         roomService.readyGame(request);
     }
-
-    @MessageMapping("/exit")
-    public void exitRoom(RequestDto exitRequest) {
-        roomService.exitRoom(exitRequest);
-    }
 }
