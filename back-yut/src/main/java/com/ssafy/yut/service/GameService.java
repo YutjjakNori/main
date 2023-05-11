@@ -6,7 +6,7 @@ import com.ssafy.yut.dto.EventDto;
 import com.ssafy.yut.dto.GameDto;
 import com.ssafy.yut.dto.PieceDto;
 import com.ssafy.yut.dto.RequestDto;
-import com.ssafy.yut.dto.TurnDto;
+import com.ssafy.yut.dto.UserDto;
 import com.ssafy.yut.dto.YutDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
@@ -164,7 +164,7 @@ public class GameService {
     @KafkaListener(topics = TOPIC + ".turn", groupId = GROUP_ID)
     public void sendTurn(RequestDto request){
         template.convertAndSend("/topic/game/turn/" + request.getRoomCode(),
-                TurnDto.builder()
+                UserDto.builder()
                         .userId(request.getUserId())
                         .build());
     }
