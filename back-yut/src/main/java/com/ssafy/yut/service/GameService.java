@@ -481,8 +481,7 @@ public class GameService {
     @KafkaListener(topics = TOPIC + ".piece", groupId = "game-piece")
     public void movePiece(Map<String, Object> response) {
         log.info("Piece Move To : " + response.get("roomCode"));
-        template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("responsemd" +
-                ""));
+        template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("response"));
     }
 
     /**
