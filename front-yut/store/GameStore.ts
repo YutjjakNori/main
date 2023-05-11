@@ -57,9 +57,9 @@ const EventIndex = atom<number>({
   default: -1,
 });
 
-const BgmAutoPlayState = atom<boolean>({
-  key: "BgmAutoPlay",
-  default: true,
+const BgmMuteState = atom<boolean>({
+  key: "BgmMute",
+  default: false,
 });
 
 export {
@@ -73,5 +73,5 @@ export {
   YutThrowBtnState,
   SelectedPieceIndex,
   EventIndex,
-  BgmAutoPlayState,
+  BgmMuteState,
 };

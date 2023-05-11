@@ -1,18 +1,18 @@
 import React from "react";
 import { useRecoilValue } from "recoil";
-import { BgmAutoPlayState } from "@/store/GameStore";
+import { BgmMuteState } from "@/store/GameStore";
 
 const AudioToggleCompo = () => {
-  const bgmAutoPlay = useRecoilValue(BgmAutoPlayState);
-  console.log(bgmAutoPlay);
-
-  
+  const bgmMute = useRecoilValue(BgmMuteState);
+  console.log(bgmMute);
 
   return (
     <>
       <audio
-        src="/music/lobbyBGM.mp3"
-        muted={bgmAutoPlay}
+        playsInline={true}
+        controls={true}
+        src="/audio/lobbyBGM.mp3"
+        muted={bgmMute}
         autoPlay={true}
         loop={true}
       />
