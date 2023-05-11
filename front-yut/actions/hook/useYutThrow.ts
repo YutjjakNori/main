@@ -22,7 +22,15 @@ const useYutThrow = () => {
 
   // 윷 던지기 결과
   const [resultList, setResultList] = useRecoilState(YutThrowResultListState);
-  const [resultType, setResultType] = useState<ThrowResultType>("모");
+
+  const resultType = useMemo(() => {
+    const filterResultList = resultList.filter((item) => item !== "");
+
+    if (filterResultList.length === 0) return "모";
+
+    const size = filterResultList.length;
+    return filterResultList[size - 1];
+  }, [resultList]);
   // 윷 던지기 누적 개수를 관리하는 count 변수
   // -> 만약 윷을 리스트에 넣고 난뒤의 값이 4라면 서버에 isLast: true 로 알려주기.
   const [count, setCount] = useState(0);
@@ -43,25 +51,24 @@ const useYutThrow = () => {
 
   // 서버에서 받아온 윷 던지기 결과 저장
   const saveThrowResult = (result: ThrowResultType) => {
-    setResultType(result);
     //result를 사용했으면 true로 toggle
     let pushed = false;
     let cnt = 0;
 
-    const newList = resultList.map((item) => {
-      if (item !== "") {
-        cnt++;
-        return item;
-      }
-      if (pushed) return item;
-
-      pushed = true;
-      cnt++;
-      return result;
-    });
     setCount(cnt);
 
-    setResultList(newList);
+    setResultList((current) =>
+      current.map((item) => {
+        if (item !== "") {
+          cnt++;
+          return item;
+        }
+        if (pushed) return item;
+        pushed = true;
+        cnt++;
+        return result;
+      }),
+    );
 
     setCanThrowYut("none");
 
