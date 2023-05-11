@@ -1,3 +1,4 @@
+import useGameAction from "@/actions/hook/useGameAction";
 import usePieceMove from "@/actions/hook/usePieceMove";
 import { NowTurnPlayerIdState } from "@/store/GameStore";
 import { UserInfoState } from "@/store/UserStore";
@@ -33,12 +34,16 @@ const YutPieceCompo = ({
   state = "NotStarted",
   appendArray = [],
 }: YutPieceCompoProps) => {
+  const { action } = useGameAction();
   const { selectPiece } = usePieceMove();
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const myInfo = useRecoilValue(UserInfoState);
   const isClickable = useMemo(
-    () => myInfo.userId === userId && nowTurnPlayerId === userId,
-    [nowTurnPlayerId, myInfo],
+    () =>
+      action === "ChoosePiece" &&
+      myInfo.userId === userId &&
+      nowTurnPlayerId === userId,
+    [nowTurnPlayerId, myInfo, action],
   );
   const appendedCount = useMemo(() => appendArray.length, [appendArray]);
 
