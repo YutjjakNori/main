@@ -359,6 +359,7 @@ public class GameService {
 
             data.put("end", end);
             if(end) {
+                game.setGameStatus("end");
                 kafkaTemplate.send("chat", roomCode,
                         ChatDto.Request.builder()
                         .type(ChatType.SYSTEM)
@@ -444,13 +445,17 @@ public class GameService {
 
         }
 
+        game.setUsers(gameUsers);
+        game.setPlate(plate);
+        redisMapper.saveData(key, game);
+
         pieceResponse = PieceDto.Response.builder()
                 .type(type)
                 .data(data)
                 .build();
         response.put("roomCode", roomCode);
         response.put("response", pieceResponse);
-        kafkaTemplate.send(TOPIC+".piece", roomCode, response);
+        kafkaTemplate.send(TOPIC + ".piece", roomCode, response);
     }
 
     /**
