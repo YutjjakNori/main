@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -166,7 +167,7 @@ public class RoomService {
         response.put("roomCode", roomCode);
         response.put("response", enterResponse);
         log.info("Enter Room From : " + roomCode + " User : " + userId);
-        kafkaTemplate.send(TOPIC_ROOM + ".enter", response);
+        kafkaTemplate.send(TOPIC_ROOM + ".enter", 0, roomCode, response);
         kafkaTemplate.send(TOPIC_CHAT, chatRequestDto);
     }
 
@@ -175,8 +176,8 @@ public class RoomService {
      *
      * @param response 대기방 정보
      */
-    @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = GROUP_ID)
-    public void sendRoomState(Map<String, Object> response) {
+    @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = "room-enter")
+    public void sendRoomState(@Payload Map<String, Object> response) {
         log.info("Enter Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
     }
@@ -231,7 +232,7 @@ public class RoomService {
      *
      * @param response 준비상태 변경 및 대기방 상태
      */
-    @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = "room-prepare")
     public void sendReady(Map<String, Object> response) {
         log.info("Ready Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/preparation/" + response.get("roomCode"), response.get("response"));
@@ -242,7 +243,7 @@ public class RoomService {
      *
      * @param response
      */
-    @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = "room-exit")
     public void sendExit(Map<String, Object> response) {
         template.convertAndSend("/topic/room/exit/" + response.get("roomCode"), response.get("response"));
     }
