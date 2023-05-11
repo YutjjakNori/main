@@ -57,6 +57,11 @@ const EventIndex = atom<number>({
   default: -1,
 });
 
+const BgmAutoPlayState = atom<boolean>({
+  key: "BgmAutoPlay",
+  default: true,
+});
+
 export {
   RoomCodeState,
   YutPieceListState,
@@ -68,4 +73,5 @@ export {
   YutThrowBtnState,
   SelectedPieceIndex,
   EventIndex,
+  BgmAutoPlayState,
 };
