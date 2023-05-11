@@ -198,7 +198,8 @@ const ReadyLayout = () => {
 
   useEffect(() => {
     console.log("useEffect memberReadyList >>>>  ", memberReadyList);
-  }, [memberReadyList]);
+    console.log("useEffect 나의 isReady 상태 >>>>  ", isReady);
+  }, [memberReadyList, isReady]);
 
   //새로고침 시 소켓 해제
   useEffect(() => {
@@ -211,9 +212,7 @@ const ReadyLayout = () => {
 
     return window?.removeEventListener("beforeunload", disconnectSocket);
   }, []);
-  function consoleIsReady() {
-    console.log("consoleIsReady", isReady);
-  }
+
   //준비 or 준비취소 send
   async function handleIsReady() {
     let ready;
@@ -242,12 +241,25 @@ const ReadyLayout = () => {
     );
   }
 
-  //나가기 send
+  //나가기
   function handleIsExit() {
     if (stompClient !== null && stompClient !== undefined) {
       stompClient.disconnect();
       router.push("/lobby");
     }
+  }
+
+  //방코드 복사
+  function copyTextToClipboard(roomCode: string) {
+    navigator.clipboard
+      .writeText(roomCode)
+      .then(() => {
+        console.log(`"${roomCode}" copied to clipboard`);
+        alert(`방코드 "${roomCode}"가 복사되었습니다!`);
+      })
+      .catch((error) => {
+        console.error(`Could not copy roomCode: ${error}`);
+      });
   }
 
   return (
@@ -275,13 +287,7 @@ const ReadyLayout = () => {
         >
           준비
         </button>
-        <button
-          onClick={() => {
-            consoleIsReady();
-          }}
-        >
-          준비로그찍기
-        </button>
+        {/* TODO : SoundControlButton 진우형이 만들면 import하기 */}
         <style.SoundContainer
           onClick={() => {
             handleIsExit();
@@ -299,7 +305,7 @@ const ReadyLayout = () => {
         </style.SoundContainer>
         <style.CopyContainer
           onClick={() => {
-            handleIsExit();
+            copyTextToClipboard(roomCode);
           }}
         >
           <CircleButton
