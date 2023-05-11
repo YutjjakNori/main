@@ -77,7 +77,7 @@ public class GameService {
                         .roomCode(roomCode)
                         .content("게임을 시작합니다!")
                         .build());
-        kafkaTemplate.send(TOPIC + ".start", roomCode, response);
+        kafkaTemplate.send(TOPIC + ".start", response);
     }
 
     /**
@@ -97,7 +97,7 @@ public class GameService {
      * @param request
      */
     public void yut(YutDto.Request request){
-        kafkaTemplate.send(TOPIC + ".yut", request.getRoomCode(), request);
+        kafkaTemplate.send(TOPIC + ".yut", request);
     }
 
     /**
@@ -126,7 +126,7 @@ public class GameService {
         } else {
             result = "모";
         }
-        kafkaTemplate.send("chat", request.getRoomCode(),
+        kafkaTemplate.send("chat",
                 ChatDto.Request.builder()
                         .type(ChatType.SYSTEM)
                         .userId(request.getUserId())
@@ -146,14 +146,14 @@ public class GameService {
      * @param request
      */
     public void getTurn(RequestDto request){
-        kafkaTemplate.send("chat", request.getRoomCode(),
+        kafkaTemplate.send("chat",
                 ChatDto.Request.builder()
                         .type(ChatType.SYSTEM)
                         .userId(request.getUserId())
                         .roomCode(request.getRoomCode())
                         .content("차례입니다.")
                         .build());
-        kafkaTemplate.send(TOPIC + ".turn", request.getRoomCode(), request);
+        kafkaTemplate.send(TOPIC + ".turn", request);
     }
 
     /**
@@ -327,7 +327,7 @@ public class GameService {
         data.put("event", event.contains(plateNum));
 
         if(event.contains(plateNum)) {
-            kafkaTemplate.send("chat", roomCode,
+            kafkaTemplate.send("chat",
                     ChatDto.Request.builder()
                     .type(ChatType.SYSTEM)
                     .userId(request.getUserId())
@@ -360,7 +360,7 @@ public class GameService {
             data.put("end", end);
             if(end) {
                 game.setGameStatus("end");
-                kafkaTemplate.send("chat", roomCode,
+                kafkaTemplate.send("chat",
                         ChatDto.Request.builder()
                         .type(ChatType.SYSTEM)
                         .userId(request.getUserId())
@@ -407,7 +407,7 @@ public class GameService {
                     data.put("selectPiece", selectPieces);
                     plate.put(plateNum, platePieces);
 
-                    kafkaTemplate.send("chat", roomCode,
+                    kafkaTemplate.send("chat",
                             ChatDto.Request.builder()
                             .type(ChatType.SYSTEM)
                             .userId(request.getUserId())
@@ -455,7 +455,7 @@ public class GameService {
                 .build();
         response.put("roomCode", roomCode);
         response.put("response", pieceResponse);
-        kafkaTemplate.send(TOPIC + ".piece", roomCode, response);
+        kafkaTemplate.send(TOPIC + ".piece", response);
     }
 
     /**
@@ -485,7 +485,7 @@ public class GameService {
         int eventNum = random.nextInt(4);
 
         // 이벤트 발생한 것 카프카로 보내기
-        kafkaTemplate.send(TOPIC + ".event", request.getRoomCode(),
+        kafkaTemplate.send(TOPIC + ".event",
                 EventDto.response.builder()
                         .userId(request.getUserId())
                         .roomCode(request.getRoomCode())
@@ -581,7 +581,7 @@ public class GameService {
         // 변경 데이터 redis로 저장하기
         redisMapper.saveData(request.getRoomCode(), game);
         // 변경 데이터 kafka로 보내기
-        kafkaTemplate.send(TOPIC + ".eventResult", request.getRoomCode(),
+        kafkaTemplate.send(TOPIC + ".eventResult",
                 EventDto.responseResult.builder()
                         .roomCode(request.getRoomCode())
                         .userId(request.getUserId())
