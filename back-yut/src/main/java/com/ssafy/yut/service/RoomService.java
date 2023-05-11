@@ -195,8 +195,10 @@ public class RoomService {
         int userSize = users.size();
 
         int userIndex = users.indexOf(new GameUser(request.getUserId(), null));
+        int readyStatus = Integer.parseInt(game.getGameStatus(), 2);
+        int changeReady = 1 << userIndex;
 
-        String ready = game.getGameStatus().replace(String.valueOf(game.getGameStatus().charAt(userIndex)), readyChange);
+        String ready = String.format("%s", Integer.toBinaryString(readyStatus ^ changeReady));
         game.setGameStatus(ready);
 
         boolean canStart = userSize > 1 && userSize < 5 && ((1 << userSize) - 1) == Integer.parseInt(ready, 2);
