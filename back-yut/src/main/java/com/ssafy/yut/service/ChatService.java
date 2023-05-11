@@ -37,7 +37,7 @@ public class ChatService {
      *
      * @param message 유저가 받은 메시지
      */
-    @KafkaListener(topics = TOPIC, groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC, groupId = "chat")
     public void readMessage(ChatDto.Request message){
         template.convertAndSend("/topic/chat/" + message.getRoomCode(),
                 ChatDto.Response.builder()

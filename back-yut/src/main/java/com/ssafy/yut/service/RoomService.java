@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -175,7 +174,7 @@ public class RoomService {
      *
      * @param response 대기방 정보
      */
-    @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC_ROOM + ".enter", groupId = "room-enter")
     public void sendRoomState(Map<String, Object> response) {
         log.info("Enter Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/enter/" + response.get("roomCode"), response.get("response"));
@@ -233,7 +232,7 @@ public class RoomService {
      *
      * @param response 준비상태 변경 및 대기방 상태
      */
-    @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC_ROOM + ".prepare", groupId = "room-prepare")
     public void sendReady(Map<String, Object> response) {
         log.info("Ready Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/room/preparation/" + response.get("roomCode"), response.get("response"));
@@ -244,7 +243,7 @@ public class RoomService {
      *
      * @param response
      */
-    @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC_ROOM + ".exit", groupId = "room-exit")
     public void sendExit(Map<String, Object> response) {
         template.convertAndSend("/topic/room/exit/" + response.get("roomCode"), response.get("response"));
     }

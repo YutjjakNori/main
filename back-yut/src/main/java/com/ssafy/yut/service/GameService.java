@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,9 +64,16 @@ public class GameService {
                     .build());
         }
 
+        // FIXME: 삭제
+        Set<Integer> event = new HashSet<>();
+        event.add(6);
+        event.add(25);
+
         GameDto.Response gameStartResponse = GameDto.Response.builder()
                 .users(users)
-                .event(game.getEvent())
+                // FIXME: 76 -> 75로 변경
+                // .event(game.getEvent())
+                .event(event)
                 .build();
         response.put("roomCode", roomCode);
         response.put("response", gameStartResponse);
@@ -85,7 +93,7 @@ public class GameService {
      *
      * @param response
      */
-    @KafkaListener(topics = TOPIC + ".start", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC + ".start", groupId = "game-start")
     public void startGame(Map<String, Object> response) {
         log.info("Game Start Send To : " + response.get("roomCode"));
         template.convertAndSend("/topic/game/start/"+response.get("roomCode"), response.get("response"));
@@ -105,7 +113,7 @@ public class GameService {
      *
      * @param request
      */
-    @KafkaListener(topics = TOPIC + ".yut", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC + ".yut", groupId = "game-yut")
     public void throwYut(YutDto.Request request){
         int number = 100;
         if(request.isLast()){
@@ -161,7 +169,7 @@ public class GameService {
      *
      * @param request
      */
-    @KafkaListener(topics = TOPIC + ".turn", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC + ".turn", groupId = "game-turn")
     public void sendTurn(RequestDto request){
         template.convertAndSend("/topic/game/turn/" + request.getRoomCode(),
                 UserDto.builder()
@@ -199,9 +207,16 @@ public class GameService {
         int turnUserIndex = gameUsers.indexOf(turnUser);
         turnUser.setPieces(gameUsers.get(turnUserIndex).getPieces());
         List<Integer> pieces = turnUser.getPieces();
-        Set<Integer> event = game.getEvent();
+
+        // FIXME: 210 -> 209로 변경
+//        Set<Integer> event = game.getEvent();
+        Set<Integer> event = new HashSet<>();
         Map<Integer, List<Integer>> plate = game.getPlate();
         List<Integer> movePieces = plate.remove(plateNum);
+
+        // FIXME: 삭제
+        event.add(6);
+        event.add(25);
 
         switch (direction) {
             // 순행
@@ -463,11 +478,10 @@ public class GameService {
      *
      * @param response
      */
-    @KafkaListener(topics = TOPIC + ".piece", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC + ".piece", groupId = "game-piece")
     public void movePiece(Map<String, Object> response) {
         log.info("Piece Move To : " + response.get("roomCode"));
-        template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("responsemd" +
-                ""));
+        template.convertAndSend("/topic/game/piece/" + response.get("roomCode"), response.get("response"));
     }
 
     /**
@@ -482,8 +496,34 @@ public class GameService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
 
-        int eventNum = random.nextInt(4);
+        int eventNum = random.nextInt(5);
 
+        String eventName = "";
+        switch (eventNum){
+            case 0:
+                eventName = "꽝";
+                break;
+            case 1:
+                eventName = "한번 던지기";
+                break;
+            case 2:
+                eventName = "말 업고가기";
+                break;
+            case 3:
+                eventName = "출발했던 자리로 이동";
+                break;
+            case 4:
+                eventName = "처음으로 돌아가기";
+                break;
+        }
+
+        // 채팅으로 보내기
+        kafkaTemplate.send("chat",
+                ChatDto.Request.builder()
+                        .type(ChatType.SYSTEM)
+                        .userId(request.getUserId())
+                        .roomCode(request.getRoomCode())
+                        .content("[" + eventName + "]을(를) 뽑았습니다."));
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
                 EventDto.response.builder()
@@ -498,7 +538,7 @@ public class GameService {
      *
      * @param eventDto
      */
-    @KafkaListener(topics = TOPIC + ".event", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC + ".event", groupId = "game-event")
     public void sendEvent(EventDto.response eventDto) {
         template.convertAndSend("/topic/game/event/" + eventDto.getRoomCode(), eventDto);
     }
@@ -596,7 +636,7 @@ public class GameService {
      *
      * @param eventDto
      */
-    @KafkaListener(topics = TOPIC + ".eventResult", groupId = GROUP_ID)
+    @KafkaListener(topics = TOPIC + ".eventResult", groupId = "game-eventResult")
     public void sendEventResult(EventDto.responseResult eventDto) {
         template.convertAndSend("/topic/game/event/result/" + eventDto.getRoomCode(), eventDto);
     }
