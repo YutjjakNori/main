@@ -97,7 +97,7 @@ public class GameService {
      * @param request
      */
     public void yut(YutDto.Request request){
-        kafkaTemplate.send(TOPIC + ".yut", request.getRoomCode(), request);
+        kafkaTemplate.send(TOPIC + ".yut", request);
     }
 
     /**
@@ -153,7 +153,7 @@ public class GameService {
                         .roomCode(request.getRoomCode())
                         .content("차례입니다.")
                         .build());
-        kafkaTemplate.send(TOPIC + ".turn", request.getRoomCode(), request);
+        kafkaTemplate.send(TOPIC + ".turn", request);
     }
 
     /**
@@ -455,7 +455,7 @@ public class GameService {
                 .build();
         response.put("roomCode", roomCode);
         response.put("response", pieceResponse);
-        kafkaTemplate.send(TOPIC + ".piece", roomCode, response);
+        kafkaTemplate.send(TOPIC+".piece", response);
     }
 
     /**
@@ -485,8 +485,8 @@ public class GameService {
         int eventNum = random.nextInt(4);
 
         // 이벤트 발생한 것 카프카로 보내기
-        kafkaTemplate.send(TOPIC + ".event", request.getRoomCode(),
-                EventDto.response.builder()
+        kafkaTemplate.send(TOPIC + ".event",
+                EventDto.builder()
                         .userId(request.getUserId())
                         .roomCode(request.getRoomCode())
                         .event(eventNum)
