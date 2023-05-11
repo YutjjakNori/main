@@ -5,8 +5,12 @@ import {
   YutPieceListState,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import * as gameUtil from "@/utils/gameUtils";
+import { sendEvent } from "../socket-api/socketInstance";
+import { RoomCodeState } from "@/store/GameStore";
+import useYutThrow from "./useYutThrow";
+import { ThrowResultType } from "@/types/game/YutThrowTypes";
 
 const animationSeconds = 0.5;
 
@@ -19,13 +23,15 @@ const usePieceMove = () => {
   const [movePathList, setMovePathList] = useState<Array<number>>([]);
   //모서리 분기점 활성화
   const [cornerSelectType, setCornerSelectType] = useRecoilState(
-    ActiveCornerArrowState
+    ActiveCornerArrowState,
   );
+  const roomCode = useRecoilValue(RoomCodeState);
+  const { popYutThrowResult } = useYutThrow();
 
   //말 동내기
   const pieceOver = (userId: string, pieceId: number) => {
     const newArr = pieceList.filter(
-      (piece) => piece.userId !== userId || piece.pieceId !== pieceId
+      (piece) => piece.userId !== userId || piece.pieceId !== pieceId,
     );
     setPieceList(newArr);
   };
@@ -34,18 +40,18 @@ const usePieceMove = () => {
   const setMoveInfo = useCallback(
     (userId: string, pieceId: number, movePath: Array<number>) => {
       const pieceIndex = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === pieceId
+        (p) => p.userId === userId && p.pieceId === pieceId,
       );
       setMovePieceIndex(pieceIndex);
       setMovePathList(movePath);
     },
-    [pieceList]
+    [pieceList],
   );
 
   const pieceMove = (
     userId: string,
     pieceId: number,
-    movePath: Array<number>
+    movePath: Array<number>,
   ) => {
     setMoveInfo(userId, pieceId, movePath);
   };
@@ -63,10 +69,28 @@ const usePieceMove = () => {
     setPieceList(list);
   };
 
+  // 도 1, 개 2, 걸 3, 윷 4, 모 5
+  const convertThrowResultToInt = useCallback((type: ThrowResultType) => {
+    switch (type) {
+      case "도":
+        return 1;
+      case "개":
+        return 2;
+      case "걸":
+        return 3;
+      case "윷":
+        return 4;
+      case "모":
+        return 5;
+      default:
+        throw Error("잘못된 윷 던지기 결과 타입입니다");
+    }
+  }, []);
+
   //말 선택
-  const selectPiece = useCallback((userId: string, pieceId: number) => {
+  const selectPiece = (userId: string, pieceId: number) => {
     const pieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === pieceId
+      (p) => p.userId === userId && p.pieceId === pieceId,
     );
     setMovePieceIndex(pieceIndex);
 
@@ -82,7 +106,25 @@ const usePieceMove = () => {
     }
     //아닌 경우 reset
     setCornerSelectType("none");
-  }, []);
+
+    //윷 말 선택했을 경우
+    const selectePieceList = [
+      pieceList[pieceIndex].pieceId,
+      ...pieceList[pieceIndex].appendArray.map((piece) => piece.pieceId),
+    ];
+
+    const yutType = convertThrowResultToInt(popYutThrowResult());
+
+    const request = {
+      roomCode: roomCode,
+      userId: userId,
+      selectPiece: selectePieceList,
+      plateNum: position,
+      yut: yutType,
+      direction: 1,
+    };
+    sendEvent("/game/piece", {}, request);
+  };
 
   //말 합치기
   const appendPiece = (userId: string, targetPieceIdList: Array<number>) => {
@@ -95,7 +137,7 @@ const usePieceMove = () => {
 
     const filteredIdList: Array<number> = targetPieceIdList.filter((id) => {
       const idx = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === id
+        (p) => p.userId === userId && p.pieceId === id,
       );
 
       return idx !== -1;
@@ -111,7 +153,7 @@ const usePieceMove = () => {
   const appendAToB = (
     userId: string,
     movePieceIndex: number, //움직여서 합칠 말
-    targetPieceIndex: number //원래 말 판에 있던 말
+    targetPieceIndex: number, //원래 말 판에 있던 말
   ) => {
     let basePiece = pieceList[movePieceIndex];
     let targetPiece = pieceList[targetPieceIndex];
@@ -121,7 +163,7 @@ const usePieceMove = () => {
       targetPiece.state === "NotStarted"
     ) {
       throw Error(
-        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음"
+        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음",
       );
     }
 
@@ -154,13 +196,13 @@ const usePieceMove = () => {
 
   const catchPiece = (
     targetUserId: string,
-    targetPieceIdList: Array<number>
+    targetPieceIdList: Array<number>,
   ) => {
     //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
     let targetPieceIndex = -1;
     for (let i = 0; i < targetPieceIdList.length; i++) {
       const idx = pieceList.findIndex(
-        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i]
+        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i],
       );
 
       if (idx !== -1) {
