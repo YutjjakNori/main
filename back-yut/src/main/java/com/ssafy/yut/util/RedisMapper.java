@@ -6,14 +6,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
+/**
+ * Redis 데이터 관련 Mapper
+ *
+ * @author 이준
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class RedisMapper {
 
     private final RedisTemplate<String, String> redisTemplate;
+
+    /**
+     * Redis에 데이터 저장
+     * 
+     * @param key
+     * @param data
+     * @return
+     * @param <T>
+     */
     public <T> boolean saveData(String key, T data) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -25,6 +37,15 @@ public class RedisMapper {
             return false;
         }
     }
+
+    /**
+     * Redis에서 데이터 불러오기
+     * 
+     * @param key
+     * @param classType
+     * @return
+     * @param <T>
+     */
     public <T> T getData(String key, Class<T> classType) {
         String value = redisTemplate.opsForValue().get(key);
 
@@ -37,6 +58,22 @@ public class RedisMapper {
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Redis에서 데이터 삭제
+     *
+     * @param key
+     * @return
+     */
+    public boolean deleteData(String key) {
+        try {
+            redisTemplate.delete(key);
+            return true;
+        }
+        catch(Exception e) {
+            return false;
         }
     }
 }
