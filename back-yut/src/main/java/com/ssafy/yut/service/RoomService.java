@@ -106,7 +106,7 @@ public class RoomService {
         GameUser gameUser = GameUser.builder().userId(userId).pieces(pieces).build();
 
         Game game = redisMapper.getData(gameKey, Game.class);
-        if (game == null) {
+        if (game == null && !roomCode.equals("")) {
             users.add(gameUser);
             game = Game.builder()
                     .users(users)
