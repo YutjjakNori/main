@@ -54,7 +54,7 @@ const useGameTurn = () => {
   //게임 순서 배열
   const [playerTurnList, setPlayerTurnList] = useRecoilState(PlayTurnState);
   const setPlayerPieceList = useSetRecoilState(YutPieceListState);
-  const { startGame, turnStart, action } = useGameAction();
+  const { startGame, turnStart, action, throwYut } = useGameAction();
   const setCornerSelectType = useSetRecoilState(ActiveCornerArrowState);
   const roomCode = useRecoilValue(RoomCodeState);
   const myInfo = useRecoilValue(UserInfoState);
@@ -122,6 +122,9 @@ const useGameTurn = () => {
         ifNextTurnIsMe();
         break;
       case "TurnStart":
+        throwYut();
+        break;
+      case "ThrowYut":
         break;
       case "TurnEnd":
         ifNextTurnIsMe();
