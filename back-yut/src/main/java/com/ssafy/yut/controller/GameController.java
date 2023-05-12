@@ -3,6 +3,7 @@ package com.ssafy.yut.controller;
 import com.ssafy.yut.dto.*;
 import com.ssafy.yut.service.GameService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,8 +26,8 @@ public class GameController {
      * @param request
      */
     @MessageMapping("/start")
-    public void startGame(GameDto.Request request) {
-        gameService.startGame(request);
+    public void startGame(GameDto.Request request, Message<?> message) {
+        gameService.startGame(request, message);
     }
 
     /**
