@@ -1,17 +1,19 @@
 import { createRoom, enterRoom } from "@/actions/http-api/lobbyApi";
 import BackgroundTextCompo from "@/present/component/BackgroundTextCompo/BackgroundTextCompo";
 import LobbyButtonCompo from "@/present/component/LobbyButtonCompo/LobbyButtonCompo";
-import { RoomCodeState } from "@/store/GameStore";
+import { RoomCodeState, UserInteractionState } from "@/store/GameStore";
 import { colors } from "@/styles/theme";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import * as style from "./LobbyLayout.style";
 
 const LobbyLayout = () => {
   const router = useRouter();
   // TODO : room code state 하나만 쓰도록 고치기
   const setRoomCode = useSetRecoilState(RoomCodeState);
+  const [userInteraction, setUserInteraction] =
+    useRecoilState(UserInteractionState);
 
   // 방 만들기 onClick
   const onClickMakeRoom = useCallback(async () => {
@@ -54,7 +56,7 @@ const LobbyLayout = () => {
         router.push("/ready");
       });
     },
-    [router],
+    [router]
   );
 
   const buttonInfoList = [
@@ -78,9 +80,14 @@ const LobbyLayout = () => {
     },
   ];
 
+  const userInteract = () => {
+    console.log(userInteraction);
+    setUserInteraction(!userInteraction);
+  };
+
   return (
     <>
-      <style.Container>
+      <style.Container onClick={userInteract}>
         <BackgroundTextCompo />
         <style.ButtonContainer>
           {buttonInfoList.map((button) => (

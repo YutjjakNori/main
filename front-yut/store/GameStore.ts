@@ -62,6 +62,11 @@ const BgmMuteState = atom<boolean>({
   default: false,
 });
 
+const UserInteractionState = atom<boolean>({
+  key: "UserInteraction",
+  default: false,
+});
+
 export {
   RoomCodeState,
   YutPieceListState,
@@ -74,4 +79,5 @@ export {
   SelectedPieceIndex,
   EventIndex,
   BgmMuteState,
+  UserInteractionState
 };
