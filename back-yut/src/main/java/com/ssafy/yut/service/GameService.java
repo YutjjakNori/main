@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * 게임 관련 Service
@@ -561,8 +562,8 @@ public class GameService {
         GameUser gameUser = GameUser.builder().userId(request.getUserId()).build();
         int turnUserIndex = gameUsers.indexOf(gameUser);
         gameUser = gameUsers.get(turnUserIndex);    // 해당 turn의 유저
-        List<Integer> resultPieceRedis = null;   // 반환값 : selectPiece
-        List<Integer> resultPieceKafka = null;   // 반환값 : selectPiece
+        List<Integer> resultPieceRedis = new ArrayList<>();   // 반환값 : selectPiece
+        List<Integer> resultPieceKafka = new ArrayList<>();   // 반환값 : selectPiece
         int move = -1;  // 반환값 : move (이동 위치)
 
         if (request.getEvent() == 0) {
@@ -581,7 +582,7 @@ public class GameService {
             int resultPieceIndex = turnUserIndex * 3 + pieceIndex;    // 말 인덱스를 사용해 실제 말 번호 가져오기
 
             // 말 업고가기 - 위치 변경 (Redis ver)
-            resultPieceRedis = game.getPlate().get(request.getPlateNum());
+            resultPieceRedis = game.getPlate().get(request.getPlateNum()).stream().collect(Collectors.toList());
             resultPieceRedis.add(resultPieceIndex);
 
             // 변경 데이터 반영하기
@@ -590,7 +591,7 @@ public class GameService {
             game.setUsers(gameUsers);
 
             // 말 업고가기 - 위치 변경 (Kafka ver)
-            resultPieceKafka = request.getSelectPiece();
+            resultPieceKafka = request.getSelectPiece().stream().collect(Collectors.toList());
             resultPieceKafka.add(pieceIndex);
         } else {
             // event == 1 -> 자리 이동
