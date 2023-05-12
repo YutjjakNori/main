@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,8 +26,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * 게임 관련 Service
@@ -48,7 +50,9 @@ public class GameService {
      *
      * @param request 게임 시작
      */
-    public void startGame(GameDto.Request request) {
+    public void startGame(GameDto.Request request, Message<?> message) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+        String sessionId = accessor.getSessionId();
         Map<String, Object> response = new HashMap<>();
         String roomCode = request.getRoomCode();
         String key = "game:" + roomCode;
@@ -75,7 +79,7 @@ public class GameService {
                 // .event(game.getEvent())
                 .event(event)
                 .build();
-        response.put("roomCode", roomCode);
+        response.put("sessionId", sessionId);
         response.put("response", gameStartResponse);
 
         kafkaTemplate.send("chat", roomCode,
@@ -96,7 +100,7 @@ public class GameService {
     @KafkaListener(topics = TOPIC + ".start", groupId = "game-start")
     public void startGame(Map<String, Object> response) {
         log.info("Game Start Send To : " + response.get("roomCode"));
-        template.convertAndSend("/topic/game/start/"+response.get("roomCode"), response.get("response"));
+        template.convertAndSend("/topic/game/start/"+response.get("sessionId"), response.get("response"));
     }
 
     /**
