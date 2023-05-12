@@ -1,6 +1,7 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
 import {
   ActiveCornerArrowState,
+  NowTurnPlayerIdState,
   SelectedPieceIndex,
   YutPieceListState,
 } from "@/store/GameStore";
@@ -135,16 +136,6 @@ const usePieceMove = () => {
         if (pieceIndex === -1)
           throw Error("id에 해당하는 말 정보를 찾을수 없습니다");
 
-        const position = latestPiecList[pieceIndex].position;
-        //선택한 말이 모서리면 모서리 분기점 활성화
-        if (gameUtil.isCorner(position)) {
-          const type = gameUtil.cornerIndexToType(position);
-          setCornerSelectType(type);
-          return;
-        }
-        //아닌 경우 reset
-        setCornerSelectType("none");
-
         //윷 말 선택했을 경우
         const selectePieceList = [
           latestPiecList[pieceIndex].pieceId,
@@ -157,6 +148,16 @@ const usePieceMove = () => {
           await getYutThrowResultForUse()
         );
 
+        const position = latestPiecList[pieceIndex].position;
+        //선택한 말이 모서리면 모서리 분기점 활성화
+        if (gameUtil.isCorner(position)) {
+          const type = gameUtil.cornerIndexToType(position);
+          setCornerSelectType(type);
+          return;
+        }
+        //아닌 경우 reset
+        setCornerSelectType("none");
+
         const request = {
           roomCode: roomCode,
           userId: userId,
@@ -165,6 +166,45 @@ const usePieceMove = () => {
           yut: yutType,
           direction: 1,
         };
+        sendEvent("/game/piece", {}, request);
+      }
+  );
+
+  const selectArrow = useRecoilCallback(
+    ({ snapshot }) =>
+      async (arrowType: number, position: number) => {
+        const latestNowTurnPlayerId = await snapshot.getPromise(
+          NowTurnPlayerIdState
+        );
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+
+        const selectedPieceIndex = latestPieceList.findIndex(
+          (p) => p.userId === latestNowTurnPlayerId && p.position === position
+        );
+
+        if (selectedPieceIndex === -1)
+          throw Error("모서리에 있는 말의 정보를 찾을수 없습니다");
+
+        const selectePieceList = [
+          latestPieceList[selectedPieceIndex].pieceId,
+          ...latestPieceList[selectedPieceIndex].appendArray.map(
+            (piece) => piece.pieceId
+          ),
+        ];
+
+        const yutType = convertThrowResultToInt(
+          await getYutThrowResultForUse()
+        );
+
+        const request = {
+          roomCode: roomCode,
+          userId: latestNowTurnPlayerId,
+          selectPiece: selectePieceList,
+          plateNum: position,
+          yut: yutType,
+          direction: arrowType,
+        };
+
         sendEvent("/game/piece", {}, request);
       }
   );
@@ -303,6 +343,7 @@ const usePieceMove = () => {
     pieceMove,
     pieceOver,
     selectPiece,
+    selectArrow,
     clearActiveCornerArrow,
     appendPiece,
     catchPiece,
