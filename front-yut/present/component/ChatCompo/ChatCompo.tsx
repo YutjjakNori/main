@@ -1,12 +1,8 @@
 //chatting component
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import * as style from "./ChatCompo.style";
-import {
-  sendEvent,
-  stompClient,
-  subscribeTopic,
-} from "@/actions/socket-api/socketInstance";
+import { sendEvent } from "@/actions/socket-api/socketInstance";
 import { UserInfoState } from "@/store/UserStore";
 import { RoomCodeState } from "@/store/GameStore";
 import { MessageLogProps, messageLogState } from "@/store/ChatStore";
@@ -17,20 +13,6 @@ const ChatCompo = () => {
   const roomCode = useRecoilValue(RoomCodeState);
   const [messageLog, setMessageLog] =
     useRecoilState<MessageLogProps>(messageLogState);
-
-  // const chattingMessage = useCallback(
-  //   (value: any) => {
-  //     console.log("채팅 구독 성공 후 콜백 함수 호출");
-  //     console.log("chatting data", value);
-  //     if (stompClient) {
-  //       const nextMessages = { [value.userId]: value.content };
-  //       setMessageLog((prevMessages) =>
-  //         Object.assign({}, prevMessages, nextMessages)
-  //       );
-  //     }
-  //   },
-  //   [stompClient]
-  // );
 
   const sendMessage = (e: any) => {
     e.preventDefault();
@@ -49,36 +31,6 @@ const ChatCompo = () => {
     }
   };
 
-  // const chattingMessage = async (data: any) => {
-  //   const userIds = data.users.map((user: any) => user.userId);
-  //   const newMemberList = [...userIds];
-  //   await setMemberList(newMemberList); //유저 아이디만 저장한 배열
-
-  //   const readyString = data.ready;
-  //   const isAllReady = checkAllReady(readyString);
-
-  //   // member 객체의 isReady 속성을 readyString 값에 따라 설정
-  //   const members = userIds.map((userId: string, index: number) => ({
-  //     userId: userId,
-  //     isReady: readyString[index] === "1",
-  //   }));
-  //   await setMemberReadyList(members);
-  //   // 모두 준비되어 있다면 openModal 함수 실행
-  //   if (isAllReady) {
-  //     openModal();
-  //   }
-  // };
-
-  // useEffect(() => {
-  // initConnection();
-  // if (stompClient) {
-  //   initConnection();
-  // }
-  // }, []);
-
-  // const initConnection = async () => {
-  //   await subscribeTopic("/topic/chat/" + roomCode, chattingMessage);
-  // };
   return (
     <>
       <style.Container>

@@ -7,7 +7,6 @@ import useModal from "@/actions/hook/controlModal";
 import { useCallback, useEffect, useState } from "react";
 import {
   connect,
-  onError,
   stompClient,
   sendEvent,
   subscribeTopic,
@@ -19,8 +18,6 @@ import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 import { MemberListState, MemberReadyListState } from "@/store/MemberStore";
 import closeSvg from "@/public/icon/close.svg";
 import copySvg from "@/public/icon/copy.svg";
-import voiceOnSvg from "@/public/icon/voiceOn.svg";
-import voiceOffSvg from "@/public/icon/voiceOff.svg";
 import CircleButton, {
   CircleButtonProps,
 } from "@/present/common/Button/Circle/CircleButton";
@@ -39,16 +36,7 @@ const ReadyLayout = () => {
     borderColor: "transparent",
     margin: "1rem",
   };
-  //소리버튼
-  const soundBtnInfo: CircleButtonProps = {
-    Icon: voiceOffSvg,
-    fontSize: "",
-    text: "",
-    color: "#575757",
-    backgroundColor: "#FFF",
-    borderColor: "gray",
-    margin: "1rem",
-  };
+
   //복사버튼
   const copyBtnInfo: CircleButtonProps = {
     Icon: copySvg,
@@ -63,7 +51,6 @@ const ReadyLayout = () => {
   const router = useRouter();
   const { openModal, closeModal } = useModal(); //모달 Hook
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState); //내 정보 세팅
-  // const [isReady, setIsReady] = useState(false); //내 레디상태 관리
   const [isReady, setIsReady] = useState("0"); //내 레디상태 관리
 
   //멤버 아이디 배열
@@ -82,7 +69,6 @@ const ReadyLayout = () => {
     const userIds = data.users.map((user: any) => user.userId);
     const newMemberList = [...userIds];
     setMemberList(newMemberList); //유저 아이디만 저장한 배열
-
     const readyString = data.ready;
 
     // member 객체의 isReady 속성을 readyString 값에 따라 설정
@@ -95,14 +81,12 @@ const ReadyLayout = () => {
 
   //대기 - 준비 구독 콜백함수
   const preparation = (data: any) => {
-    console.log("준비구독 데이터:", data);
-
     const readyUserId = data.userId;
     const ready = data.ready;
     const start = data.start;
 
     setMemberReadyList((prev) => {
-      // 이전 상태(prev)에서 해당 유저의 정보를 찾아 isReady 값을 업데이트합니다.
+      // 이전 상태(prev)에서 해당 유저의 정보를 찾아 isReady 값을 업데이트
       return prev.map((member) => {
         if (member.userId === readyUserId) {
           return {
@@ -115,7 +99,7 @@ const ReadyLayout = () => {
       });
     });
 
-    // 모두 준비되어 있다면 openModal 함수 실행
+    // 모두 준비되어 있다면 1초 뒤 openModal 함수 실행
     if (start) {
       setTimeout(() => {
         openModal();
@@ -126,8 +110,6 @@ const ReadyLayout = () => {
   //채팅 구독
   const chattingMessage = useCallback(
     (value: any) => {
-      console.log("채팅 구독 성공 후 콜백 함수 호출");
-      console.log("chatting data", value);
       if (stompClient) {
         const nextMessages = { [value.userId]: value.content };
 
@@ -151,6 +133,7 @@ const ReadyLayout = () => {
     });
   }, []);
 
+  //구독할 토픽들
   const topics: any = {
     "/topic/room/enter/": settingMembers,
     "/topic/room/preparation/": preparation,
@@ -158,6 +141,7 @@ const ReadyLayout = () => {
     "/topic/room/exit/": requestToLeave,
   };
 
+  //웹소켓 연결 및 초기 세팅
   async function initConnection() {
     await connect();
 
@@ -183,21 +167,18 @@ const ReadyLayout = () => {
       }
     );
 
-    // return () => {
-    //   if (stompClient?.connected) {
-    //     stompClient?.disconnect();
-    //   }
-    // };
+    return () => {
+      if (stompClient?.connected) {
+        stompClient?.disconnect();
+      }
+    };
   }
 
   useEffect(() => {
     initConnection();
   }, []);
 
-  useEffect(() => {
-    console.log("useEffect memberReadyList >>>>  ", memberReadyList);
-    console.log("useEffect memberList >>>>  ", memberList);
-  }, [memberReadyList, isReady]);
+  useEffect(() => {}, [memberReadyList, isReady]);
 
   //새로고침 시 소켓 해제
   useEffect(() => {
@@ -214,18 +195,14 @@ const ReadyLayout = () => {
   //준비 or 준비취소 send
   function handleIsReady() {
     let ready;
-
     // isReady 값을 true로 변경
     if (isReady === "1") {
       setIsReady("0");
       ready = "0";
-      console.log("준비 취소");
     } else {
       setIsReady("1");
       ready = "1";
-      console.log("준비");
     }
-    console.log("ready 상태:", ready, "userID:", userInfo.userId);
     setIsReady(ready);
 
     sendEvent(
@@ -252,7 +229,6 @@ const ReadyLayout = () => {
     navigator.clipboard
       .writeText(roomCode)
       .then(() => {
-        console.log(`"${roomCode}" copied to clipboard`);
         alert(`방코드 "${roomCode}"가 복사되었습니다!`);
       })
       .catch((error) => {
@@ -285,22 +261,7 @@ const ReadyLayout = () => {
         >
           준비
         </button>
-        {/* TODO : SoundControlButton 진우형이 만들면 import하기 */}
-        <style.SoundContainer
-          onClick={() => {
-            handleIsExit();
-          }}
-        >
-          <CircleButton
-            Icon={soundBtnInfo.Icon}
-            fontSize={soundBtnInfo.fontSize}
-            text={soundBtnInfo.text}
-            color={soundBtnInfo.color}
-            backgroundColor={soundBtnInfo.backgroundColor}
-            borderColor={soundBtnInfo.borderColor}
-            margin={soundBtnInfo.margin}
-          />
-        </style.SoundContainer>
+
         <style.CopyContainer
           onClick={() => {
             copyTextToClipboard(roomCode);
@@ -336,6 +297,7 @@ const ReadyLayout = () => {
             <div className="btn-alert-text">방 나가기</div>
           </style.ExitAlertContainer>
         </style.ExitContainer>
+
         <Modal title={"게임을 시작합니다"}>
           <Timer
             ss={5}

@@ -20,8 +20,7 @@ const LobbyLayout = () => {
       throw Error("방 생성에 실패했습니다");
     } else {
       setRoomCode(result.roomCode);
-      // router.push("/ready");
-      router.push("/readySocketTest");
+      router.push("/ready");
     }
   }, [router]);
 
@@ -51,8 +50,7 @@ const LobbyLayout = () => {
           }
         }
         setRoomCode(code);
-        // router.push("/ready");
-        router.push("/readySocketTest");
+        router.push("/ready");
       });
     },
     [router]
