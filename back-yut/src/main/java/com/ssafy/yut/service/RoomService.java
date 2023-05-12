@@ -127,7 +127,7 @@ public class RoomService {
             gameUsers.add(gameUser);
             String ready = game.getGameStatus();
             game.setUsers(gameUsers);
-            game.setGameStatus(ready + "0");
+            game.setGameStatus("0" + ready);
 
             User user = User.builder()
                     .userId(userId)
