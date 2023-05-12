@@ -27,8 +27,8 @@ const lobby = () => {
     fontSize: "",
     text: "",
     color: "#575757",
-    backgroundColor: "#EA857C",
-    borderColor: "transparent",
+    backgroundColor: "transparent",
+    borderColor: "black",
     margin: "1rem",
   };
 
