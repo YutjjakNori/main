@@ -28,6 +28,7 @@ public class EventDto {
      */
     @Getter
     @AllArgsConstructor
+    @Builder
     public static class requestResult {
         private String roomCode;    // 방 코드
         private String userId;  // 해당 턴이 사용자 세션 아이디
