@@ -22,7 +22,6 @@ async function connect(): Promise<void> {
     let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut", null, {
       transports: ["websocket", "xhr-streaming", "xhr-polling"],
     });
-
     stompClient = Stomp.over(socket);
     stompClient.connect(
       {},
@@ -45,13 +44,11 @@ async function connect(): Promise<void> {
 
 /**
  * Socket 연결 후 Topic 구독할 때 실행하는 함수
- *
  * @param topic 원하는 topic 주소 parameter
  * @callback 서버에서 준 데이터를 돌려받을 함수
  */
 function subscribeTopic(topic: string, callback?: any) {
   stompClient?.subscribe(topic, (body: any) => {
-    // if (callback) callback(JSON.parse(body.body));
     if (typeof callback === "function") {
       callback(JSON.parse(body.body));
     }
@@ -75,7 +72,6 @@ function sendEvent(
 
 /**
  * Socket 연결 시 오류가 발생했을 때 실행하는 함수
- *
  * @param frame 연결 실패 시 반환하는 parameter
  */
 function onError(frame: any) {

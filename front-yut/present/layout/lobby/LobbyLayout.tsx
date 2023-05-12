@@ -10,7 +10,6 @@ import * as style from "./LobbyLayout.style";
 
 const LobbyLayout = () => {
   const router = useRouter();
-  // TODO : room code state 하나만 쓰도록 고치기
   const setRoomCode = useSetRecoilState(RoomCodeState);
 
   // 방 만들기 onClick
@@ -54,7 +53,7 @@ const LobbyLayout = () => {
         router.push("/ready");
       });
     },
-    [router],
+    [router]
   );
 
   const buttonInfoList = [
