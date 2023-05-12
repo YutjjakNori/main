@@ -26,7 +26,11 @@ const GameProfile = ({
 
   // isReady가 변경되면 색깔 변경
   useEffect(() => {
-    if (!isReady && !color) return;
+    if (
+      (isReady === undefined || isReady === null) &&
+      (color === undefined || color === null)
+    )
+      return;
     if (color) {
       setProfileColor(color);
       return;
@@ -35,6 +39,7 @@ const GameProfile = ({
       setProfileColor(colors.readyPage.ready);
       return;
     }
+    setProfileColor(colors.readyPage.notReady);
   }, [isReady]);
 
   useEffect(() => {
