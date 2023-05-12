@@ -5,12 +5,13 @@ import {
   YutPieceListState,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import * as gameUtil from "@/utils/gameUtils";
 import { sendEvent } from "../socket-api/socketInstance";
 import { RoomCodeState } from "@/store/GameStore";
 import useYutThrow from "./useYutThrow";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
+import useGameAction from "./useGameAction";
 
 const animationSeconds = 0.5;
 
@@ -26,7 +27,18 @@ const usePieceMove = () => {
     ActiveCornerArrowState,
   );
   const roomCode = useRecoilValue(RoomCodeState);
-  const { popYutThrowResult } = useYutThrow();
+  const { getYutThrowResultForUse, popYutThrowResultForUse, isResultEmpty } =
+    useYutThrow();
+  const { turnEnd, selectPieceStart } = useGameAction();
+
+  const findIndexByUserIdAndPieceId = useCallback(
+    (userId: string, pieceId: number) => {
+      return pieceList.findIndex(
+        (p) => p.userId === userId && p.pieceId === pieceId,
+      );
+    },
+    [pieceList],
+  );
 
   //말 동내기
   const pieceOver = (userId: string, pieceId: number) => {
@@ -36,16 +48,18 @@ const usePieceMove = () => {
     setPieceList(newArr);
   };
 
-  //움직여야할 경로 정보
-  const setMoveInfo = useCallback(
-    (userId: string, pieceId: number, movePath: Array<number>) => {
-      const pieceIndex = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === pieceId,
-      );
-      setMovePieceIndex(pieceIndex);
-      setMovePathList(movePath);
-    },
-    [pieceList],
+  const setMoveInfo = useRecoilCallback(
+    ({ snapshot }) =>
+      async (userId: string, pieceId: number, movePath: Array<number>) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const pieceIndex = latestPieceList.findIndex(
+          (p) => p.userId === userId && p.pieceId === pieceId,
+        );
+        popYutThrowResultForUse();
+        setMovePieceIndex(pieceIndex);
+        setMovePathList(movePath);
+      },
+    [],
   );
 
   const pieceMove = (
@@ -56,18 +70,24 @@ const usePieceMove = () => {
     setMoveInfo(userId, pieceId, movePath);
   };
 
-  const doPieceMove = (movePieceIndex: number, pointIndex: number) => {
-    const list = pieceList.map((p, idx) => {
-      if (movePieceIndex !== idx) return p;
-      const tmp: YutPieceCompoProps = { ...p };
-      if (tmp.state === "NotStarted") {
-        tmp.state = "InBoard";
-      }
-      tmp.position = pointIndex;
-      return tmp;
-    });
-    setPieceList(list);
-  };
+  const doPieceMove = useRecoilCallback(
+    ({ snapshot }) =>
+      async (movePieceIndex: number, pointIndex: number) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+
+        const list = latestPieceList.map((p, idx) => {
+          if (movePieceIndex !== idx) return p;
+          const tmp: YutPieceCompoProps = { ...p };
+          if (tmp.state === "NotStarted") {
+            tmp.state = "InBoard";
+          }
+          tmp.position = pointIndex;
+          return tmp;
+        });
+        setPieceList(list);
+      },
+    [],
+  );
 
   // 도 1, 개 2, 걸 3, 윷 4, 모 5
   const convertThrowResultToInt = useCallback((type: ThrowResultType) => {
@@ -88,43 +108,51 @@ const usePieceMove = () => {
   }, []);
 
   //말 선택
-  const selectPiece = (userId: string, pieceId: number) => {
-    const pieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === pieceId,
-    );
-    setMovePieceIndex(pieceIndex);
+  const selectPiece = useRecoilCallback(
+    ({ snapshot }) =>
+      async (userId: string, pieceId: number) => {
+        const latestPiecList = await snapshot.getPromise(YutPieceListState);
+        const pieceIndex = latestPiecList.findIndex(
+          (p) => p.userId === userId && p.pieceId === pieceId,
+        );
+        setMovePieceIndex(pieceIndex);
 
-    if (pieceIndex === -1)
-      throw Error("id에 해당하는 말 정보를 찾을수 없습니다");
+        if (pieceIndex === -1)
+          throw Error("id에 해당하는 말 정보를 찾을수 없습니다");
 
-    const position = pieceList[pieceIndex].position;
-    //선택한 말이 모서리면 모서리 분기점 활성화
-    if (gameUtil.isCorner(position)) {
-      const type = gameUtil.cornerIndexToType(position);
-      setCornerSelectType(type);
-      return;
-    }
-    //아닌 경우 reset
-    setCornerSelectType("none");
+        const position = latestPiecList[pieceIndex].position;
+        //선택한 말이 모서리면 모서리 분기점 활성화
+        if (gameUtil.isCorner(position)) {
+          const type = gameUtil.cornerIndexToType(position);
+          setCornerSelectType(type);
+          return;
+        }
+        //아닌 경우 reset
+        setCornerSelectType("none");
 
-    //윷 말 선택했을 경우
-    const selectePieceList = [
-      pieceList[pieceIndex].pieceId,
-      ...pieceList[pieceIndex].appendArray.map((piece) => piece.pieceId),
-    ];
+        //윷 말 선택했을 경우
+        const selectePieceList = [
+          latestPiecList[pieceIndex].pieceId,
+          ...latestPiecList[pieceIndex].appendArray.map(
+            (piece) => piece.pieceId,
+          ),
+        ];
 
-    const yutType = convertThrowResultToInt(popYutThrowResult());
+        const yutType = convertThrowResultToInt(
+          await getYutThrowResultForUse(),
+        );
 
-    const request = {
-      roomCode: roomCode,
-      userId: userId,
-      selectPiece: selectePieceList,
-      plateNum: position,
-      yut: yutType,
-      direction: 1,
-    };
-    sendEvent("/game/piece", {}, request);
-  };
+        const request = {
+          roomCode: roomCode,
+          userId: userId,
+          selectPiece: selectePieceList,
+          plateNum: position,
+          yut: yutType,
+          direction: 1,
+        };
+        sendEvent("/game/piece", {}, request);
+      },
+  );
 
   //말 합치기
   const appendPiece = (userId: string, targetPieceIdList: Array<number>) => {
@@ -244,6 +272,12 @@ const usePieceMove = () => {
     const timer = setInterval(() => {
       if (i >= movePathList.length) {
         clearInterval(timer);
+
+        if (isResultEmpty) {
+          turnEnd();
+          return;
+        }
+        selectPieceStart();
         return;
       }
       doPieceMove(movePieceIndex, movePathList[i++]);

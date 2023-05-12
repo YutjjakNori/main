@@ -13,6 +13,7 @@ import {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
+  PieceMoveResponseType,
   YutThrowResponseType,
 } from "@/types/game/SocketResponseTypes";
 import useGameAction from "@/actions/hook/useGameAction";
@@ -20,7 +21,7 @@ import useYutThrow from "@/actions/hook/useYutThrow";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
-  const { turnEnd } = useGameAction();
+  const { turnEnd, movePiece } = useGameAction();
   const { pieceMove, pieceOver, appendPiece, catchPiece } = usePieceMove();
   const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
@@ -52,7 +53,17 @@ const Game = () => {
     saveThrowResult(response.result);
   };
 
-  const selectPieceCallback = (response: any) => {
+  const selectPieceCallback = (response: PieceMoveResponseType) => {
+    const callbackType = response.type;
+    movePiece();
+
+    switch (callbackType) {
+      case 1:
+        const { event, userId, selectPiece, move } = response.data;
+        if (!event) {
+          pieceMove(userId, selectPiece[0], move);
+        }
+    }
     // TODO : 말 움직이기 로직 연결
   };
 
@@ -75,12 +86,6 @@ const Game = () => {
     initSubscribe();
   }, []);
 
-  const testMove1 = () => {
-    pieceMove("1", 1, [0, 1, 2, 3, 4]);
-  };
-  const testMove2 = () => {
-    pieceMove("1", 2, [0, 1, 2, 3, 4]);
-  };
   const testPieceOver = () => {
     pieceOver("1", 1);
   };
@@ -104,8 +109,6 @@ const Game = () => {
     <>
       <GameLayout userList={userList} />
 
-      <button onClick={testMove1}>movePath 1</button>
-      <button onClick={testMove2}>movePath 2</button>
       <button onClick={testPieceOver}>pieceOver</button>
       <button onClick={testNextTurn}>다음 차례</button>
       <button onClick={testPieceAppend}>말 합치기</button>

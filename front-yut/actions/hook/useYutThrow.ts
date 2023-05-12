@@ -7,7 +7,7 @@ import { RoomCodeState } from "@/store/GameStore";
 import { UserInfoState } from "@/store/UserStore";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import { useEffect, useMemo, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { sendEvent } from "../socket-api/socketInstance";
 import useGameAction from "./useGameAction";
 
@@ -22,6 +22,12 @@ const useYutThrow = () => {
 
   // 윷 던지기 결과
   const [resultList, setResultList] = useRecoilState(YutThrowResultListState);
+
+  //사용할 결과가 없는지
+  const isResultEmpty = useMemo(() => {
+    const filteredNotNoneList = resultList.filter((result) => result !== "");
+    return filteredNotNoneList.length === 0;
+  }, [resultList]);
 
   const resultType = useMemo(() => {
     const filterResultList = resultList.filter((item) => item !== "");
@@ -83,13 +89,23 @@ const useYutThrow = () => {
   };
 
   // 사용할 윷 던지기 결과
-  const popYutThrowResult = () => {
-    const popFirstResultIndex = resultList.findIndex((item) => item !== "");
+  const getYutThrowResultForUse = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const resultList = await snapshot.getPromise(YutThrowResultListState);
+        const popFirstResultIndex = resultList.findIndex((item) => item !== "");
 
-    if (popFirstResultIndex === -1)
-      throw Error("사용할 수 있는 결과가 없습니다");
+        if (popFirstResultIndex === -1)
+          throw Error("사용할 수 있는 결과가 없습니다");
 
-    const firstResultType = resultList[popFirstResultIndex];
+        const firstResultType = resultList[popFirstResultIndex];
+        return firstResultType;
+      },
+    [],
+  );
+
+  const popYutThrowResultForUse = () => {
+    const firstResultType = getYutThrowResultForUse();
 
     const newList: Array<ThrowResultType> = [...resultList.slice(1), ""];
     setResultList(newList);
@@ -114,7 +130,9 @@ const useYutThrow = () => {
     resultList,
     saveThrowResult,
     resultType,
-    popYutThrowResult,
+    getYutThrowResultForUse,
+    popYutThrowResultForUse,
+    isResultEmpty,
   };
 };
 
