@@ -32,6 +32,7 @@ import java.util.Random;
  *
  * @author 이준
  * @author 김정은
+ * @author 박소연
  */
 @Service
 @RequiredArgsConstructor
@@ -523,7 +524,8 @@ public class GameService {
                         .type(ChatType.SYSTEM)
                         .userId(request.getUserId())
                         .roomCode(request.getRoomCode())
-                        .content("[" + eventName + "]을(를) 뽑았습니다."));
+                        .content("[" + eventName + "]을(를) 뽑았습니다.")
+                        .build());
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
                 EventDto.response.builder()
