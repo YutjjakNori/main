@@ -16,11 +16,27 @@ const useGameAction = () => {
     setAction("TurnStart");
   };
 
+  const throwYut = () => {
+    setAction("ThrowYut");
+  };
+
   const turnEnd = () => {
     setAction("TurnEnd");
   };
 
-  return { startGame, resetAction, action, turnStart, turnEnd };
+  const selectPieceStart = () => {
+    setAction("ChoosePiece");
+  };
+
+  return {
+    startGame,
+    resetAction,
+    action,
+    turnStart,
+    turnEnd,
+    throwYut,
+    selectPieceStart,
+  };
 };
 
 export default useGameAction;

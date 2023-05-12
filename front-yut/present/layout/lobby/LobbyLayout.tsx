@@ -10,7 +10,6 @@ import * as style from "./LobbyLayout.style";
 
 const LobbyLayout = () => {
   const router = useRouter();
-  // TODO : room code state 하나만 쓰도록 고치기
   const setRoomCode = useSetRecoilState(RoomCodeState);
   const [userInteraction, setUserInteraction] =
     useRecoilState(UserInteractionState);

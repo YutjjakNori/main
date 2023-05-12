@@ -1,5 +1,6 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
 import { CornerType, GameActionType } from "@/types/game/YutGameTypes";
+import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import { atom } from "recoil";
 
 const RoomCodeState = atom<string>({
@@ -67,6 +68,11 @@ const UserInteractionState = atom<boolean>({
   default: false,
 });
 
+const YutThrowResultListState = atom<Array<ThrowResultType>>({
+  key: "YutThrowResultList",
+  default: ["", "", "", "", ""],
+});
+
 export {
   RoomCodeState,
   YutPieceListState,
@@ -79,5 +85,6 @@ export {
   SelectedPieceIndex,
   EventIndex,
   BgmMuteState,
-  UserInteractionState
+  UserInteractionState,
+  YutThrowResultListState,
 };

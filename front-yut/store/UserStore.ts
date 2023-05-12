@@ -14,10 +14,5 @@ const UserInfoState = atom<UserInfoProps>({
   },
 });
 
-const RoomCodeState = atom<string>({
-  key: "RoomCodeState",
-  default: "",
-});
-
 export type { UserInfoProps };
-export { UserInfoState, RoomCodeState };
+export { UserInfoState };
