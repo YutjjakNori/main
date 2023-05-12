@@ -20,8 +20,8 @@ import java.util.List;
 @Builder
 public class GameUser {
     private String userId;
+    private String nickName;
     private List<Integer> pieces;
-
     @Override
     public boolean equals(Object obj) {
         return ((GameUser)obj).getUserId().equals(userId);
