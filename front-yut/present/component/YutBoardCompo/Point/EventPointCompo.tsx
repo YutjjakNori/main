@@ -21,7 +21,7 @@ const EventPoint = ({ id, classStr, pieceList }: MiniPointProps) => {
     <style.EventPoint className={classStr ?? ""}>
       <EventCard width={"100%"} height={"100%"} />
       {pieceList?.map((piece, index) => (
-        <YutPieceCompo key={index} {...piece} />
+        <YutPieceCompo key={`${piece.userId}-${piece.pieceId}`} {...piece} />
       ))}
     </style.EventPoint>
   );

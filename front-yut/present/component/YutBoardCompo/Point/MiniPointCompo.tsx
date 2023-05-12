@@ -12,8 +12,8 @@ interface MiniPointProps {
 const MiniPoint = ({ id, classStr, pieceList }: MiniPointProps) => {
   return (
     <style.MiniPoint className={classStr ?? ""}>
-      {pieceList?.map((piece, index) => (
-        <YutPieceCompo key={index} {...piece} />
+      {pieceList?.map((piece) => (
+        <YutPieceCompo key={`${piece.userId}-${piece.pieceId}`} {...piece} />
       ))}
     </style.MiniPoint>
   );

@@ -28,11 +28,16 @@ const useGameAction = () => {
     setAction("ChoosePiece");
   };
 
+  const movePiece = () => {
+    setAction("MovePiece");
+  };
+
   return {
     startGame,
     resetAction,
     action,
     turnStart,
+    movePiece,
     turnEnd,
     throwYut,
     selectPieceStart,

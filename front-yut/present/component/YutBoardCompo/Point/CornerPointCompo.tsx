@@ -15,7 +15,7 @@ const CornerPoint = ({ id, type, point, pieceList }: CornerPointCompoProps) => {
     <style.CornerPoint type={type} className={point}>
       <div></div>
       {pieceList?.map((piece) => (
-        <YutPieceCompo key={id} {...piece} />
+        <YutPieceCompo key={`${piece.userId}-${piece.pieceId}`} {...piece} />
       ))}
     </style.CornerPoint>
   );

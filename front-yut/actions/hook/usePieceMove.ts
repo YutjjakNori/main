@@ -1,16 +1,18 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
 import {
   ActiveCornerArrowState,
+  NowTurnPlayerIdState,
   SelectedPieceIndex,
   YutPieceListState,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import * as gameUtil from "@/utils/gameUtils";
 import { sendEvent } from "../socket-api/socketInstance";
 import { RoomCodeState } from "@/store/GameStore";
 import useYutThrow from "./useYutThrow";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
+import useGameAction from "./useGameAction";
 
 const animationSeconds = 0.5;
 
@@ -23,51 +25,85 @@ const usePieceMove = () => {
   const [movePathList, setMovePathList] = useState<Array<number>>([]);
   //모서리 분기점 활성화
   const [cornerSelectType, setCornerSelectType] = useRecoilState(
-    ActiveCornerArrowState,
+    ActiveCornerArrowState
   );
   const roomCode = useRecoilValue(RoomCodeState);
-  const { popYutThrowResult } = useYutThrow();
+  const { getYutThrowResultForUse, popYutThrowResultForUse, isResultEmpty } =
+    useYutThrow();
+  const { turnEnd, selectPieceStart } = useGameAction();
+
+  const findIndexByUserIdAndPieceId = useCallback(
+    (userId: string, pieceId: number) => {
+      return pieceList.findIndex(
+        (p) => p.userId === userId && p.pieceId === pieceId
+      );
+    },
+    [pieceList]
+  );
 
   //말 동내기
   const pieceOver = (userId: string, pieceId: number) => {
     const newArr = pieceList.filter(
-      (piece) => piece.userId !== userId || piece.pieceId !== pieceId,
+      (piece) => piece.userId !== userId || piece.pieceId !== pieceId
     );
     setPieceList(newArr);
   };
 
-  //움직여야할 경로 정보
-  const setMoveInfo = useCallback(
-    (userId: string, pieceId: number, movePath: Array<number>) => {
-      const pieceIndex = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === pieceId,
-      );
-      setMovePieceIndex(pieceIndex);
-      setMovePathList(movePath);
-    },
-    [pieceList],
+  const setMoveInfo = useRecoilCallback(
+    ({ snapshot }) =>
+      async (userId: string, pieceId: number, movePath: Array<number>) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const pieceIndex = latestPieceList.findIndex(
+          (p) => p.userId === userId && p.pieceId === pieceId
+        );
+        await popYutThrowResultForUse();
+        setMovePieceIndex(pieceIndex);
+        setMovePathList(movePath);
+      },
+    []
   );
 
-  const pieceMove = (
-    userId: string,
-    pieceId: number,
-    movePath: Array<number>,
-  ) => {
-    setMoveInfo(userId, pieceId, movePath);
-  };
+  const pieceMove = useRecoilCallback(
+    ({ snapshot }) =>
+      async (
+        userId: string,
+        pieceIdList: Array<number>,
+        movePath: Array<number>
+      ) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
-  const doPieceMove = (movePieceIndex: number, pointIndex: number) => {
-    const list = pieceList.map((p, idx) => {
-      if (movePieceIndex !== idx) return p;
-      const tmp: YutPieceCompoProps = { ...p };
-      if (tmp.state === "NotStarted") {
-        tmp.state = "InBoard";
-      }
-      tmp.position = pointIndex;
-      return tmp;
-    });
-    setPieceList(list);
-  };
+        const playerPieceList = latestPieceList.filter((p) => {
+          const index = pieceIdList.findIndex(
+            (pId) => p.userId === userId && p.pieceId === pId
+          );
+
+          if (index !== -1) return p;
+        });
+
+        if (playerPieceList.length === 0)
+          throw Error("움직일 piece를 찾을수 없습니다");
+        setMoveInfo(userId, playerPieceList[0].pieceId, movePath);
+      },
+    []
+  );
+  const doPieceMove = useRecoilCallback(
+    ({ snapshot }) =>
+      async (movePieceIndex: number, pointIndex: number) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+
+        const list = latestPieceList.map((p, idx) => {
+          if (movePieceIndex !== idx) return p;
+          const tmp: YutPieceCompoProps = { ...p };
+          if (tmp.state === "NotStarted") {
+            tmp.state = "InBoard";
+          }
+          tmp.position = pointIndex;
+          return tmp;
+        });
+        setPieceList(list);
+      },
+    []
+  );
 
   // 도 1, 개 2, 걸 3, 윷 4, 모 5
   const convertThrowResultToInt = useCallback((type: ThrowResultType) => {
@@ -88,43 +124,90 @@ const usePieceMove = () => {
   }, []);
 
   //말 선택
-  const selectPiece = (userId: string, pieceId: number) => {
-    const pieceIndex = pieceList.findIndex(
-      (p) => p.userId === userId && p.pieceId === pieceId,
-    );
-    setMovePieceIndex(pieceIndex);
+  const selectPiece = useRecoilCallback(
+    ({ snapshot }) =>
+      async (userId: string, pieceId: number) => {
+        const latestPiecList = await snapshot.getPromise(YutPieceListState);
+        const pieceIndex = latestPiecList.findIndex(
+          (p) => p.userId === userId && p.pieceId === pieceId
+        );
+        setMovePieceIndex(pieceIndex);
 
-    if (pieceIndex === -1)
-      throw Error("id에 해당하는 말 정보를 찾을수 없습니다");
+        if (pieceIndex === -1)
+          throw Error("id에 해당하는 말 정보를 찾을수 없습니다");
 
-    const position = pieceList[pieceIndex].position;
-    //선택한 말이 모서리면 모서리 분기점 활성화
-    if (gameUtil.isCorner(position)) {
-      const type = gameUtil.cornerIndexToType(position);
-      setCornerSelectType(type);
-      return;
-    }
-    //아닌 경우 reset
-    setCornerSelectType("none");
+        //윷 말 선택했을 경우
+        const selectePieceList = [
+          latestPiecList[pieceIndex].pieceId,
+          ...latestPiecList[pieceIndex].appendArray.map(
+            (piece) => piece.pieceId
+          ),
+        ];
 
-    //윷 말 선택했을 경우
-    const selectePieceList = [
-      pieceList[pieceIndex].pieceId,
-      ...pieceList[pieceIndex].appendArray.map((piece) => piece.pieceId),
-    ];
+        const yutType = convertThrowResultToInt(
+          await getYutThrowResultForUse()
+        );
 
-    const yutType = convertThrowResultToInt(popYutThrowResult());
+        const position = latestPiecList[pieceIndex].position;
+        //선택한 말이 모서리면 모서리 분기점 활성화
+        if (gameUtil.isCorner(position)) {
+          const type = gameUtil.cornerIndexToType(position);
+          setCornerSelectType(type);
+          return;
+        }
+        //아닌 경우 reset
+        setCornerSelectType("none");
 
-    const request = {
-      roomCode: roomCode,
-      userId: userId,
-      selectPiece: selectePieceList,
-      plateNum: position,
-      yut: yutType,
-      direction: 1,
-    };
-    sendEvent("/game/piece", {}, request);
-  };
+        const request = {
+          roomCode: roomCode,
+          userId: userId,
+          selectPiece: selectePieceList,
+          plateNum: position,
+          yut: yutType,
+          direction: 1,
+        };
+        sendEvent("/game/piece", {}, request);
+      }
+  );
+
+  const selectArrow = useRecoilCallback(
+    ({ snapshot }) =>
+      async (arrowType: number, position: number) => {
+        const latestNowTurnPlayerId = await snapshot.getPromise(
+          NowTurnPlayerIdState
+        );
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+
+        const selectedPieceIndex = latestPieceList.findIndex(
+          (p) => p.userId === latestNowTurnPlayerId && p.position === position
+        );
+
+        if (selectedPieceIndex === -1)
+          throw Error("모서리에 있는 말의 정보를 찾을수 없습니다");
+
+        const selectePieceList = [
+          latestPieceList[selectedPieceIndex].pieceId,
+          ...latestPieceList[selectedPieceIndex].appendArray.map(
+            (piece) => piece.pieceId
+          ),
+        ];
+
+        const yutType = convertThrowResultToInt(
+          await getYutThrowResultForUse()
+        );
+
+        const request = {
+          roomCode: roomCode,
+          userId: latestNowTurnPlayerId,
+          selectPiece: selectePieceList,
+          plateNum: position,
+          yut: yutType,
+          direction: arrowType,
+        };
+
+        sendEvent("/game/piece", {}, request);
+      }
+  );
 
   //말 합치기
   const appendPiece = (userId: string, targetPieceIdList: Array<number>) => {
@@ -137,7 +220,7 @@ const usePieceMove = () => {
 
     const filteredIdList: Array<number> = targetPieceIdList.filter((id) => {
       const idx = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === id,
+        (p) => p.userId === userId && p.pieceId === id
       );
 
       return idx !== -1;
@@ -153,7 +236,7 @@ const usePieceMove = () => {
   const appendAToB = (
     userId: string,
     movePieceIndex: number, //움직여서 합칠 말
-    targetPieceIndex: number, //원래 말 판에 있던 말
+    targetPieceIndex: number //원래 말 판에 있던 말
   ) => {
     let basePiece = pieceList[movePieceIndex];
     let targetPiece = pieceList[targetPieceIndex];
@@ -163,7 +246,7 @@ const usePieceMove = () => {
       targetPiece.state === "NotStarted"
     ) {
       throw Error(
-        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음",
+        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음"
       );
     }
 
@@ -196,13 +279,13 @@ const usePieceMove = () => {
 
   const catchPiece = (
     targetUserId: string,
-    targetPieceIdList: Array<number>,
+    targetPieceIdList: Array<number>
   ) => {
     //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
     let targetPieceIndex = -1;
     for (let i = 0; i < targetPieceIdList.length; i++) {
       const idx = pieceList.findIndex(
-        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i],
+        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i]
       );
 
       if (idx !== -1) {
@@ -244,6 +327,12 @@ const usePieceMove = () => {
     const timer = setInterval(() => {
       if (i >= movePathList.length) {
         clearInterval(timer);
+
+        if (isResultEmpty) {
+          turnEnd();
+          return;
+        }
+        selectPieceStart();
         return;
       }
       doPieceMove(movePieceIndex, movePathList[i++]);
@@ -254,6 +343,7 @@ const usePieceMove = () => {
     pieceMove,
     pieceOver,
     selectPiece,
+    selectArrow,
     clearActiveCornerArrow,
     appendPiece,
     catchPiece,
