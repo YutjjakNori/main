@@ -23,7 +23,8 @@ const ChatCompo = () => {
         {},
         {
           type: "CHAT",
-          userId: userInfo.userId,
+          // userId: userInfo.userId,
+          userId: userInfo.nickName,
           roomCode: roomCode,
           content: message,
         }
@@ -46,7 +47,7 @@ const ChatCompo = () => {
                     <p
                       style={{
                         color:
-                          message.chatName === userInfo.userId
+                          message.chatName === userInfo.nickName
                             ? "#B778FF"
                             : message.chatName === "SYSTEM"
                             ? "#FF9436"

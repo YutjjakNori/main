@@ -1,9 +1,5 @@
 import { atom } from "recoil";
 
-// type MessageLogProps = {
-//   [key: number]: string;
-// };
-
 type MessageLogProps = {
   chatName: string;
   chatMessage: string;

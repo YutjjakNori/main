@@ -15,4 +15,17 @@ const ButtonContainer = styled.div`
   margin: auto;
 `;
 
-export { Container, ButtonContainer };
+const inputNickName = styled.div`
+  justify-content: space-between;
+  position: relative;
+  margin-top: 45%;
+  width: 400px;
+`;
+
+const ExitModalContainer = styled.div`
+  position: relative;
+  margin: 15% 30%;
+  width: 150px;
+`;
+
+export { Container, ButtonContainer, ExitModalContainer, inputNickName };

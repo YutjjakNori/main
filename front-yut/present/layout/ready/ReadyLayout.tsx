@@ -15,7 +15,11 @@ import { UserInfoState } from "@/store/UserStore";
 import { RoomCodeState } from "@/store/GameStore";
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
-import { MemberListState, MemberReadyListState } from "@/store/MemberStore";
+import {
+  MemberListState,
+  MemberReadyListState,
+  Member,
+} from "@/store/MemberStore";
 import closeSvg from "@/public/icon/close.svg";
 import copySvg from "@/public/icon/copy.svg";
 import CircleButton, {
@@ -65,18 +69,20 @@ const ReadyLayout = () => {
   const roomCode = useRecoilValue(RoomCodeState);
 
   //대기 - 방 입장 구독 콜백함수
-  const settingMembers = (data: any) => {
-    const userIds = data.users.map((user: any) => user.userId);
-    const newMemberList = [...userIds];
-    setMemberList(newMemberList); //유저 아이디만 저장한 배열
+  const settingMembers = (data: { users: Member[]; ready: string }) => {
+    const userIds = data.users.map((user: Member) => user.userId);
+    const newMemberList = [...data.users];
     const readyString = data.ready;
+    setMemberList(newMemberList); //유저 아이디와 닉네임 저장
 
     // member 객체의 isReady 속성을 readyString 값에 따라 설정
-    const members = userIds.map((userId: string, index: number) => ({
+    const readyMembers = userIds.map((userId: string, index: number) => ({
       userId: userId,
+      nickName: data.users[index].nickName,
       isReady: readyString[index] === "1",
     }));
-    setMemberReadyList(members);
+
+    setMemberReadyList(readyMembers);
   };
 
   //대기 - 준비 구독 콜백함수
@@ -106,16 +112,17 @@ const ReadyLayout = () => {
       }, 1000);
     }
   };
+
   //채팅 구독
   const chattingMessage = useCallback(
     (data: any) => {
-      // console.log("chatting data", data);
-      // console.log("data.userId", data.userId);
       if (stompClient) {
         if (data.type === "SYSTEM") {
           const nextMessages = {
             chatName: "SYSTEM",
-            chatMessage: `${data.userI}님이 ${data.content}`,
+            //nickName받으면 닉네임으로 변경
+            // chatMessage: `${data.nickName}님이 ${data.content}`,
+            chatMessage: `${data.userId}님이 ${data.content}`,
           };
           setMessageLog((messageLog) => {
             return [...messageLog, nextMessages];
@@ -178,6 +185,7 @@ const ReadyLayout = () => {
       {},
       {
         userId: localStorage.getItem("userId"),
+        nickName: userInfo.nickName,
         roomCode: roomCode,
       }
     );
@@ -256,7 +264,7 @@ const ReadyLayout = () => {
       <div>
         <h1>방코드</h1>
         <h2>{roomCode}</h2>
-        <h2>{userInfo.userId}님</h2>
+        <h2>{userInfo.nickName}님</h2>
       </div>
       <style.Container>
         {memberReadyList.map((member, index) => (
@@ -266,7 +274,7 @@ const ReadyLayout = () => {
               "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
             }
             isReady={member.isReady}
-            playerName={member.userId}
+            playerName={member.nickName}
           />
         ))}
         <button
