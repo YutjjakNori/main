@@ -22,7 +22,6 @@ async function connect(): Promise<void> {
     let socket = new SockJS(process.env.NEXT_PUBLIC_SERVER_URL + "/yut", null, {
       transports: ["websocket", "xhr-streaming", "xhr-polling"],
     });
-    console.log("connect 연결시도!!!");
     stompClient = Stomp.over(socket);
     stompClient.connect(
       {},
@@ -32,7 +31,6 @@ async function connect(): Promise<void> {
         sessionId = socket._transport.url.split("/")[5];
         localStorage.setItem("userId", sessionId);
         // localStorage.setItem("playerName", randomPlayerName());
-        console.log("connect 연결성공~~~~~!!!");
         resolve();
       },
       // onError

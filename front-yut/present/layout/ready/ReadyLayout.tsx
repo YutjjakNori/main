@@ -193,7 +193,7 @@ const ReadyLayout = () => {
   }, []);
 
   //준비 or 준비취소 send
-  function handleIsReady() {
+  const handleIsReady = (): void => {
     let ready;
     // isReady 값을 true로 변경
     if (isReady === "1") {
@@ -214,18 +214,18 @@ const ReadyLayout = () => {
         ready: ready,
       }
     );
-  }
+  };
 
   //나가기
-  function handleIsExit() {
+  const handleIsExit = (): void => {
     if (stompClient !== null && stompClient !== undefined) {
       stompClient.disconnect();
       router.push("/lobby");
     }
-  }
+  };
 
   //방코드 복사
-  function copyTextToClipboard(roomCode: string) {
+  const copyTextToClipboard = (roomCode: string): void => {
     navigator.clipboard
       .writeText(roomCode)
       .then(() => {
@@ -234,7 +234,7 @@ const ReadyLayout = () => {
       .catch((error) => {
         console.error(`Could not copy roomCode: ${error}`);
       });
-  }
+  };
 
   return (
     <>
