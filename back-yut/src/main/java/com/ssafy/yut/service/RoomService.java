@@ -3,7 +3,6 @@ package com.ssafy.yut.service;
 import com.ssafy.yut.dto.ChatDto;
 import com.ssafy.yut.dto.ChatType;
 import com.ssafy.yut.dto.ReadyDto;
-import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
@@ -40,7 +39,7 @@ import java.util.Set;
 public class RoomService {
 
     private final RedisMapper redisMapper;
-    private final String TOPIC_ROOM = "room", TOPIC_CHAT = "chat", TOPIC_GAME = "GAME", GROUP_ID = "yut";
+    private final String TOPIC_ROOM = "room", TOPIC_CHAT = "chat";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessagingTemplate template;
     private final int RANDOM_LEN = 5;
@@ -89,27 +88,28 @@ public class RoomService {
     /**
      * 방 입장 시 대기방 정보 Kafka로 보내기
      *
-     * @param enterDto 입장 정보
+     * @param request 입장 정보
      */
-    public void enterRoom(RequestDto enterDto) {
-        String userId = enterDto.getUserId();
-        String roomCode = enterDto.getRoomCode();
+    public void enterRoom(RoomDto.WaitingRequest request) {
+        String userId = request.getUserId();
+        String roomCode = request.getRoomCode();
+        String nickName = request.getNickName();
         String userKey = "user:" + userId;
         String gameKey = "game:" + roomCode;
 
-        List<GameUser> users = new ArrayList<>();
+        List<GameUser> gameUsers = new ArrayList<>();
         List<Integer> pieces = new ArrayList<>();
         pieces.add(-1);
         pieces.add(-1);
         pieces.add(-1);
 
-        GameUser gameUser = GameUser.builder().userId(userId).pieces(pieces).build();
+        GameUser gameUser = GameUser.builder().userId(userId).nickName(nickName).pieces(pieces).build();
 
         Game game = redisMapper.getData(gameKey, Game.class);
         if (game == null && !roomCode.equals("")) {
-            users.add(gameUser);
+            gameUsers.add(gameUser);
             game = Game.builder()
-                    .users(users)
+                    .users(gameUsers)
                     .gameStatus("0")
                     .plate(new HashMap<>())
                     .build();
@@ -122,11 +122,11 @@ public class RoomService {
             redisMapper.saveData(userKey, user);
             redisMapper.saveData(gameKey, game);
         }
-        else if(game.getUsers().size() < 4) {
-            users = game.getUsers();
-            users.add(gameUser);
+        else if(game != null && game.getUsers().size() < 4) {
+            gameUsers = game.getUsers();
+            gameUsers.add(gameUser);
             String ready = game.getGameStatus();
-            game.setUsers(users);
+            game.setUsers(gameUsers);
             game.setGameStatus(ready + "0");
 
             User user = User.builder()
@@ -138,18 +138,18 @@ public class RoomService {
             redisMapper.saveData(gameKey, game);
         }
         // TODO: 2023/05/06 입장 요청을 그냥 보낼 경우
-        else if(game.getUsers().size() == 4) {
+        else if(game == null || game.getUsers().size() == 4 || roomCode.equals("")) {
             //에러 처리
             return;
         }
 
         List<RoomDto.User> userResponse = new ArrayList<>();
 
-        for (GameUser getUser : users) {
-            userResponse.add(new RoomDto.User(getUser.getUserId()));
+        for (GameUser getUser : gameUsers) {
+            userResponse.add(new RoomDto.User(getUser.getUserId(), getUser.getNickName()));
         }
 
-        RoomDto.EnterResponse enterResponse = RoomDto.EnterResponse.builder()
+        RoomDto.WaitingResponse waitingResponse = RoomDto.WaitingResponse.builder()
                 .users(userResponse)
                 .ready(game.getGameStatus())
                 .build();
@@ -158,12 +158,12 @@ public class RoomService {
                 .type(ChatType.SYSTEM)
                 .userId(userId)
                 .roomCode(roomCode)
-                .content("[" + userId + "]님이 입장했습니다.")
+                .content("입장했습니다.")
                 .build();
 
         Map<String, Object> response = new HashMap<>();
         response.put("roomCode", roomCode);
-        response.put("response", enterResponse);
+        response.put("response", waitingResponse);
         log.info("Enter Room From : " + roomCode + " User : " + userId);
         kafkaTemplate.send(TOPIC_ROOM + ".enter", response);
         kafkaTemplate.send(TOPIC_CHAT, chatRequestDto);
@@ -193,7 +193,7 @@ public class RoomService {
         List<GameUser> users = game.getUsers();
         int userSize = users.size();
 
-        int userIndex = users.indexOf(new GameUser(request.getUserId(), null));
+        int userIndex = users.indexOf(GameUser.builder().userId(request.getUserId()).build());
         int readyStatus = Integer.parseInt(game.getGameStatus(), 2);
         int changeReady = 1 << userIndex;
 

@@ -2,7 +2,7 @@ package com.ssafy.yut.interceptor;
 
 import com.ssafy.yut.dto.ChatDto;
 import com.ssafy.yut.dto.ChatType;
-import com.ssafy.yut.dto.RoomDto;
+import com.ssafy.yut.dto.UserDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
 import com.ssafy.yut.entity.User;
@@ -67,7 +67,7 @@ public class StompInterceptor implements ChannelInterceptor {
 
             Game game = redisMapper.getData(gameKey, Game.class);
             List<GameUser> gameUsers = game.getUsers();
-            int exitUser = gameUsers.indexOf(new GameUser(userId, null));
+            int exitUser = gameUsers.indexOf(GameUser.builder().userId(userId).build());
             String gameStatus = game.getGameStatus();
 
             // 게임 시작
@@ -118,7 +118,7 @@ public class StompInterceptor implements ChannelInterceptor {
             redisMapper.saveData(gameKey, game);
 
             response.put("roomCode", roomCode);
-            response.put("response", RoomDto.User.builder().userId(userId).build());
+            response.put("response", UserDto.builder().userId(userId).build());
             kafkaTemplate.send("room" + ".exit", roomCode, response);
             kafkaTemplate.send("chat", roomCode,
                     ChatDto.Request.builder()
