@@ -7,7 +7,7 @@ import { RoomCodeState } from "@/store/GameStore";
 import { UserInfoState } from "@/store/UserStore";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import { useEffect, useMemo, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { sendEvent } from "../socket-api/socketInstance";
 import useGameAction from "./useGameAction";
 
@@ -19,9 +19,21 @@ const useYutThrow = () => {
 
   // 윷 던지기 버튼 활성화
   const [canThrowYut, setCanThrowYut] = useRecoilState(YutThrowBtnState);
+  const canIThrow = useMemo(() => {
+    // 윷 던질 차례때 내 차례일때만 활성화
+    if (myInfo.userId === nowTurnPlayerId && canThrowYut === "block")
+      return true;
+    return false;
+  }, [nowTurnPlayerId, myInfo, canThrowYut]);
 
   // 윷 던지기 결과
   const [resultList, setResultList] = useRecoilState(YutThrowResultListState);
+
+  //사용할 결과가 없는지
+  const isResultEmpty = useMemo(() => {
+    const filteredNotNoneList = resultList.filter((result) => result !== "");
+    return filteredNotNoneList.length === 0;
+  }, [resultList]);
 
   const resultType = useMemo(() => {
     const filterResultList = resultList.filter((item) => item !== "");
@@ -83,18 +95,33 @@ const useYutThrow = () => {
   };
 
   // 사용할 윷 던지기 결과
-  const popYutThrowResult = () => {
-    const popFirstResultIndex = resultList.findIndex((item) => item !== "");
+  const getYutThrowResultForUse = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const resultList = await snapshot.getPromise(YutThrowResultListState);
+        const popFirstResultIndex = resultList.findIndex((item) => item !== "");
 
-    if (popFirstResultIndex === -1)
-      throw Error("사용할 수 있는 결과가 없습니다");
+        if (popFirstResultIndex === -1)
+          throw Error("사용할 수 있는 결과가 없습니다");
 
-    const firstResultType = resultList[popFirstResultIndex];
+        const firstResultType = resultList[popFirstResultIndex];
+        return firstResultType;
+      },
+    [],
+  );
 
-    const newList: Array<ThrowResultType> = [...resultList.slice(1), ""];
-    setResultList(newList);
-    return firstResultType;
-  };
+  const popYutThrowResultForUse = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const resultList = await snapshot.getPromise(YutThrowResultListState);
+        const firstResultType = await getYutThrowResultForUse();
+
+        const newList: Array<ThrowResultType> = [...resultList.slice(1), ""];
+        setResultList(newList);
+        return firstResultType;
+      },
+    [],
+  );
 
   useEffect(() => {
     // 윷을 안던질때는 display none
@@ -109,12 +136,14 @@ const useYutThrow = () => {
   }, [action]);
 
   return {
-    canThrowYut,
+    canIThrow,
     throwYut,
     resultList,
     saveThrowResult,
     resultType,
-    popYutThrowResult,
+    getYutThrowResultForUse,
+    popYutThrowResultForUse,
+    isResultEmpty,
   };
 };
 

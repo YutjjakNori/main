@@ -20,9 +20,26 @@ interface YutThrowResponseType {
   result: ThrowResultType;
 }
 
+interface PieceMoveResponseDataType {
+  userId: string;
+  selectPiece: Array<number>;
+  move: Array<number>;
+  event: boolean;
+  caughtUserId?: string;
+  caughtPiece?: Array<number>;
+  end: boolean;
+}
+
+// 말을 선택했을 때 response
+interface PieceMoveResponseType {
+  type: number;
+  data: PieceMoveResponseDataType;
+}
+
 export type {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
   YutThrowResponseType,
+  PieceMoveResponseType,
 };

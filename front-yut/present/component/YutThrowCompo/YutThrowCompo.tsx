@@ -1,4 +1,3 @@
-import { useState } from "react";
 import CircleButton from "@/present/common/Button/Circle/CircleButton";
 import { CircleButtonProps } from "@/present/common/Button//Circle/CircleButton";
 import * as style from "@/present/component/YutThrowCompo/YutThrowCompo.style";
@@ -30,7 +29,7 @@ const yutResultImg = {
 };
 
 const YutThrowCompo = () => {
-  const { canThrowYut, resultList, throwYut, resultType } = useYutThrow();
+  const { canIThrow, resultList, throwYut, resultType } = useYutThrow();
 
   const yutResultInfo: CircleButtonProps = {
     text: "윷",
@@ -57,7 +56,10 @@ const YutThrowCompo = () => {
 
       <style.StyledResult>
         <style.ImgContainer>{yutResultImg[resultType]}</style.ImgContainer>
-        <style.RectContainer onClick={throwYut} display={canThrowYut}>
+        <style.RectContainer
+          onClick={throwYut}
+          display={canIThrow ? "block" : "none"}
+        >
           <RectButton
             text={yutThrowBtnInfo.text}
             fontSize={yutThrowBtnInfo.fontSize}

@@ -9,7 +9,12 @@ import {
 import { UserInfoState } from "@/store/UserStore";
 import { YutPieceType } from "@/types/game/YutPieceTypes";
 import { useCallback, useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 import { sendEvent } from "../socket-api/socketInstance";
 import useGameAction from "./useGameAction";
 
@@ -78,15 +83,28 @@ const useGameTurn = () => {
     setCornerSelectType("none");
   };
 
-  const getNextPlayerId = (): string => {
-    if (nowTurnPlayerId === "-1") {
-      return playerTurnList[0];
-    }
+  const getNextPlayerId = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const latestNowTurnPlayerId = await snapshot.getPromise(
+          NowTurnPlayerIdState,
+        );
+        const latestPlayerTurnList = await snapshot.getPromise(PlayTurnState);
 
-    const nowIndex = playerTurnList.findIndex((id) => id === nowTurnPlayerId);
-    const nextIndex = (nowIndex + 1) % playerTurnList.length;
-    return playerTurnList[nextIndex];
-  };
+        console.log("getNextPlayerId", latestNowTurnPlayerId);
+
+        if (latestNowTurnPlayerId === "-1") {
+          return latestPlayerTurnList[0];
+        }
+
+        const nowIndex = latestPlayerTurnList.findIndex(
+          (id) => id === latestNowTurnPlayerId,
+        );
+        const nextIndex = (nowIndex + 1) % latestPlayerTurnList.length;
+        return latestPlayerTurnList[nextIndex];
+      },
+    [],
+  );
 
   // 턴 넘기기
   const nextTurn = useCallback(
@@ -99,18 +117,20 @@ const useGameTurn = () => {
   );
 
   //다음 차례가 내 차례인 경우 알림
-  const ifNextTurnIsMe = () => {
-    const nextPlayerId = getNextPlayerId();
+  const ifNextTurnIsMe = async () => {
+    const nextPlayerId = await getNextPlayerId();
 
     if (nextPlayerId === myInfo.userId) {
-      sendEvent(
-        "/game/turn",
-        {},
-        {
-          roomCode: roomCode,
-          userId: nextPlayerId,
-        },
-      );
+      setTimeout(() => {
+        sendEvent(
+          "/game/turn",
+          {},
+          {
+            roomCode: roomCode,
+            userId: nextPlayerId,
+          },
+        );
+      }, 1000);
     }
   };
 
@@ -131,8 +151,6 @@ const useGameTurn = () => {
         break;
     }
   }, [action]);
-
-  useCallback(() => {}, [nowTurnPlayerId]);
 
   return { initPlayerTurn, getNextPlayerId, nextTurn };
 };
