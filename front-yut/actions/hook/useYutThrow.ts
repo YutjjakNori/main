@@ -110,13 +110,18 @@ const useYutThrow = () => {
     [],
   );
 
-  const popYutThrowResultForUse = async () => {
-    const firstResultType = await getYutThrowResultForUse();
+  const popYutThrowResultForUse = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const resultList = await snapshot.getPromise(YutThrowResultListState);
+        const firstResultType = await getYutThrowResultForUse();
 
-    const newList: Array<ThrowResultType> = [...resultList.slice(1), ""];
-    setResultList(newList);
-    return firstResultType;
-  };
+        const newList: Array<ThrowResultType> = [...resultList.slice(1), ""];
+        setResultList(newList);
+        return firstResultType;
+      },
+    [],
+  );
 
   useEffect(() => {
     // 윷을 안던질때는 display none

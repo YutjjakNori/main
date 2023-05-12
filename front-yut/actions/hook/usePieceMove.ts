@@ -55,7 +55,7 @@ const usePieceMove = () => {
         const pieceIndex = latestPieceList.findIndex(
           (p) => p.userId === userId && p.pieceId === pieceId,
         );
-        popYutThrowResultForUse();
+        await popYutThrowResultForUse();
         setMovePieceIndex(pieceIndex);
         setMovePathList(movePath);
       },
