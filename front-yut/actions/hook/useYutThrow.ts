@@ -19,6 +19,12 @@ const useYutThrow = () => {
 
   // 윷 던지기 버튼 활성화
   const [canThrowYut, setCanThrowYut] = useRecoilState(YutThrowBtnState);
+  const canIThrow = useMemo(() => {
+    // 윷 던질 차례때 내 차례일때만 활성화
+    if (myInfo.userId === nowTurnPlayerId && canThrowYut === "block")
+      return true;
+    return false;
+  }, [nowTurnPlayerId, myInfo, canThrowYut]);
 
   // 윷 던지기 결과
   const [resultList, setResultList] = useRecoilState(YutThrowResultListState);
@@ -104,8 +110,8 @@ const useYutThrow = () => {
     [],
   );
 
-  const popYutThrowResultForUse = () => {
-    const firstResultType = getYutThrowResultForUse();
+  const popYutThrowResultForUse = async () => {
+    const firstResultType = await getYutThrowResultForUse();
 
     const newList: Array<ThrowResultType> = [...resultList.slice(1), ""];
     setResultList(newList);
@@ -125,7 +131,7 @@ const useYutThrow = () => {
   }, [action]);
 
   return {
-    canThrowYut,
+    canIThrow,
     throwYut,
     resultList,
     saveThrowResult,
