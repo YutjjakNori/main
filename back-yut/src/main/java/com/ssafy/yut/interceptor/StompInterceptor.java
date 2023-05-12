@@ -112,6 +112,7 @@ public class StompInterceptor implements ChannelInterceptor {
                     return message;
                 }
                 gameStatus = gameStatus.substring(0, exitUser) + gameStatus.substring(exitUser + 1);
+                game.setUsers(gameUsers);
                 game.setGameStatus(gameStatus);
             }
 
