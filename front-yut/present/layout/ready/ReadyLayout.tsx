@@ -13,7 +13,7 @@ import {
 } from "@/actions/socket-api/socketInstance";
 import { UserInfoState } from "@/store/UserStore";
 import { RoomCodeState } from "@/store/GameStore";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 import { MemberListState, MemberReadyListState } from "@/store/MemberStore";
 import closeSvg from "@/public/icon/close.svg";
@@ -60,7 +60,7 @@ const ReadyLayout = () => {
     useRecoilState(MemberReadyListState);
   //채팅
   const [messageLog, setMessageLog] =
-    useRecoilState<MessageLogProps>(messageLogState);
+    useRecoilState<MessageLogProps[]>(messageLogState);
 
   const roomCode = useRecoilValue(RoomCodeState);
 
@@ -106,17 +106,32 @@ const ReadyLayout = () => {
       }, 1000);
     }
   };
-
   //채팅 구독
   const chattingMessage = useCallback(
-    (value: any) => {
+    (data: any) => {
+      // console.log("chatting data", data);
+      // console.log("data.userId", data.userId);
       if (stompClient) {
-        const nextMessages = { [value.userId]: value.content };
+        if (data.type === "SYSTEM") {
+          const nextMessages = {
+            chatName: "SYSTEM",
+            chatMessage: `${data.userI}님이 ${data.content}`,
+          };
+          setMessageLog((messageLog) => {
+            return [...messageLog, nextMessages];
+          });
+        } else {
+          const nextMessages = {
+            chatName: data.userId,
+            chatMessage: data.content,
+          };
 
-        setMessageLog((prevMessages) =>
-          Object.assign({}, prevMessages, nextMessages)
-        );
+          setMessageLog((messageLog) => {
+            return [...messageLog, nextMessages];
+          });
+        }
       }
+      return;
     },
     [stompClient]
   );
@@ -149,7 +164,7 @@ const ReadyLayout = () => {
       ...userInfo,
       userId: localStorage.getItem("userId") ?? "",
     });
-    setMessageLog({});
+    setMessageLog([]);
 
     const topicSubscriptions = Object.keys(topics).map((key) =>
       subscribeTopic(key + roomCode, topics[key])

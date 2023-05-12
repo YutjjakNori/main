@@ -20,6 +20,7 @@ const LobbyLayout = () => {
       throw Error("방 생성에 실패했습니다");
     } else {
       setRoomCode(result.roomCode);
+      //TODO: openModal하고 난 뒤 form데이터를 받고 router.push 해서 이동시키기
       router.push("/ready");
     }
   }, [router]);

@@ -12,11 +12,12 @@ const ChatCompo = () => {
   const [message, setMessage] = useState("");
   const roomCode = useRecoilValue(RoomCodeState);
   const [messageLog, setMessageLog] =
-    useRecoilState<MessageLogProps>(messageLogState);
+    useRecoilState<MessageLogProps[]>(messageLogState);
 
   const sendMessage = (e: any) => {
     e.preventDefault();
     if (message) {
+      if (message === "") return;
       sendEvent(
         `/chat`,
         {},
@@ -39,11 +40,23 @@ const ChatCompo = () => {
           {/* 채팅창 로그 */}
           <style.ChatLogBox>
             <div>
-              {Object.keys(messageLog).map((userId, index) => (
-                <div key={index}>
-                  <strong>{userId}:</strong> {messageLog[userId]}
-                </div>
-              ))}
+              {messageLog &&
+                messageLog.map((message: MessageLogProps, index: number) => (
+                  <div key={index}>
+                    <p
+                      style={{
+                        color:
+                          message.chatName === userInfo.userId
+                            ? "#B778FF"
+                            : message.chatName === "SYSTEM"
+                            ? "#FF9436"
+                            : "#575757",
+                      }}
+                    >
+                      {message.chatName} : {message.chatMessage}
+                    </p>
+                  </div>
+                ))}
             </div>
           </style.ChatLogBox>
           {/* 채팅 입력창 */}

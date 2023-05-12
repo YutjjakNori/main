@@ -1,12 +1,17 @@
 import { atom } from "recoil";
 
+// type MessageLogProps = {
+//   [key: number]: string;
+// };
+
 type MessageLogProps = {
-  [key: string]: string;
+  chatName: string;
+  chatMessage: string;
 };
 
-const messageLogState = atom<MessageLogProps>({
+const messageLogState = atom<MessageLogProps[]>({
   key: "messageLogState",
-  default: {},
+  default: [{ chatName: "", chatMessage: "" }],
 });
 
 export type { MessageLogProps };
