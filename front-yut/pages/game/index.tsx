@@ -61,7 +61,7 @@ const Game = () => {
       case 1:
         const { event, userId, selectPiece, move } = response.data;
         if (!event) {
-          pieceMove(userId, selectPiece[0], move);
+          pieceMove(userId, selectPiece, move);
         }
     }
     // TODO : 말 움직이기 로직 연결
@@ -78,7 +78,7 @@ const Game = () => {
       {},
       {
         roomCode: roomCode,
-      },
+      }
     );
   };
 
