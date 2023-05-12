@@ -151,8 +151,8 @@ const YutBoardCompo = () => {
         {/* rightTop -> leftBottom */}
         {createMiniPoint(20, "rightCross1", pieceList)}
         {createMiniPoint(21, "rightCross2", pieceList)}
-        {createMiniPoint(22, "rightCross3", pieceList)}
-        {createMiniPoint(23, "rightCross4", pieceList)}
+        {createMiniPoint(23, "rightCross3", pieceList)}
+        {createMiniPoint(24, "rightCross4", pieceList)}
       </style.Container>
     </>
   );
