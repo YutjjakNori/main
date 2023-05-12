@@ -17,7 +17,7 @@ import java.util.List;
 public class RoomDto extends RequestDto{
 
     /**
-     * 방 입장
+     * 대기방 유저 정보
      */
     @Getter
     @Setter
@@ -26,10 +26,11 @@ public class RoomDto extends RequestDto{
     @Builder
     public static class User {
         private String userId;
+        private String nickName;
     }
 
     /**
-     * 대기방 입장 요청
+     * 방 입장 요청
      */
     @Getter
     @Setter
@@ -40,15 +41,24 @@ public class RoomDto extends RequestDto{
         private String roomCode;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class WaitingRequest extends User{
+        private String roomCode;
+    }
+
     /**
-     * 대기방 입장 응답
+     * 대기방 정보 응답
      */
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class EnterResponse {
+    public static class WaitingResponse {
         private List<User> users;
         private String ready;
     }

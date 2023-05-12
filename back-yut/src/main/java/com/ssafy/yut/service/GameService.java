@@ -203,7 +203,7 @@ public class GameService {
 
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> gameUsers = game.getUsers();
-        GameUser turnUser = new GameUser(request.getUserId(), null);
+        GameUser turnUser = GameUser.builder().userId(request.getUserId()).build();
         int turnUserIndex = gameUsers.indexOf(turnUser);
         turnUser.setPieces(gameUsers.get(turnUserIndex).getPieces());
         List<Integer> pieces = turnUser.getPieces();
@@ -556,7 +556,7 @@ public class GameService {
         Game game = redisMapper.getData(request.getRoomCode(), Game.class);
         // 게임 이용자 중 해당 유저 들고오기
         List<GameUser> gameUsers = game.getUsers();
-        GameUser gameUser = new GameUser(request.getUserId(), null);
+        GameUser gameUser = GameUser.builder().userId(request.getUserId()).build();
         int turnUserIndex = gameUsers.indexOf(gameUser);
         gameUser = gameUsers.get(turnUserIndex);    // 해당 turn의 유저
         List<Integer> resultPieceRedis = null;   // 반환값 : selectPiece

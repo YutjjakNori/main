@@ -1,7 +1,6 @@
 package com.ssafy.yut.controller;
 
 import com.ssafy.yut.dto.ReadyDto;
-import com.ssafy.yut.dto.RequestDto;
 import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -54,11 +53,11 @@ public class RoomController {
     /**
      * 방 입장 요청
      *
-     * @param enterDto
+     * @param request
      */
     @MessageMapping("/enter")
-    public void enterRoom(@RequestBody RequestDto enterDto) {
-        roomService.enterRoom(enterDto);
+    public void enterRoom(@RequestBody RoomDto.WaitingRequest request) {
+        roomService.enterRoom(request);
     }
 
     /**
