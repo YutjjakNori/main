@@ -4,7 +4,7 @@ import GameProfile from "@/present/common/GameProfile/GameProfile";
 import Modal from "@/present/common/Modal/Modal";
 import Timer from "@/present/common/Timer/Timer";
 import useModal from "@/actions/hook/controlModal";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   connect,
   stompClient,
@@ -13,7 +13,7 @@ import {
 } from "@/actions/socket-api/socketInstance";
 import { UserInfoState } from "@/store/UserStore";
 import { RoomCodeState } from "@/store/GameStore";
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 import {
   MemberListState,
@@ -56,7 +56,8 @@ const ReadyLayout = () => {
   const { openModal, closeModal } = useModal(); //모달 Hook
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState); //내 정보 세팅
   const [isReady, setIsReady] = useState("0"); //내 레디상태 관리
-
+  //새로 추가된 유저 파악 용도
+  let simpleMemberList: Member[] = [];
   //멤버 아이디 배열
   const [memberList, setMemberList] = useRecoilState(MemberListState);
   //멤버아이디 + 레디상태 관리 배열
@@ -68,21 +69,50 @@ const ReadyLayout = () => {
 
   const roomCode = useRecoilValue(RoomCodeState);
 
+  //채팅메시지 추가 함수
+  const printMessage = (name: string, message: string) => {
+    setMessageLog((prev) => {
+      return [
+        ...prev,
+        {
+          chatName: name,
+          chatMessage: message,
+        },
+      ];
+    });
+  };
+
   //대기 - 방 입장 구독 콜백함수
   const settingMembers = (data: { users: Member[]; ready: string }) => {
-    const userIds = data.users.map((user: Member) => user.userId);
+    printMessage(
+      "SYSTEM",
+      `${
+        data.users.filter((member) => !isExistMember(member))[0].nickName
+      }님이 입장하셨습니다.`
+    );
+
     const newMemberList = [...data.users];
-    const readyString = data.ready;
     setMemberList(newMemberList); //유저 아이디와 닉네임 저장
+    simpleMemberList = newMemberList;
 
+    const userIds = data.users.map((user: Member) => user.userId);
     // member 객체의 isReady 속성을 readyString 값에 따라 설정
-    const readyMembers = userIds.map((userId: string, index: number) => ({
-      userId: userId,
-      nickName: data.users[index].nickName,
-      isReady: readyString[index] === "1",
-    }));
+    setMemberReadyList(
+      userIds.map((userId: string, index: number) => ({
+        userId: userId,
+        nickName: data.users[index].nickName,
+        isReady: data.ready[index] === "1",
+      }))
+    );
+  };
 
-    setMemberReadyList(readyMembers);
+  //추가된 멤버 찾기
+  const isExistMember = (member: Member) => {
+    for (let i = 0; i < simpleMemberList.length; i++) {
+      const nowMember = simpleMemberList[i];
+      if (nowMember.userId === member.userId) return true;
+      else return false;
+    }
   };
 
   //대기 - 준비 구독 콜백함수
@@ -114,38 +144,37 @@ const ReadyLayout = () => {
   };
 
   //채팅 구독
-  const chattingMessage = useCallback(
-    (data: any) => {
-      if (stompClient) {
-        if (data.type === "SYSTEM") {
-          const nextMessages = {
-            chatName: "SYSTEM",
-            //nickName받으면 닉네임으로 변경
-            // chatMessage: `${data.nickName}님이 ${data.content}`,
-            chatMessage: `${data.userId}님이 ${data.content}`,
-          };
-          setMessageLog((messageLog) => {
-            return [...messageLog, nextMessages];
-          });
-        } else {
-          const nextMessages = {
-            chatName: data.userId,
-            chatMessage: data.content,
-          };
+  const chattingMessage = (data: any) => {
+    let name: string;
+    let message: string;
+    if (data.type === "SYSTEM") {
+      name = "SYSTEM";
+      message = `${
+        simpleMemberList.find((member) => member.userId === data.userId)
+          ?.nickName || data.userId
+      }님이 ${data.content}`;
+    } else {
+      name = data.userId;
+      message = data.content;
+    }
+    printMessage(name, message);
+  };
 
-          setMessageLog((messageLog) => {
-            return [...messageLog, nextMessages];
-          });
-        }
-      }
-      return;
-    },
-    [stompClient]
-  );
+  const findMember = (userId: string) => {
+    for (let i = 0; i < simpleMemberList.length; i++) {
+      const nowMember = simpleMemberList[i];
+      // 찾으면 멤버 반환
+      if (nowMember.userId === userId) return nowMember;
+    }
+  };
 
   //대기 - 나가기 구독 콜백함수
-  const requestToLeave = useCallback((data: any) => {
+  const requestToLeave = (data: any) => {
     const exitUserId = data.userId;
+    printMessage(
+      "SYSTEM",
+      `${findMember(data.userId)?.nickName || "#알수없음"}님이 퇴장하셨습니다.`
+    );
     setMemberReadyList((prev) => {
       // 이전 상태(prev)에서 해당 유저의 정보를 찾아 삭제
       return prev.filter((member) => member.userId !== exitUserId);
@@ -153,7 +182,7 @@ const ReadyLayout = () => {
     setMemberList((prev) => {
       return prev.filter((member) => member !== exitUserId);
     });
-  }, []);
+  };
 
   //구독할 토픽들
   const topics: any = {

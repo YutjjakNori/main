@@ -23,7 +23,6 @@ const ChatCompo = () => {
         {},
         {
           type: "CHAT",
-          // userId: userInfo.userId,
           userId: userInfo.nickName,
           roomCode: roomCode,
           content: message,

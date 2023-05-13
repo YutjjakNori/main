@@ -102,6 +102,12 @@ const LobbyLayout = () => {
   //닉네임 저장 요청
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // nickName이 빈 값이거나 공백 문자로만 이루어졌거나 10글자 이상이라면
+    // 아무것도 하지 않고 함수를 빠져나갑니다.
+    if (!nickName || nickName.trim().length === 0 || nickName.length >= 10) {
+      alert("10글자 이하 별명을 써주세요");
+      return;
+    }
     setUserInfo({
       ...userInfo,
       nickName: nickName,
@@ -112,15 +118,13 @@ const LobbyLayout = () => {
   //모달창 닫고 대기방으로 이동
   const moveReady = () => {
     closeModal();
-    // setTimeout(() => {
-    //   closeModal();
-    // }, 1000);
     router.push("/ready");
   };
   //별명받는 모달창 실행
   const inputNickName = () => {
     setTimeout(() => {
       openModal();
+      if (nickName === "") return;
     }, 1000);
   };
 
@@ -146,6 +150,7 @@ const LobbyLayout = () => {
                 id="nickname-input"
                 value={nickName}
                 onChange={handleChange}
+                placeholder="10글자 미만 별명 작성"
                 style={{
                   marginRight: "15px",
                   height: "50px",
