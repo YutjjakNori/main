@@ -156,7 +156,7 @@ public class RoomService {
 
         ChatDto.Request chatRequestDto = ChatDto.Request.builder()
                 .type(ChatType.SYSTEM)
-                .userId(userId)
+                .userId(nickName)
                 .roomCode(roomCode)
                 .content("입장했습니다.")
                 .build();
