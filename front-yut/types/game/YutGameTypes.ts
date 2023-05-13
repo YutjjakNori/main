@@ -41,4 +41,15 @@ interface UserInfoType {
   profileImage: string;
 }
 
-export type { PieceStateType, GameActionType, CornerType, UserInfoType };
+interface PieceCatchInfo {
+  catchedUserId: string;
+  catchedPieceIdList: Array<number>;
+}
+
+export type {
+  PieceStateType,
+  GameActionType,
+  CornerType,
+  UserInfoType,
+  PieceCatchInfo,
+};

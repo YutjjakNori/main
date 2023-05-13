@@ -13,9 +13,10 @@ import styled from "styled-components";
 
 interface GameLayoutProps {
   userList: Array<PlayerCompoProps>;
+  eventPositionList: Array<number>;
 }
 
-const GameLayout = ({ userList }: GameLayoutProps) => {
+const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
   return (
     <>
       <style.BackgroundImage>
@@ -36,7 +37,7 @@ const GameLayout = ({ userList }: GameLayoutProps) => {
             <PlayerCompo key={user.playerName} {...user} />
           ))}
         </style.LeftLayout>
-        <YutBoardCompo />
+        <YutBoardCompo eventPositionList={eventPositionList} />
         {/* 윷 던지기, 채팅 */}
         <div>
           <RightLayout>
