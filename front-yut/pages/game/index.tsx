@@ -76,6 +76,15 @@ const Game = () => {
         if (!event) {
           pieceMove(userId, selectPiece, move, "Append");
         }
+      // 말 동나기
+      case 4:
+        const { end } = response.data;
+        // 게임 종료
+        if (end) {
+          return;
+        }
+        pieceMove(userId, selectPiece, move, "Over");
+        return;
     }
   };
 
@@ -98,9 +107,6 @@ const Game = () => {
     initSubscribe();
   }, []);
 
-  const testPieceOver = () => {
-    pieceOver("1", 1);
-  };
   const testCatchPiece = () => {
     catchPiece("1", [1]);
   };
@@ -113,7 +119,6 @@ const Game = () => {
     <>
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
 
-      <button onClick={testPieceOver}>pieceOver</button>
       <button onClick={testNextTurn}>다음 차례</button>
       <button onClick={testCatchPiece}>말 잡기</button>
     </>

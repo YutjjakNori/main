@@ -45,12 +45,24 @@ const usePieceMove = () => {
   );
 
   //말 동내기
-  const pieceOver = (userId: string, pieceId: number) => {
-    const newArr = pieceList.filter(
-      (piece) => piece.userId !== userId || piece.pieceId !== pieceId
-    );
-    setPieceList(newArr);
-  };
+  const pieceOver = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const latestPlayerId = await snapshot.getPromise(NowTurnPlayerIdState);
+        const latestSelectedPieceIndex = await snapshot.getPromise(
+          SelectedPieceIndex
+        );
+
+        const newArr = latestPieceList.filter(
+          (piece) =>
+            piece.userId !== latestPlayerId ||
+            piece.pieceId !== latestPieceList[latestSelectedPieceIndex].pieceId
+        );
+        setPieceList(newArr);
+      },
+    []
+  );
 
   const setMoveInfo = useRecoilCallback(
     ({ snapshot }) =>
@@ -367,6 +379,9 @@ const usePieceMove = () => {
         switch (moveType) {
           case "Append":
             appendPiece();
+            break;
+          case "Over":
+            pieceOver();
             break;
         }
 
