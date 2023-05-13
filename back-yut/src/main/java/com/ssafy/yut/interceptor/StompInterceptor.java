@@ -121,13 +121,6 @@ public class StompInterceptor implements ChannelInterceptor {
             response.put("roomCode", roomCode);
             response.put("response", UserDto.builder().userId(userId).build());
             kafkaTemplate.send("room" + ".exit", roomCode, response);
-            kafkaTemplate.send("chat", roomCode,
-                    ChatDto.Request.builder()
-                            .type(ChatType.SYSTEM)
-                            .userId(userId)
-                            .roomCode(roomCode)
-                            .content("나갔습니다.")
-                            .build());
         }
         return message;
     }

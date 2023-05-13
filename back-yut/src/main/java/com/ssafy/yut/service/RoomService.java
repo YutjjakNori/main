@@ -154,19 +154,11 @@ public class RoomService {
                 .ready(game.getGameStatus())
                 .build();
 
-        ChatDto.Request chatRequestDto = ChatDto.Request.builder()
-                .type(ChatType.SYSTEM)
-                .userId(nickName)
-                .roomCode(roomCode)
-                .content("입장했습니다.")
-                .build();
-
         Map<String, Object> response = new HashMap<>();
         response.put("roomCode", roomCode);
         response.put("response", waitingResponse);
         log.info("Enter Room From : " + roomCode + " User : " + userId);
         kafkaTemplate.send(TOPIC_ROOM + ".enter", response);
-        kafkaTemplate.send(TOPIC_CHAT, chatRequestDto);
     }
 
     /**
