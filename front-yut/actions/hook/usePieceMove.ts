@@ -2,6 +2,7 @@ import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCo
 import {
   ActiveCornerArrowState,
   NowTurnPlayerIdState,
+  PieceCatchInfoState,
   PieceMoveTypeState,
   SelectedPieceIndex,
   YutPieceListState,
@@ -34,6 +35,7 @@ const usePieceMove = () => {
     useYutThrow();
   const { turnEnd, selectPieceStart } = useGameAction();
   const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
+  const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
 
   const findIndexByUserIdAndPieceId = useCallback(
     (userId: string, pieceId: number) => {
@@ -87,10 +89,16 @@ const usePieceMove = () => {
         moveType: PieceMoveType
       ) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
-        const latestSelectedPieceIndex = await snapshot.getPromise(
-          SelectedPieceIndex
-        );
-        const selectedPiece = latestPieceList[latestSelectedPieceIndex];
+
+        const findPieceIndex = latestPieceList.findIndex((p) => {
+          const index = pieceIdList.findIndex(
+            (id) => p.userId === userId && id === p.pieceId
+          );
+
+          return index !== -1;
+        });
+
+        const selectedPiece = latestPieceList[findPieceIndex];
 
         const playerPieceList = latestPieceList.filter(
           (p) =>
@@ -312,38 +320,55 @@ const usePieceMove = () => {
     []
   );
 
-  const catchPiece = (
-    targetUserId: string,
-    targetPieceIdList: Array<number>
-  ) => {
-    //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
-    let targetPieceIndex = -1;
-    for (let i = 0; i < targetPieceIdList.length; i++) {
-      const idx = pieceList.findIndex(
-        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i]
-      );
+  const saveCatchInfo = useCallback(
+    (catchedUserId: string, catchedPieceList: Array<number>) => {
+      setCatchInfo({
+        catchedUserId: catchedUserId,
+        catchedPieceIdList: catchedPieceList,
+      });
+    },
+    []
+  );
 
-      if (idx !== -1) {
-        targetPieceIndex = idx;
-      }
-    }
-    if (targetPieceIndex === -1)
-      throw Error("usePieceMove/catchPiece : 잡을 말을 찾을 수 없습니다");
+  const catchPiece = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const { catchedUserId, catchedPieceIdList } = await snapshot.getPromise(
+          PieceCatchInfoState
+        );
 
-    //targetPiece의 appendedList를 초기화하고 다시 pieceList에 넣어줌
-    const targetPiece = pieceList[targetPieceIndex];
-    const appendedPieceList = [
-      ...targetPiece.appendArray,
-      pieceList[targetPieceIndex],
-    ].map((p) => pieceCatched(p));
+        //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
+        let targetPieceIndex = -1;
+        for (let i = 0; i < catchedPieceIdList.length; i++) {
+          const idx = latestPieceList.findIndex(
+            (p) =>
+              p.userId === catchedUserId && p.pieceId === catchedPieceIdList[i]
+          );
 
-    let newArr = [...pieceList];
-    newArr.splice(targetPieceIndex, 1);
-    newArr = newArr.concat(appendedPieceList);
-    setPieceList(newArr);
-  };
+          if (idx !== -1) {
+            targetPieceIndex = idx;
+          }
+        }
+        if (targetPieceIndex === -1)
+          throw Error("usePieceMove/catchPiece : 잡을 말을 찾을 수 없습니다");
 
-  const pieceCatched = useCallback((piece: YutPieceCompoProps) => {
+        //targetPiece의 appendedList를 초기화하고 다시 pieceList에 넣어줌
+        const targetPiece = latestPieceList[targetPieceIndex];
+        const appendedPieceList = [
+          ...targetPiece.appendArray,
+          latestPieceList[targetPieceIndex],
+        ].map((p) => resetPieceState(p));
+
+        let newArr = [...latestPieceList];
+        newArr.splice(targetPieceIndex, 1);
+        newArr = newArr.concat(appendedPieceList);
+        setPieceList(newArr);
+      },
+    []
+  );
+
+  const resetPieceState = useCallback((piece: YutPieceCompoProps) => {
     const tmp = { ...piece };
     tmp.position = -1;
     tmp.state = "NotStarted";
@@ -383,6 +408,8 @@ const usePieceMove = () => {
           case "Over":
             pieceOver();
             break;
+          case "Catch":
+            catchPiece();
         }
 
         if (isResultEmpty) {
@@ -404,6 +431,7 @@ const usePieceMove = () => {
     clearActiveCornerArrow,
     appendPiece,
     catchPiece,
+    saveCatchInfo,
   };
 };
 

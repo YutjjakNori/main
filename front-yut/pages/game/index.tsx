@@ -23,7 +23,7 @@ import { UserInfoState } from "@/store/UserStore";
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
   const { turnEnd, movePiece } = useGameAction();
-  const { pieceMove, pieceOver, appendPiece, catchPiece } = usePieceMove();
+  const { pieceMove, saveCatchInfo } = usePieceMove();
   const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
@@ -71,10 +71,21 @@ const Game = () => {
           pieceMove(userId, selectPiece, move, "Move");
           return;
         }
+      case 2:
+        if (!event) {
+          const { caughtUserId, caughtPiece } = response.data;
+          if (!caughtUserId || !caughtPiece) {
+            throw Error("잡을 사용자의 정보가 없습니다");
+          }
+          saveCatchInfo(caughtUserId, caughtPiece);
+          pieceMove(userId, selectPiece, move, "Catch");
+          return;
+        }
       // 말 합치기
       case 3:
         if (!event) {
           pieceMove(userId, selectPiece, move, "Append");
+          return;
         }
       // 말 동나기
       case 4:
@@ -107,10 +118,6 @@ const Game = () => {
     initSubscribe();
   }, []);
 
-  const testCatchPiece = () => {
-    catchPiece("1", [1]);
-  };
-
   const testNextTurn = () => {
     turnEnd();
   };
@@ -120,7 +127,6 @@ const Game = () => {
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
 
       <button onClick={testNextTurn}>다음 차례</button>
-      <button onClick={testCatchPiece}>말 잡기</button>
     </>
   );
 };
