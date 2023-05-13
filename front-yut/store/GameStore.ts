@@ -58,16 +58,6 @@ const EventIndex = atom<number>({
   default: -1,
 });
 
-const BgmMuteState = atom<boolean>({
-  key: "BgmMute",
-  default: false,
-});
-
-const UserInteractionState = atom<boolean>({
-  key: "UserInteraction",
-  default: false,
-});
-
 const YutThrowResultListState = atom<Array<ThrowResultType>>({
   key: "YutThrowResultList",
   default: ["", "", "", "", ""],
@@ -84,7 +74,5 @@ export {
   YutThrowBtnState,
   SelectedPieceIndex,
   EventIndex,
-  BgmMuteState,
-  UserInteractionState,
   YutThrowResultListState,
 };
