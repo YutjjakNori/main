@@ -17,4 +17,8 @@ const meta: Meta = {
 export default meta;
 type Story = StoryObj<typeof YutBoardCompo>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    eventPositionList: [0, 24],
+  },
+};

@@ -2,6 +2,8 @@ import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCo
 import {
   ActiveCornerArrowState,
   NowTurnPlayerIdState,
+  PieceCatchInfoState,
+  PieceMoveTypeState,
   SelectedPieceIndex,
   YutPieceListState,
 } from "@/store/GameStore";
@@ -13,6 +15,7 @@ import { RoomCodeState } from "@/store/GameStore";
 import useYutThrow from "./useYutThrow";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import useGameAction from "./useGameAction";
+import { PieceMoveType } from "@/types/game/YutPieceTypes";
 
 const animationSeconds = 0.5;
 
@@ -31,6 +34,8 @@ const usePieceMove = () => {
   const { getYutThrowResultForUse, popYutThrowResultForUse, isResultEmpty } =
     useYutThrow();
   const { turnEnd, selectPieceStart } = useGameAction();
+  const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
+  const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
 
   const findIndexByUserIdAndPieceId = useCallback(
     (userId: string, pieceId: number) => {
@@ -42,12 +47,24 @@ const usePieceMove = () => {
   );
 
   //말 동내기
-  const pieceOver = (userId: string, pieceId: number) => {
-    const newArr = pieceList.filter(
-      (piece) => piece.userId !== userId || piece.pieceId !== pieceId
-    );
-    setPieceList(newArr);
-  };
+  const pieceOver = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const latestPlayerId = await snapshot.getPromise(NowTurnPlayerIdState);
+        const latestSelectedPieceIndex = await snapshot.getPromise(
+          SelectedPieceIndex
+        );
+
+        const newArr = latestPieceList.filter(
+          (piece) =>
+            piece.userId !== latestPlayerId ||
+            piece.pieceId !== latestPieceList[latestSelectedPieceIndex].pieceId
+        );
+        setPieceList(newArr);
+      },
+    []
+  );
 
   const setMoveInfo = useRecoilCallback(
     ({ snapshot }) =>
@@ -68,21 +85,31 @@ const usePieceMove = () => {
       async (
         userId: string,
         pieceIdList: Array<number>,
-        movePath: Array<number>
+        movePath: Array<number>,
+        moveType: PieceMoveType
       ) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
-        const playerPieceList = latestPieceList.filter((p) => {
+        const findPieceIndex = latestPieceList.findIndex((p) => {
           const index = pieceIdList.findIndex(
-            (pId) => p.userId === userId && p.pieceId === pId
+            (id) => p.userId === userId && id === p.pieceId
           );
 
-          if (index !== -1) return p;
+          return index !== -1;
         });
+
+        const selectedPiece = latestPieceList[findPieceIndex];
+
+        const playerPieceList = latestPieceList.filter(
+          (p) =>
+            p.userId === selectedPiece.userId &&
+            selectedPiece.position === p.position
+        );
 
         if (playerPieceList.length === 0)
           throw Error("움직일 piece를 찾을수 없습니다");
         setMoveInfo(userId, playerPieceList[0].pieceId, movePath);
+        setMoveType(moveType);
       },
     []
   );
@@ -210,105 +237,138 @@ const usePieceMove = () => {
   );
 
   //말 합치기
-  const appendPiece = (userId: string, targetPieceIdList: Array<number>) => {
-    if (targetPieceIdList.length === 2) {
-      const fromId = targetPieceIdList[0];
-      const toId = targetPieceIdList[1];
-      appendAToB(userId, fromId, toId);
-      return;
-    }
+  const appendPiece = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const latestNowTurnPlayerId = await snapshot.getPromise(
+          NowTurnPlayerIdState
+        );
+        const latestMovePieceIndex = await snapshot.getPromise(
+          SelectedPieceIndex
+        );
 
-    const filteredIdList: Array<number> = targetPieceIdList.filter((id) => {
-      const idx = pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === id
-      );
+        const latestSelectedPiece = latestPieceList[latestMovePieceIndex];
+        let samePositionIdList = [];
+        // 현재 움직인 말과 같은 position인 piece를 찾아서 index list를 만듦
+        for (let i = 0; i < latestPieceList.length; i++) {
+          const p = latestPieceList[i];
+          if (p.userId !== latestSelectedPiece.userId) continue;
 
-      return idx !== -1;
-    });
+          if (p.position === latestSelectedPiece.position)
+            samePositionIdList.push(i);
+        }
 
-    if (filteredIdList.length > 2) {
-      throw Error("잘못된 말 업기 요청입니다.");
-    }
+        const fromId = latestMovePieceIndex;
+        const toId = samePositionIdList[0];
+        appendAToB(latestNowTurnPlayerId, fromId, toId);
+        return;
+      },
+    []
+  );
 
-    appendAToB(userId, filteredIdList[0], filteredIdList[1]);
-  };
+  const appendAToB = useRecoilCallback(
+    ({ snapshot }) =>
+      async (
+        userId: string,
+        movePieceIndex: number, //움직여서 합칠 말
+        targetPieceIndex: number //원래 말 판에 있던 말
+      ) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
-  const appendAToB = (
-    userId: string,
-    movePieceIndex: number, //움직여서 합칠 말
-    targetPieceIndex: number //원래 말 판에 있던 말
-  ) => {
-    let basePiece = pieceList[movePieceIndex];
-    let targetPiece = pieceList[targetPieceIndex];
+        let basePiece = latestPieceList[movePieceIndex];
+        let targetPiece = latestPieceList[targetPieceIndex];
 
-    if (
-      basePiece.state === "NotStarted" &&
-      targetPiece.state === "NotStarted"
-    ) {
-      throw Error(
-        "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음"
-      );
-    }
+        if (
+          basePiece.state === "NotStarted" &&
+          targetPiece.state === "NotStarted"
+        ) {
+          throw Error(
+            "usePieceMove/appendPiece : 둘다 시작하지 않은 말이므로 업을 수 없음"
+          );
+        }
 
-    if (basePiece.state === "InBoard" && targetPiece.state === "NotStarted") {
-      const tmpIndex = movePieceIndex;
-      const tmpPiece = basePiece;
+        if (
+          basePiece.state === "InBoard" &&
+          targetPiece.state === "NotStarted"
+        ) {
+          const tmpIndex = movePieceIndex;
+          const tmpPiece = basePiece;
 
-      movePieceIndex = targetPieceIndex;
-      basePiece = targetPiece;
+          movePieceIndex = targetPieceIndex;
+          basePiece = targetPiece;
 
-      targetPieceIndex = tmpIndex;
-      targetPiece = tmpPiece;
-    }
+          targetPieceIndex = tmpIndex;
+          targetPiece = tmpPiece;
+        }
 
-    //target에 move를 append함
-    let newArr = pieceList.map((p, idx) => {
-      if (idx !== targetPieceIndex) return p;
+        //target에 move를 append함
+        let newArr = latestPieceList.map((p, idx) => {
+          if (idx !== targetPieceIndex) return p;
 
-      const tmpP = { ...p };
-      const baseTmpP = { ...pieceList[movePieceIndex] };
-      baseTmpP.state = "Appended";
-      baseTmpP.position = tmpP.position;
-      tmpP.appendArray = [...tmpP.appendArray, baseTmpP];
-      return tmpP;
-    });
+          const tmpP = { ...p };
+          const baseTmpP = { ...latestPieceList[movePieceIndex] };
+          baseTmpP.state = "Appended";
+          baseTmpP.position = tmpP.position;
+          tmpP.appendArray = [...tmpP.appendArray, baseTmpP];
+          return tmpP;
+        });
 
-    newArr.splice(movePieceIndex, 1);
-    setPieceList(newArr);
-  };
+        newArr.splice(movePieceIndex, 1);
+        setPieceList(newArr);
+      },
+    []
+  );
 
-  const catchPiece = (
-    targetUserId: string,
-    targetPieceIdList: Array<number>
-  ) => {
-    //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
-    let targetPieceIndex = -1;
-    for (let i = 0; i < targetPieceIdList.length; i++) {
-      const idx = pieceList.findIndex(
-        (p) => p.userId === targetUserId && p.pieceId === targetPieceIdList[i]
-      );
+  const saveCatchInfo = useCallback(
+    (catchedUserId: string, catchedPieceList: Array<number>) => {
+      setCatchInfo({
+        catchedUserId: catchedUserId,
+        catchedPieceIdList: catchedPieceList,
+      });
+    },
+    []
+  );
 
-      if (idx !== -1) {
-        targetPieceIndex = idx;
-      }
-    }
-    if (targetPieceIndex === -1)
-      throw Error("usePieceMove/catchPiece : 잡을 말을 찾을 수 없습니다");
+  const catchPiece = useRecoilCallback(
+    ({ snapshot }) =>
+      async () => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const { catchedUserId, catchedPieceIdList } = await snapshot.getPromise(
+          PieceCatchInfoState
+        );
 
-    //targetPiece의 appendedList를 초기화하고 다시 pieceList에 넣어줌
-    const targetPiece = pieceList[targetPieceIndex];
-    const appendedPieceList = [
-      ...targetPiece.appendArray,
-      pieceList[targetPieceIndex],
-    ].map((p) => pieceCatched(p));
+        //말을 업은 경우 pieceList에 있는 pieceId의 index를 찾음
+        let targetPieceIndex = -1;
+        for (let i = 0; i < catchedPieceIdList.length; i++) {
+          const idx = latestPieceList.findIndex(
+            (p) =>
+              p.userId === catchedUserId && p.pieceId === catchedPieceIdList[i]
+          );
 
-    let newArr = [...pieceList];
-    newArr.splice(targetPieceIndex, 1);
-    newArr = newArr.concat(appendedPieceList);
-    setPieceList(newArr);
-  };
+          if (idx !== -1) {
+            targetPieceIndex = idx;
+          }
+        }
+        if (targetPieceIndex === -1)
+          throw Error("usePieceMove/catchPiece : 잡을 말을 찾을 수 없습니다");
 
-  const pieceCatched = useCallback((piece: YutPieceCompoProps) => {
+        //targetPiece의 appendedList를 초기화하고 다시 pieceList에 넣어줌
+        const targetPiece = latestPieceList[targetPieceIndex];
+        const appendedPieceList = [
+          ...targetPiece.appendArray,
+          latestPieceList[targetPieceIndex],
+        ].map((p) => resetPieceState(p));
+
+        let newArr = [...latestPieceList];
+        newArr.splice(targetPieceIndex, 1);
+        newArr = newArr.concat(appendedPieceList);
+        setPieceList(newArr);
+      },
+    []
+  );
+
+  const resetPieceState = useCallback((piece: YutPieceCompoProps) => {
     const tmp = { ...piece };
     tmp.position = -1;
     tmp.state = "NotStarted";
@@ -320,13 +380,37 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
+  // const moveWithLatestValue = useRecoilCallback(
+  //   ({ snapshot }) =>
+  //     async () => {
+  //       const latestMovePieceIndex = await snapshot.getPromise(
+  //         SelectedPieceIndex
+  //       );
+  //       const latestMovePath = await snapshot.getPromise();
+  //     },
+  //   []
+  // );
+
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
+    console.log(movePathList, movePieceIndex);
 
     let i = 0;
     const timer = setInterval(() => {
       if (i >= movePathList.length) {
         clearInterval(timer);
+
+        // move가 끝나면 추가 동작
+        switch (moveType) {
+          case "Append":
+            appendPiece();
+            break;
+          case "Over":
+            pieceOver();
+            break;
+          case "Catch":
+            catchPiece();
+        }
 
         if (isResultEmpty) {
           turnEnd();
@@ -347,6 +431,7 @@ const usePieceMove = () => {
     clearActiveCornerArrow,
     appendPiece,
     catchPiece,
+    saveCatchInfo,
   };
 };
 
