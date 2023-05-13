@@ -1,7 +1,5 @@
 package com.ssafy.yut.interceptor;
 
-import com.ssafy.yut.dto.ChatDto;
-import com.ssafy.yut.dto.ChatType;
 import com.ssafy.yut.dto.UserDto;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;

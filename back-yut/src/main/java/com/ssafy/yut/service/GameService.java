@@ -1,7 +1,6 @@
 package com.ssafy.yut.service;
 
 import com.ssafy.yut.dto.ChatDto;
-import com.ssafy.yut.dto.ChatType;
 import com.ssafy.yut.dto.EventDto;
 import com.ssafy.yut.dto.GameDto;
 import com.ssafy.yut.dto.PieceDto;
@@ -84,13 +83,6 @@ public class GameService {
         response.put("sessionId", sessionId);
         response.put("response", gameStartResponse);
 
-        kafkaTemplate.send("chat", roomCode,
-                ChatDto.Request.builder()
-                        .type(ChatType.SYSTEM)
-                        .userId("SYSTEM")
-                        .roomCode(roomCode)
-                        .content("게임을 시작합니다!")
-                        .build());
         kafkaTemplate.send(TOPIC + ".start", response);
     }
 
@@ -140,13 +132,7 @@ public class GameService {
         } else {
             result = "모";
         }
-        kafkaTemplate.send("chat",
-                ChatDto.Request.builder()
-                        .type(ChatType.SYSTEM)
-                        .userId(request.getUserId())
-                        .roomCode(request.getRoomCode())
-                        .content("["+ result + "]을(를) 던졌습니다.")
-                        .build());
+
         template.convertAndSend("/topic/game/stick/" + request.getRoomCode(),
                 YutDto.Response.builder()
                         .userId(request.getUserId())
@@ -160,13 +146,6 @@ public class GameService {
      * @param request
      */
     public void getTurn(RequestDto request){
-        kafkaTemplate.send("chat",
-                ChatDto.Request.builder()
-                        .type(ChatType.SYSTEM)
-                        .userId(request.getUserId())
-                        .roomCode(request.getRoomCode())
-                        .content("차례입니다.")
-                        .build());
         kafkaTemplate.send(TOPIC + ".turn", request);
     }
 
@@ -346,17 +325,6 @@ public class GameService {
         // 이동 끝 응답하기
         data.put("move", move);
         data.put("event", event.contains(plateNum));
-
-        if(event.contains(plateNum)) {
-            kafkaTemplate.send("chat",
-                    ChatDto.Request.builder()
-                    .type(ChatType.SYSTEM)
-                    .userId(request.getUserId())
-                    .roomCode(roomCode)
-                    .content("님이 이벤트 칸으로 이동했습니다.")
-                    .build());
-        }
-
         data.put("userId", request.getUserId());
 
         // 말 동나기
@@ -376,19 +344,7 @@ public class GameService {
                     break;
                 }
             }
-
-
             data.put("end", end);
-            if(end) {
-                game.setGameStatus("end");
-                kafkaTemplate.send("chat",
-                        ChatDto.Request.builder()
-                        .type(ChatType.SYSTEM)
-                        .userId(request.getUserId())
-                        .roomCode(roomCode)
-                        .content("님이 승리했습니다!")
-                        .build());
-            }
         }
         // 말이 동나는 경우 아닐 때
         else {
@@ -427,14 +383,6 @@ public class GameService {
                     }
                     data.put("selectPiece", selectPieces);
                     plate.put(plateNum, platePieces);
-
-                    kafkaTemplate.send("chat",
-                            ChatDto.Request.builder()
-                            .type(ChatType.SYSTEM)
-                            .userId(request.getUserId())
-                            .roomCode(roomCode)
-                            .content("님의 말이 " + caughtUserId+ "님의 말을 잡았습니다!")
-                            .build());
                 }
 
                 // 내 말일때
@@ -522,15 +470,6 @@ public class GameService {
                 eventName = "처음으로 돌아가기";
                 break;
         }
-
-        // 채팅으로 보내기
-        kafkaTemplate.send("chat",
-                ChatDto.Request.builder()
-                        .type(ChatType.SYSTEM)
-                        .userId(request.getUserId())
-                        .roomCode(request.getRoomCode())
-                        .content("[" + eventName + "]을(를) 뽑았습니다.")
-                        .build());
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
                 EventDto.response.builder()

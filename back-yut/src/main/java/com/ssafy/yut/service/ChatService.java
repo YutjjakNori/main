@@ -41,7 +41,6 @@ public class ChatService {
     public void readMessage(ChatDto.Request message){
         template.convertAndSend("/topic/chat/" + message.getRoomCode(),
                 ChatDto.Response.builder()
-                        .type(message.getType())
                         .userId(message.getUserId())
                         .content(message.getContent())
                         .build());
