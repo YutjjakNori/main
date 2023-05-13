@@ -28,10 +28,14 @@ const Game = () => {
   const roomCode = useRecoilValue(RoomCodeState);
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
   const myInfo = useRecoilValue(UserInfoState);
+  const [eventPositionList, setEventPositionList] = useState<Array<number>>([
+    -1, -1,
+  ]);
 
   //게임 시작시 사용자 정보 셋팅
   const gameStartCallback = useCallback((response: GameStartResponseType) => {
     const users: Array<GameStartUserType> = response?.users;
+    const event = response?.event;
     initPlayerTurn(users.map((user) => user.id));
     const list: Array<PlayerCompoProps> = users.map((user, index) => {
       return {
@@ -42,6 +46,7 @@ const Game = () => {
       };
     });
     setUserList(list);
+    setEventPositionList(event);
   }, []);
 
   //현재 턴인 사람 정보 수정
@@ -106,7 +111,7 @@ const Game = () => {
 
   return (
     <>
-      <GameLayout userList={userList} />
+      <GameLayout userList={userList} eventPositionList={eventPositionList} />
 
       <button onClick={testPieceOver}>pieceOver</button>
       <button onClick={testNextTurn}>다음 차례</button>

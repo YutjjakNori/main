@@ -228,6 +228,7 @@ const EventPoint = styled.div`
   position: relative;
   box-sizing: border-box;
   width: ${miniPointSize * 1.2}rem;
+  border: none;
 
   ${PieceSize}
 `;
