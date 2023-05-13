@@ -1,7 +1,5 @@
 package com.ssafy.yut.service;
 
-import com.ssafy.yut.dto.ChatDto;
-import com.ssafy.yut.dto.ChatType;
 import com.ssafy.yut.dto.ReadyDto;
 import com.ssafy.yut.dto.RoomDto;
 import com.ssafy.yut.entity.Game;
