@@ -52,7 +52,6 @@ const SelectedPieceIndex = atom<number>({
   key: "SelectedYutPiece",
   default: -1,
 });
-
 const EventIndex = atom<number>({
   key: "EventIdx",
   default: -1,
@@ -61,6 +60,11 @@ const EventIndex = atom<number>({
 const YutThrowResultListState = atom<Array<ThrowResultType>>({
   key: "YutThrowResultList",
   default: ["", "", "", "", ""],
+});
+
+const PieceMoveTypeState = atom<string>({
+  key: "PieceMoveType",
+  default: "Move",
 });
 
 export {
@@ -75,4 +79,5 @@ export {
   SelectedPieceIndex,
   EventIndex,
   YutThrowResultListState,
+  PieceMoveTypeState,
 };

@@ -63,8 +63,13 @@ const Game = () => {
     switch (callbackType) {
       case 1:
         if (!event) {
-          pieceMove(userId, selectPiece, move);
+          pieceMove(userId, selectPiece, move, "Move");
           return;
+        }
+      // 말 합치기
+      case 3:
+        if (!event) {
+          pieceMove(userId, selectPiece, move, "Append");
         }
     }
   };
@@ -91,14 +96,6 @@ const Game = () => {
   const testPieceOver = () => {
     pieceOver("1", 1);
   };
-  const testPieceAppend = () => {
-    appendPiece("1", [1, 2]);
-  };
-  const testPieceAppend2 = () => {
-    const appendList = [1, 2, 3];
-
-    appendPiece("1", appendList);
-  };
   const testCatchPiece = () => {
     catchPiece("1", [1]);
   };
@@ -113,8 +110,6 @@ const Game = () => {
 
       <button onClick={testPieceOver}>pieceOver</button>
       <button onClick={testNextTurn}>다음 차례</button>
-      <button onClick={testPieceAppend}>말 합치기</button>
-      <button onClick={testPieceAppend2}>말 3개 합치기</button>
       <button onClick={testCatchPiece}>말 잡기</button>
     </>
   );
