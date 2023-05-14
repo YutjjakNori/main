@@ -38,15 +38,6 @@ const usePieceMove = () => {
   const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
   const { throwYut } = useGameAction();
 
-  const findIndexByUserIdAndPieceId = useCallback(
-    (userId: string, pieceId: number) => {
-      return pieceList.findIndex(
-        (p) => p.userId === userId && p.pieceId === pieceId
-      );
-    },
-    [pieceList]
-  );
-
   //말 동내기
   const pieceOver = useRecoilCallback(
     ({ snapshot }) =>
@@ -381,20 +372,8 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
-  // const moveWithLatestValue = useRecoilCallback(
-  //   ({ snapshot }) =>
-  //     async () => {
-  //       const latestMovePieceIndex = await snapshot.getPromise(
-  //         SelectedPieceIndex
-  //       );
-  //       const latestMovePath = await snapshot.getPromise();
-  //     },
-  //   []
-  // );
-
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
-    console.log(movePathList, movePieceIndex);
 
     let i = 0;
     const timer = setInterval(() => {
@@ -423,7 +402,7 @@ const usePieceMove = () => {
       }
       doPieceMove(movePieceIndex, movePathList[i++]);
     }, animationSeconds * 1000);
-  }, [movePathList, movePieceIndex]);
+  }, [movePathList]);
 
   return {
     pieceMove,
