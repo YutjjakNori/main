@@ -36,6 +36,7 @@ const usePieceMove = () => {
   const { turnEnd, selectPieceStart } = useGameAction();
   const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
   const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
+  const { throwYut } = useGameAction();
 
   const findIndexByUserIdAndPieceId = useCallback(
     (userId: string, pieceId: number) => {
@@ -409,7 +410,8 @@ const usePieceMove = () => {
             pieceOver();
             break;
           case "Catch":
-            catchPiece();
+            catchPiece().then(() => throwYut());
+            return;
         }
 
         if (isResultEmpty) {
