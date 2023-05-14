@@ -82,15 +82,27 @@ const usePieceMove = () => {
       ) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
-        const findPieceIndex = latestPieceList.findIndex((p) => {
-          const index = pieceIdList.findIndex(
-            (id) => p.userId === userId && id === p.pieceId
+        let findIndex = -1;
+
+        if (pieceIdList.length === 1) {
+          findIndex = latestPieceList.findIndex(
+            (p) => p.userId === userId && p.pieceId === pieceIdList[0]
           );
+        } else {
+          // append 된 list인 경우 어떤 말을 움직일지 찾아야함, 현재 위치가 도착지가 아닌 piece id를 고름
+          findIndex = latestPieceList.findIndex((p) => {
+            const index = pieceIdList.findIndex(
+              (id) =>
+                p.userId === userId &&
+                p.pieceId === id &&
+                movePath[movePath.length - 1] !== p.position
+            );
 
-          return index !== -1;
-        });
+            return index !== -1;
+          });
+        }
 
-        const selectedPiece = latestPieceList[findPieceIndex];
+        const selectedPiece = latestPieceList[findIndex];
 
         const playerPieceList = latestPieceList.filter(
           (p) =>
@@ -233,6 +245,7 @@ const usePieceMove = () => {
     ({ snapshot }) =>
       async () => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        console.log(latestPieceList);
         const latestNowTurnPlayerId = await snapshot.getPromise(
           NowTurnPlayerIdState
         );
@@ -241,19 +254,25 @@ const usePieceMove = () => {
         );
 
         const latestSelectedPiece = latestPieceList[latestMovePieceIndex];
-        let samePositionIdList = [];
+        let samePositionIdList: Array<number> = [];
         // 현재 움직인 말과 같은 position인 piece를 찾아서 index list를 만듦
         for (let i = 0; i < latestPieceList.length; i++) {
           const p = latestPieceList[i];
           if (p.userId !== latestSelectedPiece.userId) continue;
 
           if (p.position === latestSelectedPiece.position)
-            samePositionIdList.push(i);
+            samePositionIdList.push(p.pieceId);
         }
 
-        const fromId = latestMovePieceIndex;
-        const toId = samePositionIdList[0];
-        appendAToB(latestNowTurnPlayerId, fromId, toId);
+        console.log("same position pice list", samePositionIdList);
+
+        const fromIdx = latestMovePieceIndex; //움직인 말
+        const toIdx = latestPieceList.findIndex(
+          (p) =>
+            p.userId === latestNowTurnPlayerId &&
+            p.pieceId === samePositionIdList[0]
+        ); //가만히 있던 말
+        appendAToB(latestNowTurnPlayerId, fromIdx, toIdx);
         return;
       },
     []
@@ -266,6 +285,9 @@ const usePieceMove = () => {
         movePieceIndex: number, //움직여서 합칠 말
         targetPieceIndex: number //원래 말 판에 있던 말
       ) => {
+        console.log("from", movePieceIndex);
+        console.log("to", targetPieceIndex);
+
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
         let basePiece = latestPieceList[movePieceIndex];
@@ -280,19 +302,22 @@ const usePieceMove = () => {
           );
         }
 
-        if (
-          basePiece.state === "InBoard" &&
-          targetPiece.state === "NotStarted"
-        ) {
-          const tmpIndex = movePieceIndex;
-          const tmpPiece = basePiece;
+        // if (
+        //   basePiece.state === "InBoard" &&
+        //   targetPiece.state === "NotStarted"
+        // ) {
+        //   const tmpIndex = movePieceIndex;
+        //   const tmpPiece = basePiece;
 
-          movePieceIndex = targetPieceIndex;
-          basePiece = targetPiece;
+        //   movePieceIndex = targetPieceIndex;
+        //   basePiece = targetPiece;
 
-          targetPieceIndex = tmpIndex;
-          targetPiece = tmpPiece;
-        }
+        //   targetPieceIndex = tmpIndex;
+        //   targetPiece = tmpPiece;
+        // }
+
+        console.log("움직인 말", basePiece.pieceId);
+        console.log("가만히 있던 말", targetPiece.pieceId);
 
         //target에 move를 append함
         let newArr = latestPieceList.map((p, idx) => {
@@ -307,6 +332,8 @@ const usePieceMove = () => {
         });
 
         newArr.splice(movePieceIndex, 1);
+
+        console.log("append result", newArr);
         setPieceList(newArr);
       },
     []
@@ -400,6 +427,7 @@ const usePieceMove = () => {
         selectPieceStart();
         return;
       }
+      console.log("move to", movePathList[i]);
       doPieceMove(movePieceIndex, movePathList[i++]);
     }, animationSeconds * 1000);
   }, [movePathList]);
