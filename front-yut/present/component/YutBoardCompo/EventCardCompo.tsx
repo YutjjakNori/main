@@ -7,6 +7,7 @@ import {
   NowTurnPlayerIdState,
   SelectedPieceIndex,
   EventIndex,
+  PiecePrevPosState,
 } from "@/store/GameStore";
 
 import Option0 from "@/public/icon/eventItems/0.svg";
@@ -35,12 +36,14 @@ const EventCard = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
   const curUserId = useRecoilValue(NowTurnPlayerIdState);
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
-  // const [eventIndex, setEventIndex] = useState(-1);
-  const { appendPiece } = usePieceMove();
+  const { appendPiece, pieceMove } = usePieceMove();
 
   //선택된 piece의 index
   const [movePieceIndex, setMovePieceIndex] =
     useRecoilState(SelectedPieceIndex);
+
+  // 윷말 전 위치 불러오기
+  const piecePrevPos = useRecoilValue(PiecePrevPosState);
 
   function hideEventCard() {
     setTimeout(() => setEventIndex(-1), 2000);
@@ -69,6 +72,13 @@ const EventCard = () => {
     }
   }
 
+  function moveToPrevPosEvent() {
+    // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
+    const pieceIdList = [movePieceIndex];
+    const movePath = [piecePrevPos];
+    pieceMove(curUserId, pieceIdList, movePath, "Move");
+  }
+
   useEffect(() => {
     {
       takeAction(eventIndex);
@@ -90,9 +100,12 @@ const EventCard = () => {
           appendEvent();
           break;
         case 3:
+          // 이전 위치 기억하는 변수가 있나?
           setEventIndex(3);
+          moveToPrevPosEvent();
           break;
         case 4:
+          // 맨 처음 위치로 이동
           setEventIndex(4);
           break;
       }

@@ -7,14 +7,19 @@ import useGameTurn from "@/actions/hook/useGameTurn";
 import usePieceMove from "@/actions/hook/usePieceMove";
 import GameLayout from "@/present/layout/game/GameLayout";
 import { sendEvent, subscribeTopic } from "@/actions/socket-api/socketInstance";
-import { useRecoilValue } from "recoil";
-import { RoomCodeState } from "@/store/GameStore";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  RoomCodeState,
+  EventIndex,
+  NowTurnPlayerIdState,
+} from "@/store/GameStore";
 import {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
   PieceMoveResponseType,
   YutThrowResponseType,
+  EventResponseType,
 } from "@/types/game/SocketResponseTypes";
 import useGameAction from "@/actions/hook/useGameAction";
 import useYutThrow from "@/actions/hook/useYutThrow";
@@ -31,6 +36,8 @@ const Game = () => {
   const [eventPositionList, setEventPositionList] = useState<Array<number>>([
     -1, -1,
   ]);
+  const setEventIndex = useSetRecoilState(EventIndex);
+  const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
 
   //게임 시작시 사용자 정보 셋팅
   const gameStartCallback = useCallback((response: GameStartResponseType) => {
@@ -99,11 +106,18 @@ const Game = () => {
     }
   };
 
+  const getEventCallback = (response: EventResponseType) => {
+    const callbackType = response.event;
+    console.log("event 번호!: " + callbackType);
+    setEventIndex(callbackType);
+  };
+
   const initSubscribe = () => {
     subscribeTopic(`/topic/game/start/${myInfo.userId}`, gameStartCallback);
     subscribeTopic(`/topic/game/turn/${roomCode}`, startTurnCallback);
     subscribeTopic(`/topic/game/stick/${roomCode}`, throwYutCallback);
     subscribeTopic(`/topic/game/piece/${roomCode}`, selectPieceCallback);
+    subscribeTopic(`/topic/game/event/${roomCode}`, getEventCallback);
 
     sendEvent(
       "/game/start",
@@ -122,11 +136,26 @@ const Game = () => {
     turnEnd();
   };
 
+  const testEvent = () => {
+    sendEvent(
+      "/game/event",
+      {},
+      {
+        roomCode: roomCode,
+        userId: nowTurnPlayerId, // recoil 전역변수
+      }
+    );
+
+    // 서버 통신이 안되서 임시 test용!
+    setEventIndex(3);
+  };
+
   return (
     <>
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
 
       <button onClick={testNextTurn}>다음 차례</button>
+      <button onClick={testEvent}>이벤트 받아오기</button>
     </>
   );
 };

@@ -80,6 +80,12 @@ const PieceCatchInfoState = atom<PieceCatchInfo>({
   },
 });
 
+// 윷 말 이동 전 위치
+const PiecePrevPosState = atom<number>({
+  key: "PiecePrevPos",
+  default: -1,
+});
+
 export {
   RoomCodeState,
   YutPieceListState,
@@ -94,4 +100,5 @@ export {
   YutThrowResultListState,
   PieceMoveTypeState,
   PieceCatchInfoState,
+  PiecePrevPosState,
 };

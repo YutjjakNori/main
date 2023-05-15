@@ -8,10 +8,15 @@ import {
   YutPieceListState,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
-import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 import * as gameUtil from "@/utils/gameUtils";
 import { sendEvent } from "../socket-api/socketInstance";
-import { RoomCodeState } from "@/store/GameStore";
+import { RoomCodeState, PiecePrevPosState } from "@/store/GameStore";
 import useYutThrow from "./useYutThrow";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import useGameAction from "./useGameAction";
@@ -30,6 +35,9 @@ const usePieceMove = () => {
   const [cornerSelectType, setCornerSelectType] = useRecoilState(
     ActiveCornerArrowState
   );
+  // 윷말 이동 전 위치 저장
+  const setPiecePrevPos = useSetRecoilState(PiecePrevPosState);
+
   const roomCode = useRecoilValue(RoomCodeState);
   const { getYutThrowResultForUse, popYutThrowResultForUse, isResultEmpty } =
     useYutThrow();
@@ -76,6 +84,9 @@ const usePieceMove = () => {
         await popYutThrowResultForUse();
         setMovePieceIndex(pieceIndex);
         setMovePathList(movePath);
+        // 말 이동 전 이전 위치 저장.
+        const prevPosition = latestPieceList[pieceIndex].position;
+        setPiecePrevPos(prevPosition);
       },
     []
   );
