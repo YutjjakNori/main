@@ -17,7 +17,7 @@ const CarouselCompo = ({ contents }: CarouselCompoProps) => {
   // prev
   const onClickLeft = useCallback(() => {
     setNowItemIndex((current) =>
-      current - 1 < 0 ? contentSize - 1 : current - 1,
+      current - 1 < 0 ? contentSize - 1 : current - 1
     );
   }, [nowItemIndex]);
   // next

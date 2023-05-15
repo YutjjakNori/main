@@ -2,6 +2,7 @@ import { createRoom, enterRoom } from "@/actions/http-api/lobbyApi";
 import BackgroundTextCompo from "@/present/component/BackgroundTextCompo/BackgroundTextCompo";
 import LobbyButtonCompo from "@/present/component/LobbyButtonCompo/LobbyButtonCompo";
 import { RoomCodeState } from "@/store/GameStore";
+import { UserInteractionState } from "@/store/AudioStore";
 import { colors } from "@/styles/theme";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
@@ -25,6 +26,8 @@ const LobbyLayout = () => {
   const router = useRouter();
   const { openModal, closeModal } = useModal(); //모달 Hook
   const setRoomCode = useSetRecoilState(RoomCodeState);
+  const [userInteraction, setUserInteraction] =
+    useRecoilState(UserInteractionState);
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState);
   const [nickName, setNickName] = useState("");
 
@@ -133,9 +136,13 @@ const LobbyLayout = () => {
     closeModal();
   };
 
+  const userInteract = () => {
+    setUserInteraction(!userInteraction);
+  };
+
   return (
     <>
-      <style.Container>
+      <style.Container onClick={userInteract}>
         <BackgroundTextCompo />
         <style.ButtonContainer>
           {buttonInfoList.map((button) => (
