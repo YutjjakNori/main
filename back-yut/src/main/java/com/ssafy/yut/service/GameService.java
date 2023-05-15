@@ -1,6 +1,5 @@
 package com.ssafy.yut.service;
 
-import com.ssafy.yut.dto.ChatDto;
 import com.ssafy.yut.dto.EventDto;
 import com.ssafy.yut.dto.GameDto;
 import com.ssafy.yut.dto.PieceDto;
@@ -188,15 +187,15 @@ public class GameService {
 
         Game game = redisMapper.getData(key, Game.class);
         List<GameUser> gameUsers = game.getUsers();
-        GameUser turnUser = GameUser.builder().userId(request.getUserId()).build();
-        int turnUserIndex = gameUsers.indexOf(turnUser);
-        turnUser.setPieces(gameUsers.get(turnUserIndex).getPieces());
-        List<Integer> pieces = turnUser.getPieces();
+        int turnUserIndex = gameUsers.indexOf(GameUser.builder().userId(request.getUserId()).build());
+        GameUser turnUser = game.getUsers().get(turnUserIndex);
+        List<Integer> turnUserPieces = turnUser.getPieces();
 
         // FIXME: 210 -> 209로 변경
 //        Set<Integer> event = game.getEvent();
         Set<Integer> event = new HashSet<>();
         Map<Integer, List<Integer>> plate = game.getPlate();
+        // 선택한 말이 있는 위치에서 말 지우기
         List<Integer> movePieces = plate.remove(plateNum);
 
         // FIXME: 삭제
@@ -239,38 +238,38 @@ public class GameService {
                     for(int path = 1; path <= yut; path++) {
                         // 0번 도착
                         if((plateNum + path) == 20) {
-                            plateNum = 0;
                             move.add(0);
                             continue;
                         }
                         // 말 동나기
                         else if((plateNum + path) > 20) {
-                            plateNum = -1;
                             move.add(-1);
                             break;
                         }
                         move.add(plateNum + path);
                     }
+                    // 이동한 위치
+                    plateNum = (plateNum + yut < 20) ? plateNum + yut : (plateNum + yut == 20) ? 0 : -1;
+                    break;
                 }
-                // 이동한 위치
-                plateNum = (plateNum == 0 || plateNum == -1) ? plateNum : plateNum + yut;
-                break;
 
             // 좌하 ↙
             case 2:
                 // 우상단 모서리
                 if(plateNum == 5) {
                     plateNum += 14;
+                    log.info("right down : " + String.valueOf(plateNum));
                     for(int path = 1; path <= yut; path++) {
                         move.add(plateNum + path);
                     }
                     // 이동한 위치
                     plateNum += yut;
+                    log.info("Final PlateNum : " + String.valueOf(plateNum));
                     break;
                 }
 
                 // 중앙
-                else if(plateNum == 22 || plateNum == 27) {
+                else if(plateNum == 27) {
                     plateNum = 22;
                 }
 
@@ -282,7 +281,7 @@ public class GameService {
                     move.add(plateNum + path);
                 }
                 // 이동한 위치
-                plateNum = plateNum + yut >= 25 ? (plateNum - 10) + yut  : plateNum + yut;
+                plateNum = plateNum + yut >= 25 ? (plateNum +yut) - 10  : plateNum + yut;
                 break;
 
             // 우하 ↘
@@ -299,33 +298,32 @@ public class GameService {
                 }
 
                 // 중앙
-                else if(plateNum == 22 || plateNum == 27) {
+                else if(plateNum == 22) {
                     plateNum = 27;
                 }
 
                 for(int path = 1; path <= yut; path++) {
                     // 0번 도착
                     if((plateNum + path) == 30) {
-                        plateNum = 0;
                         move.add(0);
                         continue;
                     }
                     // 말 동나기
                     else if((plateNum + path) > 30) {
-                        plateNum = -1;
                         move.add(-1);
                         break;
                     }
                     move.add(plateNum + path);
                 }
                 // 이동한 위치
-                plateNum = (plateNum == 0 || plateNum == -1) ? plateNum : plateNum + yut;
+                plateNum = (plateNum + yut < 30) ? plateNum + yut : (plateNum + yut == 30) ? 0 : -1;
                 break;
         }
+
         // 이동 끝 응답하기
+        data.put("userId", request.getUserId());
         data.put("move", move);
         data.put("event", event.contains(plateNum));
-        data.put("userId", request.getUserId());
 
         // 말 동나기
         if(plateNum == -1) {
@@ -334,11 +332,11 @@ public class GameService {
             boolean end = true;
 
             // 윷 판에서 말지우고 완주상태로 바꾸기
-            for(Integer finishPiece : movePieces) {
-                pieces.set(finishPiece - 1, 0);
+            for(Integer finishPiece : selectPieces) {
+                turnUserPieces.set(finishPiece - 1, 0);
             }
 
-            for(Integer piece : pieces) {
+            for(Integer piece : turnUserPieces) {
                 if(piece != 0) {
                     end = false;
                     break;
@@ -349,68 +347,64 @@ public class GameService {
         // 말이 동나는 경우 아닐 때
         else {
             // 시작 전인 말 시작으로 바꿔주기
-            if(selectPieces.size() == 1 && pieces.get(selectPieces.get(0) - 1) == -1) {
-                pieces.set(0, 1);
+            if(selectPieces.size() == 1 && turnUserPieces.get(selectPieces.get(0) - 1) == -1) {
+                turnUserPieces.set(0, 1);
             }
 
-            List<Integer> platePieces;
+            List<Integer> piecesInPlate;
             // 윷판에 말이 있는 지 검사 -> get()은 없으면 NullPointException
             // 있으면 내 말인지 아닌지 판단
             if(plate.containsKey(plateNum)) {
                 // 이동 위치의 말 정보 가져오기
-                platePieces = plate.get(plateNum);
-                int platePieceIndex = platePieces.get(0) / 3;
+                piecesInPlate = plate.get(plateNum);
+                int pieceIndexInPlate = piecesInPlate.get(0) / 3;
 
                 // 내 말이 아닐 때
-                if(platePieceIndex != turnUserIndex) {
+                if(pieceIndexInPlate != turnUserIndex) {
                     type = 2;
-                    String caughtUserId = gameUsers.get(platePieceIndex).getUserId();
+                    String caughtUserId = gameUsers.get(pieceIndexInPlate).getUserId();
                     data.put("caughtUserId", caughtUserId);
                     List<Integer> caughtPieces = new ArrayList<>();
                     // 이동 위치의 말 시작 전 상태로 돌리기.
-                    for(Integer platePiece : platePieces) {
-                        int caughtPiece = platePiece % 3;
-                        gameUsers.get(platePieceIndex).getPieces().set(caughtPiece, -1);
+                    for(Integer pieceInPlate : piecesInPlate) {
+                        int caughtPiece = pieceInPlate % 3;
+                        gameUsers.get(pieceIndexInPlate).getPieces().set(caughtPiece, -1);
                         caughtPieces.add(caughtPiece + 1);
                     }
 
                     data.put("caughtPiece", caughtPieces);
-                    platePieces.clear();
+                    piecesInPlate.clear();
 
                     // 선택된 말 이동 위치에 옮기기.
                     for(Integer selectPiece : selectPieces) {
-                        platePieces.add((turnUserIndex * 3) + (selectPiece - 1));
+                        piecesInPlate.add((turnUserIndex * 3) + (selectPiece - 1));
                     }
-                    data.put("selectPiece", selectPieces);
-                    plate.put(plateNum, platePieces);
                 }
 
                 // 내 말일때
                 else {
                     type = 3;
                     // 이동 위치에 선택한 말 합치기
-                    for(Integer platePiece : platePieces) {
+                    for(Integer platePiece : piecesInPlate) {
                         selectPieces.add((platePiece % 3) + 1);
                     }
-                    platePieces.clear();
+                    piecesInPlate.clear();
 
                     // 선택된 말 이동 위치에 옮기기.
                     for(Integer selectPiece : selectPieces) {
-                        platePieces.add((turnUserIndex * 3) + (selectPiece - 1));
+                        piecesInPlate.add((turnUserIndex * 3) + (selectPiece - 1));
                     }
-                    data.put("selectPiece", selectPieces);
-                    plate.put(plateNum, platePieces);
                 }
             }
             // 없으면 말 이동한다.
             else {
-                platePieces = new ArrayList<>();
+                piecesInPlate = new ArrayList<>();
                 for(Integer selectPiece : selectPieces) {
-                    platePieces.add((turnUserIndex * 3) + (selectPiece - 1));
+                    piecesInPlate.add((turnUserIndex * 3) + (selectPiece - 1));
                 }
-                data.put("selectPiece", selectPieces);
-                plate.put(plateNum, platePieces);
             }
+            data.put("selectPiece", selectPieces);
+            plate.put(plateNum, piecesInPlate);
 
         }
 
