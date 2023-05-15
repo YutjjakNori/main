@@ -40,23 +40,22 @@ const ChatCompo = () => {
           {/* 채팅창 로그 */}
           <style.ChatLogBox>
             <div>
-              {messageLog &&
-                messageLog.map((message: MessageLogProps, index: number) => (
-                  <div key={index}>
-                    <p
-                      style={{
-                        color:
-                          message.chatName === userInfo.nickName
-                            ? "#B778FF"
-                            : message.chatName === "SYSTEM"
-                            ? "#FF9436"
-                            : "#575757",
-                      }}
-                    >
-                      {message.chatName} : {message.chatMessage}
-                    </p>
-                  </div>
-                ))}
+              {messageLog.map((message: MessageLogProps, index: number) => (
+                <div key={index}>
+                  <p
+                    style={{
+                      color:
+                        message.chatName === userInfo.nickName
+                          ? "#B778FF"
+                          : message.chatName === "SYSTEM"
+                          ? "#FF9436"
+                          : "#575757",
+                    }}
+                  >
+                    {message.chatName} : {message.chatMessage}
+                  </p>
+                </div>
+              ))}
             </div>
           </style.ChatLogBox>
           {/* 채팅 입력창 */}

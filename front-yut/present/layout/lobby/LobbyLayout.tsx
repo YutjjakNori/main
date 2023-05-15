@@ -163,8 +163,6 @@ const LobbyLayout = () => {
                 style={{
                   height: "50px",
                   width: "75px",
-                  // borderRadius: "30px",
-                  // border: "thick double #575757",
                 }}
               >
                 입장

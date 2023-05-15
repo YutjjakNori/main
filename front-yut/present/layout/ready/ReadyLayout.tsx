@@ -28,8 +28,24 @@ import CircleButton, {
 import * as style from "./ReadyLayout.style";
 import { useRouter } from "next/router";
 import { MessageLogProps, messageLogState } from "@/store/ChatStore";
+import Image from "next/image";
+import CherryBlossomImage from "@/public/image/cherryBlossom.png";
+import CherryBlossomImage2 from "@/public/image/cherryBlossom2.png";
+import CherryGif from "@/public/image/CherryGif.gif";
+import CherryGif2 from "@/public/image/CherryGif2.gif";
+import CherryGif3 from "@/public/image/CherryGif2.gif";
+import RectButton, {
+  RectButtonProps,
+} from "@/present/common/Button/Rect/RectButton";
 
 const ReadyLayout = () => {
+  //준비 버튼
+  const readyBtnInfo: RectButtonProps = {
+    text: "준비",
+    fontSize: "20px",
+    backgroundColor: "#6EBA91",
+  };
+
   //나가기버튼
   const exitBtnInfo: CircleButtonProps = {
     Icon: closeSvg,
@@ -147,16 +163,10 @@ const ReadyLayout = () => {
   const chattingMessage = (data: any) => {
     let name: string;
     let message: string;
-    if (data.type === "SYSTEM") {
-      name = "SYSTEM";
-      message = `${
-        simpleMemberList.find((member) => member.userId === data.userId)
-          ?.nickName || data.userId
-      }님이 ${data.content}`;
-    } else {
-      name = data.userId;
-      message = data.content;
-    }
+
+    name = data.userId;
+    message = data.content;
+
     printMessage(name, message);
   };
 
@@ -290,30 +300,36 @@ const ReadyLayout = () => {
 
   return (
     <>
-      <div>
-        <h1>방코드</h1>
-        <h2>{roomCode}</h2>
-        <h2>{userInfo.nickName}님</h2>
-      </div>
-      <style.Container>
-        {memberReadyList.map((member, index) => (
-          <GameProfile
-            key={index}
-            profileImage={
-              "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
-            }
-            isReady={member.isReady}
-            playerName={member.nickName}
-          />
-        ))}
-        <button
-          onClick={() => {
-            handleIsReady();
-          }}
-        >
-          준비
-        </button>
+      <style.BackgroundImage>
+        <Image
+          className="cherryBlossom1"
+          src={CherryBlossomImage}
+          alt="벚꽃1"
+        />
+      </style.BackgroundImage>
+      <style.BackgroundImage>
+        <Image className="cherryGif" src={CherryGif} alt="벚꽃gif" />
+      </style.BackgroundImage>
+      <style.BackgroundImage>
+        <Image className="cherryGif3" src={CherryGif3} alt="벚꽃gif" />
+      </style.BackgroundImage>
 
+      <style.BackgroundImage>
+        <Image
+          className="cherryBlossom2"
+          src={CherryBlossomImage2}
+          alt="벚꽃2"
+        />
+      </style.BackgroundImage>
+      <style.BackgroundImage>
+        <Image className="cherryGif2" src={CherryGif2} alt="벚꽃gif2" />
+      </style.BackgroundImage>
+
+      <style.Container>
+        <style.RoomInfo>
+          <p className="roomCodeTitle">방코드</p>
+          <p className="roomCode">{roomCode}</p>
+        </style.RoomInfo>
         <style.CopyContainer
           onClick={() => {
             copyTextToClipboard(roomCode);
@@ -329,39 +345,80 @@ const ReadyLayout = () => {
             margin={copyBtnInfo.margin}
           />
         </style.CopyContainer>
-        <style.ExitContainer
-          onClick={() => {
-            handleIsExit();
-          }}
-        >
-          <style.ExitAlertContainer>
-            <div className="btn-alert">
-              <CircleButton
-                Icon={exitBtnInfo.Icon}
-                fontSize={exitBtnInfo.fontSize}
-                text={exitBtnInfo.text}
-                color={exitBtnInfo.color}
-                backgroundColor={exitBtnInfo.backgroundColor}
-                borderColor={exitBtnInfo.borderColor}
-                margin={exitBtnInfo.margin}
-              />
-            </div>
-            <div className="btn-alert-text">방 나가기</div>
-          </style.ExitAlertContainer>
-        </style.ExitContainer>
 
-        <Modal title={"게임을 시작합니다"}>
-          <Timer
-            ss={5}
-            size={65}
-            color={"#000"}
-            handleOver={() => {
-              closeModal();
-              router.push("game");
+        <style.TestContainer>
+          {memberReadyList.map((member, index) => (
+            <GameProfile
+              key={index}
+              profileImage={
+                "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
+              }
+              isReady={member.isReady}
+              playerName={member.nickName}
+            />
+          ))}
+
+          <style.ReadyBtnContainer
+            onClick={() => {
+              handleIsReady();
             }}
-          />
-        </Modal>
-        <ChatCompo />
+          >
+            <RectButton
+              text={readyBtnInfo.text}
+              fontSize={readyBtnInfo.fontSize}
+              backgroundColor={readyBtnInfo.backgroundColor}
+            />
+          </style.ReadyBtnContainer>
+
+          <style.CopyContainer
+            onClick={() => {
+              copyTextToClipboard(roomCode);
+            }}
+          >
+            <CircleButton
+              Icon={copyBtnInfo.Icon}
+              fontSize={copyBtnInfo.fontSize}
+              text={copyBtnInfo.text}
+              color={copyBtnInfo.color}
+              backgroundColor={copyBtnInfo.backgroundColor}
+              borderColor={copyBtnInfo.borderColor}
+              margin={copyBtnInfo.margin}
+            />
+          </style.CopyContainer>
+          <style.ExitContainer
+            onClick={() => {
+              handleIsExit();
+            }}
+          >
+            <style.ExitAlertContainer>
+              <div className="btn-alert">
+                <CircleButton
+                  Icon={exitBtnInfo.Icon}
+                  fontSize={exitBtnInfo.fontSize}
+                  text={exitBtnInfo.text}
+                  color={exitBtnInfo.color}
+                  backgroundColor={exitBtnInfo.backgroundColor}
+                  borderColor={exitBtnInfo.borderColor}
+                  margin={exitBtnInfo.margin}
+                />
+              </div>
+              <div className="btn-alert-text">방 나가기</div>
+            </style.ExitAlertContainer>
+          </style.ExitContainer>
+
+          <Modal title={"게임을 시작합니다"}>
+            <Timer
+              ss={5}
+              size={65}
+              color={"#000"}
+              handleOver={() => {
+                closeModal();
+                router.push("game");
+              }}
+            />
+          </Modal>
+          <ChatCompo />
+        </style.TestContainer>
       </style.Container>
     </>
   );
