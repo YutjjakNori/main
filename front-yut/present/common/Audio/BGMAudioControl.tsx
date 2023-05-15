@@ -19,7 +19,8 @@ const BGMAudioControl = () => {
     <audio
       // controls
       ref={audioRef}
-      src="../../../public/audio/lobbyBGM.mp3"
+      src="/audio/lobbyBGM.mp3" // compoTest.tsx 에서 사용시
+      // src="../../../public/audio/lobbyBGM.mp3"  // storybook에서 사용시
       muted={bgmMute}
       loop
       id="playAudio"

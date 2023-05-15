@@ -6,11 +6,13 @@ import { CircleButtonProps } from "@/present/common/Button/Circle/CircleButton";
 import { RectButtonProps } from "@/present/common/Button/Rect/RectButton";
 
 import { useRecoilState } from "recoil";
-import { BgmMuteState } from "@/store/AudioStore";
+import { BgmMuteState, UserInteractionState } from "@/store/AudioStore";
 
 import Svg from "@/public/icon/close.svg";
 import UnMute from "@/public/icon/music/UnMute.svg";
 import Mute from "@/public/icon/music/Mute.svg";
+
+import BGMAudioControl from "@/present/common/Audio/BGMAudioControl";
 
 const CompoTest = () => {
   // 만들고자 하는 컴포넌트의 정보를 여기에서 설정! (버튼 사이즈는 아래 container div에서 설정!)
@@ -39,13 +41,21 @@ const CompoTest = () => {
     margin: "1rem",
   };
 
+  const [userInteraction, setUserInteraction] =
+    useRecoilState(UserInteractionState);
   const [bgmMute, setBgmMute] = useRecoilState(BgmMuteState);
   const bgmMuteToggle = () => {
     setBgmMute(!bgmMute);
   };
 
+  const userInteract = () => {
+    setUserInteraction(!userInteraction);
+  };
+
   return (
-    <StyledContainer>
+    <StyledContainer onClick={userInteract}>
+      <p> 아무곳을 클릭하여 bgm 음악을 재생하세요! </p>
+      <BGMAudioControl />
       <StyledContainer1>
         <RectButton
           text={makeRoomBtnInfo.text}
