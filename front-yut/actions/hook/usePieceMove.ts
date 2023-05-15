@@ -189,13 +189,19 @@ const usePieceMove = () => {
         //아닌 경우 reset
         setCornerSelectType("none");
 
+        let direction = 1;
+        if (21 <= position && position <= 24) {
+          direction = 2;
+        } else if (25 <= position && position <= 29) {
+          direction = 3;
+        }
         const request = {
           roomCode: roomCode,
           userId: userId,
           selectPiece: selectePieceList,
           plateNum: position,
           yut: yutType,
-          direction: 1,
+          direction: direction,
         };
         sendEvent("/game/piece", {}, request);
       }
@@ -209,9 +215,17 @@ const usePieceMove = () => {
         );
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
-        const selectedPieceIndex = latestPieceList.findIndex(
-          (p) => p.userId === latestNowTurnPlayerId && p.position === position
-        );
+        const selectedPieceIndex = latestPieceList.findIndex((p) => {
+          if (position !== 22 && position !== 27) {
+            return (
+              p.userId === latestNowTurnPlayerId && p.position === position
+            );
+          }
+          return (
+            p.userId === latestNowTurnPlayerId &&
+            (p.position === 22 || p.position === 27)
+          );
+        });
 
         if (selectedPieceIndex === -1)
           throw Error("모서리에 있는 말의 정보를 찾을수 없습니다");
@@ -422,6 +436,10 @@ const usePieceMove = () => {
       doPieceMove(movePieceIndex, movePathList[i++]);
     }, animationSeconds * 1000);
   }, [movePathList]);
+
+  useEffect(() => {
+    console.log(pieceList);
+  }, [pieceList]);
 
   return {
     pieceMove,
