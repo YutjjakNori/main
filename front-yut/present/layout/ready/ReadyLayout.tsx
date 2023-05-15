@@ -33,7 +33,7 @@ import CherryBlossomImage from "@/public/image/cherryBlossom.png";
 import CherryBlossomImage2 from "@/public/image/cherryBlossom2.png";
 import CherryGif from "@/public/image/CherryGif.gif";
 import CherryGif2 from "@/public/image/CherryGif2.gif";
-import CherryGif3 from "@/public/image/CherryGif2.gif";
+import CherryGif3 from "@/public/image/CherryGif3.gif";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
@@ -311,7 +311,7 @@ const ReadyLayout = () => {
         <Image className="cherryGif" src={CherryGif} alt="벚꽃gif" />
       </style.BackgroundImage>
       <style.BackgroundImage>
-        <Image className="cherryGif3" src={CherryGif3} alt="벚꽃gif" />
+        <Image className="cherryGif3" src={CherryGif3} alt="벚꽃gif3" />
       </style.BackgroundImage>
 
       <style.BackgroundImage>
