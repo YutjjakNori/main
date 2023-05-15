@@ -418,6 +418,9 @@ const usePieceMove = () => {
           case "Catch":
             catchPiece().then(() => throwYut());
             return;
+          case "Event":
+            // TODO : event 관련 로직 추가
+            return;
         }
 
         if (isResultEmpty) {
