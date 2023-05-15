@@ -350,9 +350,6 @@ const ReadyLayout = () => {
           {memberReadyList.map((member, index) => (
             <GameProfile
               key={index}
-              profileImage={
-                "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
-              }
               isReady={member.isReady}
               playerName={member.nickName}
             />
