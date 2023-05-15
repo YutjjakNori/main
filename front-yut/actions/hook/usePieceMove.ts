@@ -245,7 +245,6 @@ const usePieceMove = () => {
     ({ snapshot }) =>
       async () => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
-        console.log(latestPieceList);
         const latestNowTurnPlayerId = await snapshot.getPromise(
           NowTurnPlayerIdState
         );
@@ -263,8 +262,6 @@ const usePieceMove = () => {
           if (p.position === latestSelectedPiece.position)
             samePositionIdList.push(p.pieceId);
         }
-
-        console.log("same position pice list", samePositionIdList);
 
         const fromIdx = latestMovePieceIndex; //움직인 말
         const toIdx = latestPieceList.findIndex(
@@ -285,9 +282,6 @@ const usePieceMove = () => {
         movePieceIndex: number, //움직여서 합칠 말
         targetPieceIndex: number //원래 말 판에 있던 말
       ) => {
-        console.log("from", movePieceIndex);
-        console.log("to", targetPieceIndex);
-
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
         let basePiece = latestPieceList[movePieceIndex];
@@ -316,9 +310,6 @@ const usePieceMove = () => {
         //   targetPiece = tmpPiece;
         // }
 
-        console.log("움직인 말", basePiece.pieceId);
-        console.log("가만히 있던 말", targetPiece.pieceId);
-
         //target에 move를 append함
         let newArr = latestPieceList.map((p, idx) => {
           if (idx !== targetPieceIndex) return p;
@@ -332,8 +323,6 @@ const usePieceMove = () => {
         });
 
         newArr.splice(movePieceIndex, 1);
-
-        console.log("append result", newArr);
         setPieceList(newArr);
       },
     []
@@ -430,7 +419,6 @@ const usePieceMove = () => {
         selectPieceStart();
         return;
       }
-      console.log("move to", movePathList[i]);
       doPieceMove(movePieceIndex, movePathList[i++]);
     }, animationSeconds * 1000);
   }, [movePathList]);
