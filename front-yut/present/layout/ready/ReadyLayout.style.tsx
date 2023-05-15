@@ -1,15 +1,43 @@
 import styled from "styled-components";
 
 const Container = styled.div`
-  position: relative;
+  background-color: #f0f6ff;
   margin: 0;
   width: 100vw;
   height: 100vh;
 `;
 
-const ExitContainer = styled.div`
+const RoomInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 20vh;
+  opacity: 1;
+  .roomCodeTitle {
+    font-size: 36px;
+    font-weight: 400;
+  }
+  .roomCode {
+    font-weight: 600;
+    font-size: 48px;
+  }
+`;
+const CherryBlossomImg = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 439px;
+  height: 439px;
+  object-fit: cover;
+`;
+
+const TestContainer = styled.div`
   position: relative;
-  width: 30px;
+  margin: 0;
+  width: 100vw;
+  height: 50vh;
 `;
 
 const SoundContainer = styled.div`
@@ -18,11 +46,41 @@ const SoundContainer = styled.div`
 `;
 
 const CopyContainer = styled.div`
-  position: relative;
-  width: 30px;
+  position: fixed;
+  top: 9.5vh;
+  left: 54vw;
+  width: 35px;
+`;
+
+const ExitContainer = styled.div`
+  display: flex;
+  position: fixed;
+  top: 10px;
+  right: 45px;
+  align-items: center;
+`;
+
+const ReadyBtnContainer = styled.div`
+  width: 300px;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  width: fit-contents;
+  margin: auto;
+  position: absolute;
+  bottom: 10px;
+  right: 50px;
+  top: 70vh;
+
+  /* :hover{
+    
+  } */
 `;
 
 const ExitAlertContainer = styled.div`
+  position: relative;
+  margin-left: 10px;
+
   .btn-alert-text {
     width: 110px;
     height: 48px;
@@ -33,17 +91,65 @@ const ExitAlertContainer = styled.div`
     position: absolute;
     opacity: 0;
     transition: all ease 0.5s;
-    margin: 0px 15px;
+    right: 0px;
+    top: 100%;
   }
+
   .btn-alert:hover + .btn-alert-text {
     opacity: 1;
   }
 `;
 
+const BackgroundImage = styled.div`
+  position: fixed;
+  .cherryBlossom1 {
+    left: 0;
+    top: 0;
+    width: 23vw;
+    height: auto;
+    opacity: 0.6;
+  }
+  .cherryBlossom2 {
+    position: inherit;
+    right: 0;
+    top: 15vh;
+    z-index: 0;
+    width: 25vw;
+    height: auto;
+    opacity: 0.6;
+  }
+  .cherryGif {
+    position: inherit;
+    top: 31vh;
+    left: 10px;
+    width: 30vw;
+    opacity: 0.3;
+  }
+  .cherryGif2 {
+    position: inherit;
+    top: 40vh;
+    right: 10px;
+    width: 30vw;
+    opacity: 0.3;
+  }
+  .cherryGif3 {
+    position: inherit;
+    top: 5vh;
+    left: 35vw;
+    width: 30vw;
+    opacity: 0.3;
+  }
+`;
+
 export {
+  TestContainer,
   Container,
+  CherryBlossomImg,
   ExitContainer,
   CopyContainer,
   ExitAlertContainer,
   SoundContainer,
+  BackgroundImage,
+  RoomInfo,
+  ReadyBtnContainer,
 };
