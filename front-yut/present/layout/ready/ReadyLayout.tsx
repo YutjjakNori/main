@@ -31,9 +31,9 @@ import { MessageLogProps, messageLogState } from "@/store/ChatStore";
 import Image from "next/image";
 import CherryBlossomImage from "@/public/image/cherryBlossom.png";
 import CherryBlossomImage2 from "@/public/image/cherryBlossom2.png";
-import CherryGif from "@/public/image/CherryGif.gif";
-import CherryGif2 from "@/public/image/CherryGif2.gif";
-import CherryGif3 from "@/public/image/CherryGif3.gif";
+import CherryGif from "@/public/image/cherryGif.gif";
+import CherryGif2 from "@/public/image/cherryGif.gif";
+import CherryGif3 from "@/public/image/cherryGif.gif";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
