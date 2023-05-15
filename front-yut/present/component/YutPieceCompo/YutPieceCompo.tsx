@@ -43,7 +43,7 @@ const YutPieceCompo = ({
       action === "ChoosePiece" &&
       myInfo.userId === userId &&
       nowTurnPlayerId === userId,
-    [nowTurnPlayerId, myInfo, action],
+    [nowTurnPlayerId, myInfo, action]
   );
   const appendedCount = useMemo(() => appendArray.length, [appendArray]);
 
@@ -56,13 +56,13 @@ const YutPieceCompo = ({
   const color = useMemo(() => {
     switch (pieceType) {
       case "flowerRice":
-        return colors.gamePlayer[0];
+        return colors.gamePlayer[3];
       case "songpyeon":
         return colors.gamePlayer[1];
       case "ssukRice":
         return colors.gamePlayer[2];
       default:
-        return colors.gamePlayer[3];
+        return colors.gamePlayer[0];
     }
   }, [pieceType]);
 
