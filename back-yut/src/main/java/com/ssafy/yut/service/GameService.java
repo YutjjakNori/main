@@ -445,6 +445,7 @@ public class GameService {
      */
     public void occurrenceEvent(RequestDto request) {
         // 이벤트 종류 : 0:꽝, 1:한번 던지기, 2:말 업고가기, 3:출발했던 자리로, 4:처음으로 돌아가기
+        log.info("Event - Occurrence : " + request.getRoomCode() + ", " + request.getUserId());
 
         // 이벤트 발생
         Random random = new Random();
@@ -452,24 +453,6 @@ public class GameService {
 
         int eventNum = random.nextInt(5);
 
-        String eventName = "";
-        switch (eventNum){
-            case 0:
-                eventName = "꽝";
-                break;
-            case 1:
-                eventName = "한번 던지기";
-                break;
-            case 2:
-                eventName = "말 업고가기";
-                break;
-            case 3:
-                eventName = "출발했던 자리로 이동";
-                break;
-            case 4:
-                eventName = "처음으로 돌아가기";
-                break;
-        }
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
                 EventDto.response.builder()
@@ -486,6 +469,7 @@ public class GameService {
      */
     @KafkaListener(topics = TOPIC + ".event", groupId = "game-event")
     public void sendEvent(EventDto.response eventDto) {
+        log.info("Event - Occurrence Send : roomCode(" + eventDto.getRoomCode() + "), userId(" + eventDto.getUserId() + "), eventNum(" + eventDto.getEvent() + ")");
         template.convertAndSend("/topic/game/event/" + eventDto.getRoomCode(), eventDto);
     }
 
@@ -497,6 +481,7 @@ public class GameService {
     public void executeEvent(EventDto.requestResult request) {
         // 이벤트 실행하기
         // 0 : 말 업고가기 / 1 : 자리 이동 (출발했던 자리로, 시작 전으로)
+        log.info("Event - Execute : " + request.getRoomCode() + ", " + request.getUserId());
 
         // 게임 데이터 들고오기
         Game game = redisMapper.getData(request.getRoomCode(), Game.class);
@@ -584,6 +569,7 @@ public class GameService {
      */
     @KafkaListener(topics = TOPIC + ".eventResult", groupId = "game-eventResult")
     public void sendEventResult(EventDto.responseResult eventDto) {
+        log.info("Event - Execute Send : roomCode(" + eventDto.getRoomCode() + "), userId(" + eventDto.getUserId() + "), eventNum(" + eventDto.getEvent() + ")");
         template.convertAndSend("/topic/game/event/result/" + eventDto.getRoomCode(), eventDto);
     }
 

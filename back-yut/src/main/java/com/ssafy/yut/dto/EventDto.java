@@ -15,6 +15,7 @@ public class EventDto {
      * 이벤트 발생
      */
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class response {
@@ -27,6 +28,7 @@ public class EventDto {
      * 이벤트 실행 requestDTO
      */
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class requestResult {
@@ -42,6 +44,7 @@ public class EventDto {
      * 이벤트 실행 responseDTO
      */
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @Builder
     public static class responseResult {

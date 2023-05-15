@@ -48,7 +48,6 @@ public class GameServiceTest {
             gameService.occurrenceEvent(new RequestDto(USER_ID, ROOM_CODE));
 
             // then
-            verify(kafkaTemplate, times(1)).send(eq("chat"), any(ChatDto.Request.class));
             verify(kafkaTemplate, times(1)).send(eq(TOPIC + ".event"), any(EventDto.response.class));
         }
 
