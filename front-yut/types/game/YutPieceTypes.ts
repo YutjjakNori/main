@@ -1,3 +1,5 @@
 type YutPieceType = "flowerRice" | "yakgwa" | "songpyeon" | "ssukRice";
 
-export type { YutPieceType };
+type PieceMoveType = "Move" | "Append" | "Over" | "Catch" | "Event";
+
+export type { YutPieceType, PieceMoveType };

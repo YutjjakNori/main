@@ -4,7 +4,7 @@ import GameProfile from "@/present/common/GameProfile/GameProfile";
 import Modal from "@/present/common/Modal/Modal";
 import Timer from "@/present/common/Timer/Timer";
 import useModal from "@/actions/hook/controlModal";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   connect,
   stompClient,
@@ -15,7 +15,11 @@ import { UserInfoState } from "@/store/UserStore";
 import { RoomCodeState } from "@/store/GameStore";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
-import { MemberListState, MemberReadyListState } from "@/store/MemberStore";
+import {
+  MemberListState,
+  MemberReadyListState,
+  Member,
+} from "@/store/MemberStore";
 import closeSvg from "@/public/icon/close.svg";
 import copySvg from "@/public/icon/copy.svg";
 import CircleButton, {
@@ -24,8 +28,24 @@ import CircleButton, {
 import * as style from "./ReadyLayout.style";
 import { useRouter } from "next/router";
 import { MessageLogProps, messageLogState } from "@/store/ChatStore";
+import Image from "next/image";
+import CherryBlossomImage from "@/public/image/cherryBlossom.png";
+import CherryBlossomImage2 from "@/public/image/cherryBlossom2.png";
+import CherryGif from "@/public/image/CherryGif.gif";
+import CherryGif2 from "@/public/image/CherryGif2.gif";
+import CherryGif3 from "@/public/image/CherryGif3.gif";
+import RectButton, {
+  RectButtonProps,
+} from "@/present/common/Button/Rect/RectButton";
 
 const ReadyLayout = () => {
+  //준비 버튼
+  const readyBtnInfo: RectButtonProps = {
+    text: "준비",
+    fontSize: "20px",
+    backgroundColor: "#6EBA91",
+  };
+
   //나가기버튼
   const exitBtnInfo: CircleButtonProps = {
     Icon: closeSvg,
@@ -52,7 +72,8 @@ const ReadyLayout = () => {
   const { openModal, closeModal } = useModal(); //모달 Hook
   const [userInfo, setUserInfo] = useRecoilState(UserInfoState); //내 정보 세팅
   const [isReady, setIsReady] = useState("0"); //내 레디상태 관리
-
+  //새로 추가된 유저 파악 용도
+  let simpleMemberList: Member[] = [];
   //멤버 아이디 배열
   const [memberList, setMemberList] = useRecoilState(MemberListState);
   //멤버아이디 + 레디상태 관리 배열
@@ -60,23 +81,54 @@ const ReadyLayout = () => {
     useRecoilState(MemberReadyListState);
   //채팅
   const [messageLog, setMessageLog] =
-    useRecoilState<MessageLogProps>(messageLogState);
+    useRecoilState<MessageLogProps[]>(messageLogState);
 
   const roomCode = useRecoilValue(RoomCodeState);
 
-  //대기 - 방 입장 구독 콜백함수
-  const settingMembers = (data: any) => {
-    const userIds = data.users.map((user: any) => user.userId);
-    const newMemberList = [...userIds];
-    setMemberList(newMemberList); //유저 아이디만 저장한 배열
-    const readyString = data.ready;
+  //채팅메시지 추가 함수
+  const printMessage = (name: string, message: string) => {
+    setMessageLog((prev) => {
+      return [
+        ...prev,
+        {
+          chatName: name,
+          chatMessage: message,
+        },
+      ];
+    });
+  };
 
+  //대기 - 방 입장 구독 콜백함수
+  const settingMembers = (data: { users: Member[]; ready: string }) => {
+    printMessage(
+      "SYSTEM",
+      `${
+        data.users.filter((member) => !isExistMember(member))[0].nickName
+      }님이 입장하셨습니다.`
+    );
+
+    const newMemberList = [...data.users];
+    setMemberList(newMemberList); //유저 아이디와 닉네임 저장
+    simpleMemberList = newMemberList;
+
+    const userIds = data.users.map((user: Member) => user.userId);
     // member 객체의 isReady 속성을 readyString 값에 따라 설정
-    const members = userIds.map((userId: string, index: number) => ({
-      userId: userId,
-      isReady: readyString[index] === "1",
-    }));
-    setMemberReadyList(members);
+    setMemberReadyList(
+      userIds.map((userId: string, index: number) => ({
+        userId: userId,
+        nickName: data.users[index].nickName,
+        isReady: data.ready[index] === "1",
+      }))
+    );
+  };
+
+  //추가된 멤버 찾기
+  const isExistMember = (member: Member) => {
+    for (let i = 0; i < simpleMemberList.length; i++) {
+      const nowMember = simpleMemberList[i];
+      if (nowMember.userId === member.userId) return true;
+      else return false;
+    }
   };
 
   //대기 - 준비 구독 콜백함수
@@ -108,22 +160,31 @@ const ReadyLayout = () => {
   };
 
   //채팅 구독
-  const chattingMessage = useCallback(
-    (value: any) => {
-      if (stompClient) {
-        const nextMessages = { [value.userId]: value.content };
+  const chattingMessage = (data: any) => {
+    let name: string;
+    let message: string;
 
-        setMessageLog((prevMessages) =>
-          Object.assign({}, prevMessages, nextMessages)
-        );
-      }
-    },
-    [stompClient]
-  );
+    name = data.userId;
+    message = data.content;
+
+    printMessage(name, message);
+  };
+
+  const findMember = (userId: string) => {
+    for (let i = 0; i < simpleMemberList.length; i++) {
+      const nowMember = simpleMemberList[i];
+      // 찾으면 멤버 반환
+      if (nowMember.userId === userId) return nowMember;
+    }
+  };
 
   //대기 - 나가기 구독 콜백함수
-  const requestToLeave = useCallback((data: any) => {
+  const requestToLeave = (data: any) => {
     const exitUserId = data.userId;
+    printMessage(
+      "SYSTEM",
+      `${findMember(data.userId)?.nickName || "#알수없음"}님이 퇴장하셨습니다.`
+    );
     setMemberReadyList((prev) => {
       // 이전 상태(prev)에서 해당 유저의 정보를 찾아 삭제
       return prev.filter((member) => member.userId !== exitUserId);
@@ -131,7 +192,7 @@ const ReadyLayout = () => {
     setMemberList((prev) => {
       return prev.filter((member) => member !== exitUserId);
     });
-  }, []);
+  };
 
   //구독할 토픽들
   const topics: any = {
@@ -149,7 +210,7 @@ const ReadyLayout = () => {
       ...userInfo,
       userId: localStorage.getItem("userId") ?? "",
     });
-    setMessageLog({});
+    setMessageLog([]);
 
     const topicSubscriptions = Object.keys(topics).map((key) =>
       subscribeTopic(key + roomCode, topics[key])
@@ -163,6 +224,7 @@ const ReadyLayout = () => {
       {},
       {
         userId: localStorage.getItem("userId"),
+        nickName: userInfo.nickName,
         roomCode: roomCode,
       }
     );
@@ -238,30 +300,36 @@ const ReadyLayout = () => {
 
   return (
     <>
-      <div>
-        <h1>방코드</h1>
-        <h2>{roomCode}</h2>
-        <h2>{userInfo.userId}님</h2>
-      </div>
-      <style.Container>
-        {memberReadyList.map((member, index) => (
-          <GameProfile
-            key={index}
-            profileImage={
-              "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
-            }
-            isReady={member.isReady}
-            playerName={member.userId}
-          />
-        ))}
-        <button
-          onClick={() => {
-            handleIsReady();
-          }}
-        >
-          준비
-        </button>
+      <style.BackgroundImage>
+        <Image
+          className="cherryBlossom1"
+          src={CherryBlossomImage}
+          alt="벚꽃1"
+        />
+      </style.BackgroundImage>
+      <style.BackgroundImage>
+        <Image className="cherryGif" src={CherryGif} alt="벚꽃gif" />
+      </style.BackgroundImage>
+      <style.BackgroundImage>
+        <Image className="cherryGif3" src={CherryGif3} alt="벚꽃gif3" />
+      </style.BackgroundImage>
 
+      <style.BackgroundImage>
+        <Image
+          className="cherryBlossom2"
+          src={CherryBlossomImage2}
+          alt="벚꽃2"
+        />
+      </style.BackgroundImage>
+      <style.BackgroundImage>
+        <Image className="cherryGif2" src={CherryGif2} alt="벚꽃gif2" />
+      </style.BackgroundImage>
+
+      <style.Container>
+        <style.RoomInfo>
+          <p className="roomCodeTitle">방코드</p>
+          <p className="roomCode">{roomCode}</p>
+        </style.RoomInfo>
         <style.CopyContainer
           onClick={() => {
             copyTextToClipboard(roomCode);
@@ -277,39 +345,80 @@ const ReadyLayout = () => {
             margin={copyBtnInfo.margin}
           />
         </style.CopyContainer>
-        <style.ExitContainer
-          onClick={() => {
-            handleIsExit();
-          }}
-        >
-          <style.ExitAlertContainer>
-            <div className="btn-alert">
-              <CircleButton
-                Icon={exitBtnInfo.Icon}
-                fontSize={exitBtnInfo.fontSize}
-                text={exitBtnInfo.text}
-                color={exitBtnInfo.color}
-                backgroundColor={exitBtnInfo.backgroundColor}
-                borderColor={exitBtnInfo.borderColor}
-                margin={exitBtnInfo.margin}
-              />
-            </div>
-            <div className="btn-alert-text">방 나가기</div>
-          </style.ExitAlertContainer>
-        </style.ExitContainer>
 
-        <Modal title={"게임을 시작합니다"}>
-          <Timer
-            ss={5}
-            size={65}
-            color={"#000"}
-            handleOver={() => {
-              closeModal();
-              router.push("game");
+        <style.TestContainer>
+          {memberReadyList.map((member, index) => (
+            <GameProfile
+              key={index}
+              profileImage={
+                "https://cdn.pixabay.com/photo/2023/04/07/06/42/bird-7905654__340.jpg"
+              }
+              isReady={member.isReady}
+              playerName={member.nickName}
+            />
+          ))}
+
+          <style.ReadyBtnContainer
+            onClick={() => {
+              handleIsReady();
             }}
-          />
-        </Modal>
-        <ChatCompo />
+          >
+            <RectButton
+              text={readyBtnInfo.text}
+              fontSize={readyBtnInfo.fontSize}
+              backgroundColor={readyBtnInfo.backgroundColor}
+            />
+          </style.ReadyBtnContainer>
+
+          <style.CopyContainer
+            onClick={() => {
+              copyTextToClipboard(roomCode);
+            }}
+          >
+            <CircleButton
+              Icon={copyBtnInfo.Icon}
+              fontSize={copyBtnInfo.fontSize}
+              text={copyBtnInfo.text}
+              color={copyBtnInfo.color}
+              backgroundColor={copyBtnInfo.backgroundColor}
+              borderColor={copyBtnInfo.borderColor}
+              margin={copyBtnInfo.margin}
+            />
+          </style.CopyContainer>
+          <style.ExitContainer
+            onClick={() => {
+              handleIsExit();
+            }}
+          >
+            <style.ExitAlertContainer>
+              <div className="btn-alert">
+                <CircleButton
+                  Icon={exitBtnInfo.Icon}
+                  fontSize={exitBtnInfo.fontSize}
+                  text={exitBtnInfo.text}
+                  color={exitBtnInfo.color}
+                  backgroundColor={exitBtnInfo.backgroundColor}
+                  borderColor={exitBtnInfo.borderColor}
+                  margin={exitBtnInfo.margin}
+                />
+              </div>
+              <div className="btn-alert-text">방 나가기</div>
+            </style.ExitAlertContainer>
+          </style.ExitContainer>
+
+          <Modal title={"게임을 시작합니다"}>
+            <Timer
+              ss={5}
+              size={65}
+              color={"#000"}
+              handleOver={() => {
+                closeModal();
+                router.push("game");
+              }}
+            />
+          </Modal>
+          <ChatCompo />
+        </style.TestContainer>
       </style.Container>
     </>
   );

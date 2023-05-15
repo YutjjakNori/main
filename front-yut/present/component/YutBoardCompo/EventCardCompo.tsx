@@ -64,7 +64,7 @@ const EventCard = () => {
       const list = [pieceIdx, movePieceIndex];
       setEventIndex(2);
       setTimeout(() => {
-        appendPiece(curUserId, list);
+        appendPiece();
       }, 2000);
     }
   }

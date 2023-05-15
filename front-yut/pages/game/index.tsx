@@ -13,22 +13,29 @@ import {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
+  PieceMoveResponseType,
   YutThrowResponseType,
 } from "@/types/game/SocketResponseTypes";
 import useGameAction from "@/actions/hook/useGameAction";
 import useYutThrow from "@/actions/hook/useYutThrow";
+import { UserInfoState } from "@/store/UserStore";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
-  const { turnEnd } = useGameAction();
-  const { pieceMove, pieceOver, appendPiece, catchPiece } = usePieceMove();
+  const { turnEnd, movePiece } = useGameAction();
+  const { pieceMove, saveCatchInfo } = usePieceMove();
   const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
+  const myInfo = useRecoilValue(UserInfoState);
+  const [eventPositionList, setEventPositionList] = useState<Array<number>>([
+    -1, -1,
+  ]);
 
   //게임 시작시 사용자 정보 셋팅
   const gameStartCallback = useCallback((response: GameStartResponseType) => {
     const users: Array<GameStartUserType> = response?.users;
+    const event = response?.event;
     initPlayerTurn(users.map((user) => user.id));
     const list: Array<PlayerCompoProps> = users.map((user, index) => {
       return {
@@ -39,6 +46,7 @@ const Game = () => {
       };
     });
     setUserList(list);
+    setEventPositionList(event);
   }, []);
 
   //현재 턴인 사람 정보 수정
@@ -52,12 +60,48 @@ const Game = () => {
     saveThrowResult(response.result);
   };
 
-  const selectPieceCallback = (response: any) => {
-    // TODO : 말 움직이기 로직 연결
+  const selectPieceCallback = (response: PieceMoveResponseType) => {
+    const callbackType = response.type;
+    movePiece();
+    const { event, userId, selectPiece, move } = response.data;
+
+    switch (callbackType) {
+      case 1:
+        if (!event) {
+          pieceMove(userId, selectPiece, move, "Move");
+          return;
+        }
+        pieceMove(userId, selectPiece, move, "Event");
+      case 2:
+        if (!event) {
+          const { caughtUserId, caughtPiece } = response.data;
+          if (!caughtUserId || !caughtPiece) {
+            throw Error("잡을 사용자의 정보가 없습니다");
+          }
+          saveCatchInfo(caughtUserId, caughtPiece);
+          pieceMove(userId, selectPiece, move, "Catch");
+          return;
+        }
+      // 말 합치기
+      case 3:
+        if (!event) {
+          pieceMove(userId, selectPiece, move, "Append");
+          return;
+        }
+      // 말 동나기
+      case 4:
+        const { end } = response.data;
+        // 게임 종료
+        if (end) {
+          return;
+        }
+        pieceMove(userId, selectPiece, move, "Over");
+        return;
+    }
   };
 
   const initSubscribe = () => {
-    subscribeTopic(`/topic/game/start/${roomCode}`, gameStartCallback);
+    subscribeTopic(`/topic/game/start/${myInfo.userId}`, gameStartCallback);
     subscribeTopic(`/topic/game/turn/${roomCode}`, startTurnCallback);
     subscribeTopic(`/topic/game/stick/${roomCode}`, throwYutCallback);
     subscribeTopic(`/topic/game/piece/${roomCode}`, selectPieceCallback);
@@ -67,7 +111,7 @@ const Game = () => {
       {},
       {
         roomCode: roomCode,
-      },
+      }
     );
   };
 
@@ -75,42 +119,15 @@ const Game = () => {
     initSubscribe();
   }, []);
 
-  const testMove1 = () => {
-    pieceMove("1", 1, [0, 1, 2, 3, 4]);
-  };
-  const testMove2 = () => {
-    pieceMove("1", 2, [0, 1, 2, 3, 4]);
-  };
-  const testPieceOver = () => {
-    pieceOver("1", 1);
-  };
-  const testPieceAppend = () => {
-    appendPiece("1", [1, 2]);
-  };
-  const testPieceAppend2 = () => {
-    const appendList = [1, 2, 3];
-
-    appendPiece("1", appendList);
-  };
-  const testCatchPiece = () => {
-    catchPiece("1", [1]);
-  };
-
   const testNextTurn = () => {
     turnEnd();
   };
 
   return (
     <>
-      <GameLayout userList={userList} />
+      <GameLayout userList={userList} eventPositionList={eventPositionList} />
 
-      <button onClick={testMove1}>movePath 1</button>
-      <button onClick={testMove2}>movePath 2</button>
-      <button onClick={testPieceOver}>pieceOver</button>
       <button onClick={testNextTurn}>다음 차례</button>
-      <button onClick={testPieceAppend}>말 합치기</button>
-      <button onClick={testPieceAppend2}>말 3개 합치기</button>
-      <button onClick={testCatchPiece}>말 잡기</button>
     </>
   );
 };

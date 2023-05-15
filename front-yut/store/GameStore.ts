@@ -1,5 +1,9 @@
 import { YutPieceCompoProps } from "@/present/component/YutPieceCompo/YutPieceCompo";
-import { CornerType, GameActionType } from "@/types/game/YutGameTypes";
+import {
+  CornerType,
+  GameActionType,
+  PieceCatchInfo,
+} from "@/types/game/YutGameTypes";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import { atom } from "recoil";
 
@@ -52,7 +56,6 @@ const SelectedPieceIndex = atom<number>({
   key: "SelectedYutPiece",
   default: -1,
 });
-
 const EventIndex = atom<number>({
   key: "EventIdx",
   default: -1,
@@ -61,6 +64,20 @@ const EventIndex = atom<number>({
 const YutThrowResultListState = atom<Array<ThrowResultType>>({
   key: "YutThrowResultList",
   default: ["", "", "", "", ""],
+});
+
+const PieceMoveTypeState = atom<string>({
+  key: "PieceMoveType",
+  default: "Move",
+});
+
+// 윷 말을 잡을 정보를 임시 저장
+const PieceCatchInfoState = atom<PieceCatchInfo>({
+  key: "PieceCeCatchInfoState",
+  default: {
+    catchedPieceIdList: [],
+    catchedUserId: "-1",
+  },
 });
 
 export {
@@ -75,4 +92,6 @@ export {
   SelectedPieceIndex,
   EventIndex,
   YutThrowResultListState,
+  PieceMoveTypeState,
+  PieceCatchInfoState,
 };
