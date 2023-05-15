@@ -437,10 +437,6 @@ const usePieceMove = () => {
     }, animationSeconds * 1000);
   }, [movePathList]);
 
-  useEffect(() => {
-    console.log(pieceList);
-  }, [pieceList]);
-
   return {
     pieceMove,
     pieceOver,
