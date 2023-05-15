@@ -44,7 +44,6 @@ const HoverContainer = styled.div<{ isHover: boolean }>`
 const SideBox = styled.div`
   width: 20%;
   height: 100%;
-  background-color: rgb(225, 225, 225, 0.5);
   display: inherit;
   position: relative;
   justify-content: center;
@@ -56,7 +55,7 @@ const SideBox = styled.div`
 `;
 
 const Button = styled.div`
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: bold;
   position: relative;
   color: ${colors.achromaticColor.lightBlack};
@@ -80,7 +79,7 @@ const Indicator = styled.div<{ active: boolean }>`
   border-radius: 100%;
   aspect-ratio: 1/1;
   background-color: ${({ active }) =>
-    active ? colors.gamePlayer[0] : "#E1E1E1"};
+    active ? colors.gamePlayer[3] : "#E1E1E1"};
 `;
 
 export {
