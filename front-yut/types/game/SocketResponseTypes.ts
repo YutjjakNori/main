@@ -39,6 +39,7 @@ interface PieceMoveResponseType {
 interface EventResponseType {
   userId: string;
   event: number;
+  roomCode: string;
 }
 
 export type {

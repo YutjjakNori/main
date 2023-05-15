@@ -78,7 +78,7 @@ const useYutThrow = () => {
         pushed = true;
         cnt++;
         return result;
-      }),
+      })
     );
 
     setCanThrowYut("none");
@@ -107,7 +107,7 @@ const useYutThrow = () => {
         const firstResultType = resultList[popFirstResultIndex];
         return firstResultType;
       },
-    [],
+    []
   );
 
   const popYutThrowResultForUse = useRecoilCallback(
@@ -120,7 +120,7 @@ const useYutThrow = () => {
         setResultList(newList);
         return firstResultType;
       },
-    [],
+    []
   );
 
   useEffect(() => {

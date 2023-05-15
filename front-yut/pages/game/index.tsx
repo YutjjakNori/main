@@ -111,10 +111,10 @@ const Game = () => {
     }
   };
 
-  const getEventCallback = (response: EventResponseType) => {
-    const callbackType = response.event;
-    console.log("event 번호!: " + callbackType);
-    setEventIndex(callbackType);
+  const getEventCallback = (data: any) => {
+    const eventType = data.event;
+    console.log("event 번호!: " + eventType);
+    setEventIndex(eventType);
   };
 
   const initSubscribe = () => {

@@ -93,12 +93,22 @@ const usePieceMove = () => {
       ) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
+        console.log("latestPieceList" + latestPieceList);
+
+        latestPieceList.forEach((piece) => {
+          console.log(piece.userId + ", " + piece.pieceId);
+        });
+        console.log("말번호: " + pieceIdList[0]);
+        console.log("현재 유저 id: " + userId);
+
         let findIndex = -1;
 
         if (pieceIdList.length === 1) {
+          console.log("말은 1개임. ");
           findIndex = latestPieceList.findIndex(
             (p) => p.userId === userId && p.pieceId === pieceIdList[0]
           );
+          console.log(findIndex);
         } else {
           // append 된 list인 경우 어떤 말을 움직일지 찾아야함, 현재 위치가 도착지가 아닌 piece id를 고름
           findIndex = latestPieceList.findIndex((p) => {
@@ -114,6 +124,7 @@ const usePieceMove = () => {
         }
 
         const selectedPiece = latestPieceList[findIndex];
+        console.log("selectedPiece" + selectPiece);
 
         const playerPieceList = latestPieceList.filter(
           (p) =>
@@ -443,6 +454,7 @@ const usePieceMove = () => {
     appendPiece,
     catchPiece,
     saveCatchInfo,
+    doPieceMove,
   };
 };
 

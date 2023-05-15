@@ -36,7 +36,7 @@ const EventCard = () => {
   const [pieceList] = useRecoilState(YutPieceListState);
   const curUserId = useRecoilValue(NowTurnPlayerIdState);
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
-  const { appendPiece, pieceMove } = usePieceMove();
+  const { appendPiece, pieceMove, doPieceMove } = usePieceMove();
 
   //선택된 piece의 index
   const [movePieceIndex, setMovePieceIndex] =
@@ -74,9 +74,22 @@ const EventCard = () => {
 
   function moveToPrevPosEvent() {
     // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
-    const pieceIdList = [movePieceIndex];
-    const movePath = [piecePrevPos];
-    pieceMove(curUserId, pieceIdList, movePath, "Move");
+    const pieceId = pieceList[movePieceIndex].pieceId;
+    // // Array<number> 형식으로 맞춰주기.
+    // const pieceIdList = [pieceId];
+    // const movePath = [piecePrevPos];
+    // pieceMove(curUserId, pieceIdList, movePath, "Move");
+    doPieceMove(pieceId, piecePrevPos);
+  }
+
+  function moveToStartPosEvent() {
+    // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
+    const pieceId = pieceList[movePieceIndex].pieceId;
+    // Array<number> 형식으로 맞춰주기.
+    // const pieceIdList = [pieceId];
+    // const movePath = [0];
+    // pieceMove(curUserId, pieceIdList, movePath, "Move");
+    doPieceMove(pieceId, 0);
   }
 
   useEffect(() => {
@@ -107,6 +120,7 @@ const EventCard = () => {
         case 4:
           // 맨 처음 위치로 이동
           setEventIndex(4);
+          moveToStartPosEvent();
           break;
       }
     } catch (err) {
