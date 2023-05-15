@@ -117,13 +117,25 @@ const createCornerPoint = (
   type: string,
   point: string,
   pieceList: Array<YutPieceCompoProps>
-) => (
-  <CornerPoint
-    id={id}
-    type={type}
-    point={point}
-    pieceList={pieceFilterByIndex(id, pieceList)}
-  />
-);
+) => {
+  const list = pieceFilterByIndex(id, pieceList);
+  if (id === 22) {
+    const list27 = pieceFilterByIndex(27, pieceList);
+
+    return (
+      <CornerPoint
+        id={id}
+        type={type}
+        point={point}
+        pieceList={list.concat(list27)}
+      />
+    );
+  }
+  return (
+    <>
+      <CornerPoint id={id} type={type} point={point} pieceList={list} />
+    </>
+  );
+};
 
 export default YutBoardCompo;
