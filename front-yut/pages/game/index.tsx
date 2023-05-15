@@ -24,6 +24,7 @@ import {
 import useGameAction from "@/actions/hook/useGameAction";
 import useYutThrow from "@/actions/hook/useYutThrow";
 import { UserInfoState } from "@/store/UserStore";
+import { MemberReadyListState } from "@/store/MemberStore";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
@@ -38,6 +39,7 @@ const Game = () => {
   ]);
   const setEventIndex = useSetRecoilState(EventIndex);
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
+  const playerNicknameList = useRecoilValue(MemberReadyListState);
 
   //게임 시작시 사용자 정보 셋팅
   const gameStartCallback = useCallback((response: GameStartResponseType) => {
@@ -45,8 +47,10 @@ const Game = () => {
     const event = response?.event;
     initPlayerTurn(users.map((user) => user.id));
     const list: Array<PlayerCompoProps> = users.map((user, index) => {
+      const player = playerNicknameList.find((u) => u.userId === user.id);
+
       return {
-        playerName: user.id,
+        playerName: player?.nickName ?? user.id,
         profileImage: "",
         userId: user.id,
         color: colors.gamePlayer[index],
@@ -78,6 +82,7 @@ const Game = () => {
           pieceMove(userId, selectPiece, move, "Move");
           return;
         }
+        pieceMove(userId, selectPiece, move, "Event");
       case 2:
         if (!event) {
           const { caughtUserId, caughtPiece } = response.data;

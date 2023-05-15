@@ -22,11 +22,7 @@ const Rule = () => {
       ],
     },
   ];
-  return (
-    <>
-      <RuleLayout layoutContents={contens} />
-    </>
-  );
+  return <RuleLayout layoutContents={contens} />;
 };
 
 export default Rule;

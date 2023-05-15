@@ -1,5 +1,6 @@
 import { colors } from "@/styles/theme";
 import styled from "styled-components";
+import BackBtn from "@/public/icon/backBtn.svg";
 
 const Container = styled.div`
   width: 100vw;
@@ -7,12 +8,12 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  /* gap: 1rem; */
 `;
 
 const Header = styled.div`
   width: 100vw;
-  background-color: ${colors.gamePlayer[0]};
+  background-color: ${colors.gamePlayer[3]};
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -46,6 +47,18 @@ const CarouselContainer = styled.div`
   dipslay: flex;
   justify-conten: center;
   align-items: center;
+
+  svg {
+    width: 80%;
+    height: 88.5%;
+    position: fixed;
+    top: 11.5%;
+  }
 `;
 
-export { Container, Header, HeaderItem, CarouselContainer };
+const BackButton = styled(BackBtn)`
+  width: 10%;
+  height: 10%;
+`;
+
+export { Container, Header, HeaderItem, CarouselContainer, BackButton };
