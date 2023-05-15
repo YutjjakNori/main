@@ -71,6 +71,7 @@ const Game = () => {
           pieceMove(userId, selectPiece, move, "Move");
           return;
         }
+        pieceMove(userId, selectPiece, move, "Event");
       case 2:
         if (!event) {
           const { caughtUserId, caughtPiece } = response.data;
