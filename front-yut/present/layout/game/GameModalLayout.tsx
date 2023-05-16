@@ -21,7 +21,6 @@ const GameModalLayout = () => {
   const playerInfoList = useRecoilValue(MemberListState);
 
   useEffect(() => {
-    console.log(action);
     switch (action) {
       // 누군가 턴을 시작했을때 내 차례면 modal on
       case "TurnStart":
