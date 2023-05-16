@@ -67,7 +67,6 @@ const ChatCompo = () => {
           </div>
         </style.ChatLogBox>
         {/* 채팅 입력창 */}
-        {/* TODO : 한줄로 나오게 만들기 */}
         <style.ChatInoutBox>
           <style.FormDiv onSubmit={sendMessage}>
             <style.ChatInput
