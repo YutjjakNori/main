@@ -16,6 +16,8 @@ import Option2 from "@/public/icon/eventItems/2.svg";
 import Option3 from "@/public/icon/eventItems/3.svg";
 import Option4 from "@/public/icon/eventItems/4.svg";
 
+import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
+
 const EventCard = () => {
   const getEventByIndex = useCallback((index: number) => {
     switch (index) {
@@ -33,10 +35,11 @@ const EventCard = () => {
   }, []);
 
   const [btnDisplay, setBtnDisplay] = useRecoilState(YutThrowBtnState);
-  const [pieceList] = useRecoilState(YutPieceListState);
+  const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
   const curUserId = useRecoilValue(NowTurnPlayerIdState);
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
-  const { appendPiece, pieceMove, doPieceMove } = usePieceMove();
+  const { appendPiece, pieceMove, doPieceMove, resetPieceState } =
+    usePieceMove();
 
   //선택된 piece의 index
   const [movePieceIndex, setMovePieceIndex] =
@@ -85,11 +88,20 @@ const EventCard = () => {
   function moveToStartPosEvent() {
     // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
     const pieceId = pieceList[movePieceIndex].pieceId;
-    // Array<number> 형식으로 맞춰주기.
-    // const pieceIdList = [pieceId];
-    // const movePath = [0];
-    // pieceMove(curUserId, pieceIdList, movePath, "Move");
-    doPieceMove(pieceId, 0);
+    const pieceType = pieceList[movePieceIndex].pieceType;
+
+    // const targetPiece = {curUserId, pieceId, pieceType, "InBoard", }
+    const latestPieceList = pieceList;
+    const targetPiece = latestPieceList[movePieceIndex];
+    const appendedPieceList = [
+      ...targetPiece.appendArray,
+      latestPieceList[movePieceIndex],
+    ].map((p) => resetPieceState(p));
+
+    let newArr = [...latestPieceList];
+    newArr.splice(movePieceIndex, 1);
+    newArr = newArr.concat(appendedPieceList);
+    setPieceList(newArr);
   }
 
   useEffect(() => {

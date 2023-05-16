@@ -455,6 +455,7 @@ const usePieceMove = () => {
     catchPiece,
     saveCatchInfo,
     doPieceMove,
+    resetPieceState,
   };
 };
 
