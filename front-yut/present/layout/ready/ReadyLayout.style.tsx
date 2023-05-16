@@ -33,7 +33,7 @@ const CherryBlossomImg = styled.img`
   object-fit: cover;
 `;
 
-const TestContainer = styled.div`
+const Container2 = styled.div`
   position: relative;
   margin: 0;
   width: 100vw;
@@ -48,7 +48,7 @@ const SoundContainer = styled.div`
 const CopyContainer = styled.div`
   position: fixed;
   top: 9.5vh;
-  left: 54vw;
+  left: 55vw;
   width: 35px;
 `;
 
@@ -71,10 +71,12 @@ const ReadyBtnContainer = styled.div`
   bottom: 10px;
   right: 50px;
   top: 70vh;
+  border-radius: 20px;
+  transition: box-shadow 0.3s;
 
-  /* :hover{
-    
-  } */
+  &:hover {
+    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+  }
 `;
 
 const ExitAlertContainer = styled.div`
@@ -140,9 +142,30 @@ const BackgroundImage = styled.div`
     opacity: 0.3;
   }
 `;
+const ChatingContatiner = styled.div`
+  display: flex;
+  position: fixed;
+  top: 20vh;
+  right: 50px;
+  align-items: center;
+`;
+
+const Container3 = styled.div`
+  position: absolute;
+  left: 25vw;
+  top: 5vh;
+
+  display: grid;
+  place-items: center;
+  grid-template-rows: repeat(2, 200px);
+  grid-template-columns: repeat(2, 200px);
+  grid-row-gap: 17px;
+  grid-column-gap: 120px;
+`;
 
 export {
-  TestContainer,
+  Container3,
+  Container2,
   Container,
   CherryBlossomImg,
   ExitContainer,
@@ -152,4 +175,5 @@ export {
   BackgroundImage,
   RoomInfo,
   ReadyBtnContainer,
+  ChatingContatiner,
 };
