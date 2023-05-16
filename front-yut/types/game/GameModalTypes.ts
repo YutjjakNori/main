@@ -16,11 +16,6 @@ interface TurnStartModalInfo {
   nowTurnPlayerNickname: string;
 }
 
-// 걸 입니다 윷 말을 고르세요
-interface ThrowYutModalInfo {
-  YutResult: ThrowResultType;
-}
-
 // 윷입니다 한번더
 interface ThrowYutAgainModalInfo {
   YutResult: ThrowResultType;
@@ -40,7 +35,6 @@ export type {
   GameModalType,
   NoneModalInfo,
   TurnStartModalInfo,
-  ThrowYutModalInfo,
   ThrowYutAgainModalInfo,
   ChoosePieceModalInfo,
   CatchPieceModalInfo,

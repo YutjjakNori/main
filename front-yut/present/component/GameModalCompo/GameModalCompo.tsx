@@ -4,7 +4,6 @@ import {
   TurnStartModalInfo,
   NoneModalInfo,
   ThrowYutAgainModalInfo,
-  ThrowYutModalInfo,
 } from "@/types/game/GameModalTypes";
 import { GameActionType } from "@/types/game/YutGameTypes";
 import { useEffect, useMemo, useState } from "react";
@@ -15,7 +14,6 @@ import * as style from "./GameModalCompo.style";
 interface GameModalCompoProps {
   data:
     | TurnStartModalInfo
-    | ThrowYutModalInfo
     | ThrowYutAgainModalInfo
     | ChoosePieceModalInfo
     | CatchPieceModalInfo
@@ -80,10 +78,6 @@ const isNoneModalInfo = (data: any): data is NoneModalInfo => {
 
 const isTurnStartModalInfo = (data: any): data is TurnStartModalInfo => {
   return data.nowTurnPlayerNickname;
-};
-
-const isThrowYutModalInfo = (data: any): data is ThrowYutModalInfo => {
-  return data === "ThrowYutModalInfo";
 };
 
 const isThrowYutAgainModalInfo = (
