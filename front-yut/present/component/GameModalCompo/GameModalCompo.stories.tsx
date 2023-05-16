@@ -13,6 +13,7 @@ export const Default: Story = {
   args: {
     data: {
       nowTurnPlayerNickname: "JJ",
+      isMyTurn: true,
     },
   },
 };
