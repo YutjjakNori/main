@@ -1,7 +1,10 @@
 import useGameAction from "@/actions/hook/useGameAction";
 import GameModalCompo from "@/present/component/GameModalCompo/GameModalCompo";
 import { GameModalInfoState } from "@/store/GameModalStore";
-import { NowTurnPlayerIdState } from "@/store/GameStore";
+import {
+  NowTurnPlayerIdState,
+  YutThrowResultListState,
+} from "@/store/GameStore";
 import { UserInfoState } from "@/store/UserStore";
 import { TurnStartModalInfo } from "@/types/game/GameModalTypes";
 import { useEffect } from "react";
@@ -12,8 +15,10 @@ const GameModalLayout = () => {
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const myInfo = useRecoilValue(UserInfoState);
   const { action } = useGameAction();
+  const yutResultList = useRecoilValue(YutThrowResultListState);
 
   useEffect(() => {
+    console.log(action);
     switch (action) {
       // 누군가 턴을 시작했을때 내 차례면 modal on
       case "TurnStart":
@@ -24,6 +29,16 @@ const GameModalLayout = () => {
             },
           });
         }
+        return;
+      case "ChoosePiece":
+        if (nowTurnPlayerId === myInfo.userId) {
+          setModalInfo({
+            data: {
+              moveYutResult: yutResultList[0],
+            },
+          });
+        }
+        return;
     }
   }, [action]);
 

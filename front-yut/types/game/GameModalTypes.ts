@@ -22,7 +22,7 @@ interface ThrowYutAgainModalInfo {
 }
 
 interface ChoosePieceModalInfo {
-  YutResult: ThrowResultType;
+  moveYutResult: ThrowResultType;
 }
 
 // 누구님의 말을 잡았습니다 한번더
