@@ -346,14 +346,16 @@ const ReadyLayout = () => {
           />
         </style.CopyContainer>
 
-        <style.TestContainer>
-          {memberReadyList.map((member, index) => (
-            <GameProfile
-              key={index}
-              isReady={member.isReady}
-              playerName={member.nickName}
-            />
-          ))}
+        <style.Container2>
+          <style.Container3>
+            {memberReadyList.map((member, index) => (
+              <GameProfile
+                key={index}
+                isReady={member.isReady}
+                playerName={member.nickName}
+              />
+            ))}
+          </style.Container3>
 
           <style.ReadyBtnContainer
             onClick={() => {
@@ -361,9 +363,9 @@ const ReadyLayout = () => {
             }}
           >
             <RectButton
-              text={readyBtnInfo.text}
+              text={isReady === "0" ? "준비" : "준비 취소"}
               fontSize={readyBtnInfo.fontSize}
-              backgroundColor={readyBtnInfo.backgroundColor}
+              backgroundColor={isReady === "0" ? "#6EBA91" : "#F07F7F"}
             />
           </style.ReadyBtnContainer>
 
@@ -403,6 +405,7 @@ const ReadyLayout = () => {
             </style.ExitAlertContainer>
           </style.ExitContainer>
 
+          {/* 모달 */}
           <Modal title={"게임을 시작합니다"}>
             <Timer
               ss={5}
@@ -414,8 +417,10 @@ const ReadyLayout = () => {
               }}
             />
           </Modal>
-          <ChatCompo />
-        </style.TestContainer>
+          <style.ChatingContatiner>
+            <ChatCompo />
+          </style.ChatingContatiner>
+        </style.Container2>
       </style.Container>
     </>
   );
