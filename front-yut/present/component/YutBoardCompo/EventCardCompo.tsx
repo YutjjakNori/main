@@ -17,6 +17,8 @@ import Option3 from "@/public/icon/eventItems/3.svg";
 import Option4 from "@/public/icon/eventItems/4.svg";
 
 import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
+import useYutThrow from "@/actions/hook/useYutThrow";
+import useGameAction from "@/actions/hook/useGameAction";
 
 const EventCard = () => {
   const getEventByIndex = useCallback((index: number) => {
@@ -40,6 +42,8 @@ const EventCard = () => {
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
   const { appendPiece, pieceMove, doPieceMove, resetPieceState } =
     usePieceMove();
+  const { isResultEmpty } = useYutThrow();
+  const { turnEnd, selectPieceStart } = useGameAction();
 
   //선택된 piece의 index
   const [movePieceIndex, setMovePieceIndex] =
@@ -78,6 +82,7 @@ const EventCard = () => {
   function moveToPrevPosEvent() {
     // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
     const pieceId = pieceList[movePieceIndex].pieceId;
+    console.log("현재 말 번호: " + pieceId);
     // // Array<number> 형식으로 맞춰주기.
     // const pieceIdList = [pieceId];
     // const movePath = [piecePrevPos];
@@ -139,6 +144,11 @@ const EventCard = () => {
       throw err;
     } finally {
       hideEventCard();
+      if (isResultEmpty) {
+        turnEnd();
+        return;
+      }
+      selectPieceStart();
     }
   };
 

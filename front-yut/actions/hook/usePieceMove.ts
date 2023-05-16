@@ -6,6 +6,7 @@ import {
   PieceMoveTypeState,
   SelectedPieceIndex,
   YutPieceListState,
+  EventIndex,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -45,6 +46,8 @@ const usePieceMove = () => {
   const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
   const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
   const { throwYut } = useGameAction();
+  const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
+  const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
 
   //말 동내기
   const pieceOver = useRecoilCallback(
@@ -78,6 +81,7 @@ const usePieceMove = () => {
         setMovePathList(movePath);
         // 말 이동 전 이전 위치 저장.
         const prevPosition = latestPieceList[pieceIndex].position;
+        console.log("말 이동 전 위치: " + prevPosition);
         setPiecePrevPos(prevPosition);
       },
     []
@@ -93,22 +97,18 @@ const usePieceMove = () => {
       ) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
 
-        console.log("latestPieceList" + latestPieceList);
-
-        latestPieceList.forEach((piece) => {
-          console.log(piece.userId + ", " + piece.pieceId);
-        });
-        console.log("말번호: " + pieceIdList[0]);
-        console.log("현재 유저 id: " + userId);
+        // latestPieceList.forEach((piece) => {
+        //   console.log(piece.userId + ", " + piece.pieceId);
+        // });
+        // console.log("말번호: " + pieceIdList[0]);
+        // console.log("현재 유저 id: " + userId);
 
         let findIndex = -1;
 
         if (pieceIdList.length === 1) {
-          console.log("말은 1개임. ");
           findIndex = latestPieceList.findIndex(
             (p) => p.userId === userId && p.pieceId === pieceIdList[0]
           );
-          console.log(findIndex);
         } else {
           // append 된 list인 경우 어떤 말을 움직일지 찾아야함, 현재 위치가 도착지가 아닌 piece id를 고름
           findIndex = latestPieceList.findIndex((p) => {
@@ -124,7 +124,6 @@ const usePieceMove = () => {
         }
 
         const selectedPiece = latestPieceList[findIndex];
-        console.log("selectedPiece" + selectPiece);
 
         const playerPieceList = latestPieceList.filter(
           (p) =>
@@ -139,6 +138,7 @@ const usePieceMove = () => {
       },
     []
   );
+
   const doPieceMove = useRecoilCallback(
     ({ snapshot }) =>
       async (movePieceIndex: number, pointIndex: number) => {
@@ -424,6 +424,17 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
+  const getEvent = () => {
+    sendEvent(
+      "/game/event",
+      {},
+      {
+        roomCode: roomCode,
+        userId: nowTurnPlayerId, // recoil 전역변수
+      }
+    );
+  };
+
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
 
@@ -444,12 +455,14 @@ const usePieceMove = () => {
             catchPiece().then(() => throwYut());
             return;
           case "Event":
-            // TODO : event 관련 로직 추가
+            getEvent();
             return;
         }
 
         if (isResultEmpty) {
           turnEnd();
+          // // 이벤트값 초기화.
+          // setEventIndex(-1);
           return;
         }
         selectPieceStart();

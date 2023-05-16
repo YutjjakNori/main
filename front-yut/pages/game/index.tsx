@@ -151,9 +151,6 @@ const Game = () => {
         userId: nowTurnPlayerId, // recoil 전역변수
       }
     );
-
-    // 서버 통신이 안되서 임시 test용!
-    setEventIndex(3);
   };
 
   return (
