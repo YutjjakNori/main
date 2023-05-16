@@ -25,10 +25,11 @@ const GameModalCompo = ({ data }: GameModalCompoProps) => {
   const getModalCompo = () => {
     switch (modalType) {
       case "TurnStart":
-        const { nowTurnPlayerNickname } = data as TurnStartModalInfo;
+        const { nowTurnPlayerNickname, isMyTurn } = data as TurnStartModalInfo;
         return (
           <TurnStartModalCompo
-            nowTurnPlayerNickname={nowTurnPlayerNickname ?? ""}
+            nowTurnPlayerNickname={nowTurnPlayerNickname}
+            isMyTurn={isMyTurn}
           />
         );
       case "ChoosePiece":
@@ -92,7 +93,11 @@ const instanceOfTurnStartModalInfo = (
   object: any
 ): object is TurnStartModalInfo => {
   if (object === null || object === undefined) return false;
-  return "nowTurnPlayerNickname" in object && Object.keys(object).length === 1;
+  return (
+    "nowTurnPlayerNickname" in object &&
+    "isMyTurn" in object &&
+    Object.keys(object).length === 2
+  );
 };
 
 const instanceOfChoosePieceInfo = (
