@@ -23,12 +23,12 @@ const LobbyLayout = () => {
     fontSize: "21px",
     backgroundColor: "#EA857C",
   };
-  //입장 버튼
-  const ingressBtnInfo: RectButtonProps = {
+  const ingressModalBtnInfo: RectButtonProps = {
     text: "입장하기",
     fontSize: "21px",
-    backgroundColor: "#6EBA91",
+    backgroundColor: "#6eba91",
   };
+
   const router = useRouter();
   const { openModal, closeModal } = useModal(); //모달 Hook
   const setRoomCode = useSetRecoilState(RoomCodeState);
@@ -156,7 +156,7 @@ const LobbyLayout = () => {
           ))}
         </style.ButtonContainer>
         <Modal title={"별명을 입력하세요"}>
-          <style.Container2 onSubmit={handleSubmit}>
+          <style.ModalFormContainer onSubmit={handleSubmit}>
             <style.inputNickName
               type="text"
               id="nickname-input"
@@ -176,14 +176,14 @@ const LobbyLayout = () => {
                 backgroundColor={exitModaltBtnInfo.backgroundColor}
               />
             </style.ExitModalContainer>
-            <style.IngressButton type="submit">
-              <RectButton
-                text={ingressBtnInfo.text}
-                fontSize={ingressBtnInfo.fontSize}
-                backgroundColor={ingressBtnInfo.backgroundColor}
-              />
+            <style.IngressButton
+              type="submit"
+              fontSize={ingressModalBtnInfo.fontSize}
+              backgroundColor={ingressModalBtnInfo.backgroundColor}
+            >
+              {ingressModalBtnInfo.text}
             </style.IngressButton>
-          </style.Container2>
+          </style.ModalFormContainer>
         </Modal>
       </style.Container>
     </>

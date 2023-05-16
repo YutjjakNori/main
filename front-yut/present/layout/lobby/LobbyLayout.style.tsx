@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { StyledButton } from "@/present/common/Button/Rect/RectButton.style";
 
 const Container = styled.div`
   position: relative;
@@ -15,7 +16,7 @@ const ButtonContainer = styled.div`
   margin: auto;
 `;
 
-const Container2 = styled.form`
+const ModalFormContainer = styled.form`
   margin-top: 100px;
   display: grid;
   place-items: center;
@@ -47,10 +48,10 @@ const ExitModalContainer = styled.div`
     box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
   }
 `;
-const IngressButton = styled.button`
+
+const IngressButton = styled(StyledButton)`
   border: none;
-  border-radius: 20px;
-  width: 135px;
+
   &:hover {
     box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
   }
@@ -62,5 +63,5 @@ export {
   ExitModalContainer,
   inputNickName,
   IngressButton,
-  Container2,
+  ModalFormContainer,
 };
