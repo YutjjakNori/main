@@ -1,0 +1,37 @@
+import useGameAction from "@/actions/hook/useGameAction";
+import GameModalCompo from "@/present/component/GameModalCompo/GameModalCompo";
+import { GameModalInfoState } from "@/store/GameModalStore";
+import { NowTurnPlayerIdState } from "@/store/GameStore";
+import { UserInfoState } from "@/store/UserStore";
+import { TurnStartModalInfo } from "@/types/game/GameModalTypes";
+import { useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+
+const GameModalLayout = () => {
+  const [modalInfo, setModalInfo] = useRecoilState(GameModalInfoState);
+  const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
+  const myInfo = useRecoilValue(UserInfoState);
+  const { action } = useGameAction();
+
+  useEffect(() => {
+    switch (action) {
+      // 누군가 턴을 시작했을때 내 차례면 modal on
+      case "TurnStart":
+        if (nowTurnPlayerId === myInfo.userId) {
+          setModalInfo({
+            data: {
+              nowTurnPlayerNickname: myInfo.nickName,
+            },
+          });
+        }
+    }
+  }, [action]);
+
+  return (
+    <>
+      <GameModalCompo data={modalInfo.data} />
+    </>
+  );
+};
+
+export default GameModalLayout;
