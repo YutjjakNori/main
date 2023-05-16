@@ -478,7 +478,8 @@ public class GameService {
         log.info("Event - Execute : " + request.getRoomCode() + ", " + request.getUserId());
 
         // 게임 데이터 들고오기
-        Game game = redisMapper.getData(request.getRoomCode(), Game.class);
+        String key = "game:" + request.getRoomCode();
+        Game game = redisMapper.getData(key, Game.class);
         // 게임 이용자 중 해당 유저 들고오기
         List<GameUser> gameUsers = game.getUsers();
         GameUser gameUser = GameUser.builder().userId(request.getUserId()).build();
