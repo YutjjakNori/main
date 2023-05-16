@@ -14,15 +14,21 @@ import { UserInfoState } from "@/store/UserStore";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
+// import CherryGif from "@/public/image/cherryGif.gif";
 
 const LobbyLayout = () => {
   //모달 나가기 버튼
   const exitModaltBtnInfo: RectButtonProps = {
     text: "돌아가기",
-    fontSize: "20px",
+    fontSize: "21px",
     backgroundColor: "#EA857C",
   };
-
+  //입장 버튼
+  const ingressBtnInfo: RectButtonProps = {
+    text: "입장하기",
+    fontSize: "21px",
+    backgroundColor: "#6EBA91",
+  };
   const router = useRouter();
   const { openModal, closeModal } = useModal(); //모달 Hook
   const setRoomCode = useSetRecoilState(RoomCodeState);
@@ -150,43 +156,34 @@ const LobbyLayout = () => {
           ))}
         </style.ButtonContainer>
         <Modal title={"별명을 입력하세요"}>
-          <style.inputNickName>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                id="nickname-input"
-                value={nickName}
-                onChange={handleChange}
-                placeholder="10글자 미만 별명 작성"
-                style={{
-                  marginRight: "15px",
-                  height: "50px",
-                  width: "230px",
-                  border: "thick double #575757",
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  height: "50px",
-                  width: "75px",
-                }}
-              >
-                입장
-              </button>
-            </form>
-          </style.inputNickName>
-          <style.ExitModalContainer
-            onClick={() => {
-              handleIsExit();
-            }}
-          >
-            <RectButton
-              text={exitModaltBtnInfo.text}
-              fontSize={exitModaltBtnInfo.fontSize}
-              backgroundColor={exitModaltBtnInfo.backgroundColor}
+          <style.Container2 onSubmit={handleSubmit}>
+            <style.inputNickName
+              type="text"
+              id="nickname-input"
+              value={nickName}
+              onChange={handleChange}
+              placeholder="10글자 미만 별명 작성"
             />
-          </style.ExitModalContainer>
+
+            <style.ExitModalContainer
+              onClick={() => {
+                handleIsExit();
+              }}
+            >
+              <RectButton
+                text={exitModaltBtnInfo.text}
+                fontSize={exitModaltBtnInfo.fontSize}
+                backgroundColor={exitModaltBtnInfo.backgroundColor}
+              />
+            </style.ExitModalContainer>
+            <style.IngressButton type="submit">
+              <RectButton
+                text={ingressBtnInfo.text}
+                fontSize={ingressBtnInfo.fontSize}
+                backgroundColor={ingressBtnInfo.backgroundColor}
+              />
+            </style.IngressButton>
+          </style.Container2>
         </Modal>
       </style.Container>
     </>
