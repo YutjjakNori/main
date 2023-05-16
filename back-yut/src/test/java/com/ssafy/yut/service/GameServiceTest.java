@@ -100,7 +100,7 @@ public class GameServiceTest {
                         .plate(plate)
                         .build();
 
-                doReturn(game).when(redisMapper).getData(ROOM_CODE, Game.class);
+                doReturn(game).when(redisMapper).getData("game:"+ROOM_CODE, Game.class);
 
                 // when
                 gameService.executeEvent(EventDto.requestResult.builder()
@@ -142,7 +142,7 @@ public class GameServiceTest {
                         .plate(plate)
                         .build();
 
-                doReturn(game).when(redisMapper).getData(ROOM_CODE, Game.class);
+                doReturn(game).when(redisMapper).getData("game:"+ROOM_CODE, Game.class);
 
                 // when
                 gameService.executeEvent(EventDto.requestResult.builder()
@@ -184,7 +184,7 @@ public class GameServiceTest {
                         .plate(plate)
                         .build();
 
-                doReturn(game).when(redisMapper).getData(ROOM_CODE, Game.class);
+                doReturn(game).when(redisMapper).getData("game:"+ROOM_CODE, Game.class);
 
                 // when
                 gameService.executeEvent(EventDto.requestResult.builder()
