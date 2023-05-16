@@ -6,6 +6,7 @@ import {
 } from "@/types/game/GameModalTypes";
 import { GameActionType } from "@/types/game/YutGameTypes";
 import { useEffect, useMemo, useState } from "react";
+import CatchPieceModalCompo from "./ActionModalCompo/CatchPieceModalCompo";
 import ChoosePieceModalCompo from "./ActionModalCompo/ChoosePieceModalCompo";
 import TurnStartModalCompo from "./ActionModalCompo/TurnStartModalCompo";
 import * as style from "./GameModalCompo.style";
@@ -43,6 +44,13 @@ const GameModalCompo = ({ data }: GameModalCompoProps) => {
             <ChoosePieceModalCompo moveYutResult={moveYutResult ?? ""} />
           </>
         );
+      case "Catch":
+        const { caughtPlayerNickname } = data as CatchPieceModalInfo;
+        return (
+          <>
+            <CatchPieceModalCompo caughtPlayerNickname={caughtPlayerNickname} />
+          </>
+        );
       default:
         return;
     }
@@ -67,6 +75,10 @@ const GameModalCompo = ({ data }: GameModalCompoProps) => {
     }
     if (instanceOfChoosePieceInfo(data)) {
       setModalType("ChoosePiece");
+      return;
+    }
+    if (instanceOfCatchPieceModalInfo(data)) {
+      setModalType("Catch");
       return;
     }
 
@@ -106,8 +118,11 @@ const isChoosePieceModalInfo = (data: any): data is ChoosePieceModalInfo => {
   return data === "ChoosePieceModalInfo";
 };
 
-const isCatchPieceModalInfo = (data: any): data is CatchPieceModalInfo => {
-  return data === "CatchPieceModalInfo";
+const instanceOfCatchPieceModalInfo = (
+  object: any
+): object is CatchPieceModalInfo => {
+  if (object === null || object === undefined) return false;
+  return "caughtPlayerNickname" in object && Object.keys(object).length === 1;
 };
 
 export default GameModalCompo;

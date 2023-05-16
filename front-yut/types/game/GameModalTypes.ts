@@ -27,7 +27,6 @@ interface ChoosePieceModalInfo {
 
 // 누구님의 말을 잡았습니다 한번더
 interface CatchPieceModalInfo {
-  nowTurnPlayerNickname: string;
   caughtPlayerNickname: string;
 }
 

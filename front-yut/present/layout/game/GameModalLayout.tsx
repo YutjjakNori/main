@@ -3,10 +3,11 @@ import GameModalCompo from "@/present/component/GameModalCompo/GameModalCompo";
 import { GameModalInfoState } from "@/store/GameModalStore";
 import {
   NowTurnPlayerIdState,
+  PieceCatchInfoState,
   YutThrowResultListState,
 } from "@/store/GameStore";
 import { UserInfoState } from "@/store/UserStore";
-import { TurnStartModalInfo } from "@/types/game/GameModalTypes";
+import { MemberListState } from "@/store/MemberStore";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
@@ -16,6 +17,8 @@ const GameModalLayout = () => {
   const myInfo = useRecoilValue(UserInfoState);
   const { action } = useGameAction();
   const yutResultList = useRecoilValue(YutThrowResultListState);
+  const catchInfo = useRecoilValue(PieceCatchInfoState);
+  const playerInfoList = useRecoilValue(MemberListState);
 
   useEffect(() => {
     console.log(action);
@@ -35,6 +38,18 @@ const GameModalLayout = () => {
           setModalInfo({
             data: {
               moveYutResult: yutResultList[0],
+            },
+          });
+        }
+        return;
+      case "Catch":
+        if (nowTurnPlayerId === myInfo.userId) {
+          const catuchUserInfo = playerInfoList.find(
+            (u) => u.userId === catchInfo.catchedUserId
+          );
+          setModalInfo({
+            data: {
+              caughtPlayerNickname: catuchUserInfo?.nickName ?? "",
             },
           });
         }

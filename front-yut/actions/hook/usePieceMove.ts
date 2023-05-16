@@ -36,7 +36,7 @@ const usePieceMove = () => {
   const { turnEnd, selectPieceStart } = useGameAction();
   const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
   const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
-  const { throwYut } = useGameAction();
+  const { catchPlayerPiece, throwYut } = useGameAction();
 
   //말 동내기
   const pieceOver = useRecoilCallback(
@@ -419,7 +419,12 @@ const usePieceMove = () => {
             pieceOver();
             break;
           case "Catch":
-            catchPiece().then(() => throwYut());
+            catchPiece().then(() => {
+              catchPlayerPiece();
+              setTimeout(() => {
+                throwYut();
+              }, 1000);
+            });
             return;
           case "Event":
             // TODO : event 관련 로직 추가
