@@ -2,7 +2,6 @@ import {
   CatchPieceModalInfo,
   ChoosePieceModalInfo,
   TurnStartModalInfo,
-  ThrowYutAgainModalInfo,
 } from "@/types/game/GameModalTypes";
 import { GameActionType } from "@/types/game/YutGameTypes";
 import { useEffect, useMemo, useState } from "react";
@@ -13,12 +12,7 @@ import * as style from "./GameModalCompo.style";
 
 // modal에 따른 타입이 data에 바인딩됨
 interface GameModalCompoProps {
-  data:
-    | TurnStartModalInfo
-    | ThrowYutAgainModalInfo
-    | ChoosePieceModalInfo
-    | CatchPieceModalInfo
-    | null;
+  data: TurnStartModalInfo | ChoosePieceModalInfo | CatchPieceModalInfo | null;
 }
 
 const GameModalCompo = ({ data }: GameModalCompoProps) => {
@@ -101,21 +95,11 @@ const instanceOfTurnStartModalInfo = (
   return "nowTurnPlayerNickname" in object && Object.keys(object).length === 1;
 };
 
-const isThrowYutAgainModalInfo = (
-  data: any
-): data is ThrowYutAgainModalInfo => {
-  return data === "ThrowYutAgainModalInfo";
-};
-
 const instanceOfChoosePieceInfo = (
   object: any
 ): object is ChoosePieceModalInfo => {
   if (object === null || object === undefined) return false;
   return "moveYutResult" in object && Object.keys(object).length === 1;
-};
-
-const isChoosePieceModalInfo = (data: any): data is ChoosePieceModalInfo => {
-  return data === "ChoosePieceModalInfo";
 };
 
 const instanceOfCatchPieceModalInfo = (
