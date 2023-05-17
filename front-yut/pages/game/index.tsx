@@ -20,6 +20,7 @@ import useGameAction from "@/actions/hook/useGameAction";
 import useYutThrow from "@/actions/hook/useYutThrow";
 import { UserInfoState } from "@/store/UserStore";
 import { MemberReadyListState } from "@/store/MemberStore";
+import GameModalLayout from "@/present/layout/game/GameModalLayout";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
@@ -131,6 +132,7 @@ const Game = () => {
   return (
     <>
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
+      <GameModalLayout />
 
       <button onClick={testNextTurn}>다음 차례</button>
     </>

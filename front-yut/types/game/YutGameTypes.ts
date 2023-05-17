@@ -1,5 +1,3 @@
-import { StaticImageData } from "next/image";
-
 type PieceStateType = "NotStarted" | "InBoard" | "Done" | "Appended";
 
 /** 현재 실행중인 게임 로직 종류
@@ -19,7 +17,9 @@ type GameActionType =
   | "End"
   | "TurnStart"
   | "TurnEnd"
-  | "None";
+  | "None"
+  | "Catch"
+  | "Event";
 
 /** 윷 판 모서리 타입
  * @leftTop 왼쪽 위 분기점
