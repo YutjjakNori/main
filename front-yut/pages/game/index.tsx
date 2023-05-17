@@ -24,7 +24,7 @@ import GameModalLayout from "@/present/layout/game/GameModalLayout";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
-  const { turnEnd, movePiece } = useGameAction();
+  const { turnEnd, movePiece, gameEnd } = useGameAction();
   const { pieceMove, saveCatchInfo } = usePieceMove();
   const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
@@ -79,26 +79,23 @@ const Game = () => {
         pieceMove(userId, selectPiece, move, "Event");
         return;
       case 2:
-        if (!event) {
-          const { caughtUserId, caughtPiece } = response.data;
-          if (!caughtUserId || !caughtPiece) {
-            throw Error("잡을 사용자의 정보가 없습니다");
-          }
-          saveCatchInfo(caughtUserId, caughtPiece);
-          pieceMove(userId, selectPiece, move, "Catch");
-          return;
+        const { caughtUserId, caughtPiece } = response.data;
+        if (!caughtUserId || !caughtPiece) {
+          throw Error("잡을 사용자의 정보가 없습니다");
         }
+        saveCatchInfo(caughtUserId, caughtPiece);
+        pieceMove(userId, selectPiece, move, "Catch");
+        return;
       // 말 합치기
       case 3:
-        if (!event) {
-          pieceMove(userId, selectPiece, move, "Append");
-          return;
-        }
+        pieceMove(userId, selectPiece, move, "Append");
+        return;
       // 말 동나기
       case 4:
         const { end } = response.data;
         // 게임 종료
         if (end) {
+          pieceMove(userId, selectPiece, move, "End");
           return;
         }
         pieceMove(userId, selectPiece, move, "Over");

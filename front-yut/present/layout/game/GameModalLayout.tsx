@@ -31,6 +31,7 @@ const GameModalLayout = () => {
           },
         });
         return;
+      // 움직일 윷 말 선택
       case "ChoosePiece":
         if (nowTurnPlayerId === myInfo.userId) {
           setModalInfo({
@@ -40,6 +41,7 @@ const GameModalLayout = () => {
           });
         }
         return;
+      // 윷 말 잡았을때 한번더
       case "Catch":
         if (nowTurnPlayerId === myInfo.userId) {
           const catuchUserInfo = playerInfoList.find(
@@ -51,6 +53,15 @@ const GameModalLayout = () => {
             },
           });
         }
+        return;
+      // 게임 종료
+      case "End":
+        const winner = playerInfoList.find((u) => u.userId === nowTurnPlayerId);
+        setModalInfo({
+          data: {
+            winnerPlayerNickname: winner?.nickName ?? "",
+          },
+        });
         return;
     }
   }, [action]);
