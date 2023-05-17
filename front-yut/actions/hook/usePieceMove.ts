@@ -429,6 +429,7 @@ const usePieceMove = () => {
   }, []);
 
   const getEvent = () => {
+    console.log(myUserInfo.userId + ", " + nowTurnPlayerId);
     if (myUserInfo.userId === nowTurnPlayerId) {
       sendEvent(
         "/game/event",

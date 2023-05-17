@@ -210,33 +210,34 @@ const EventCard = () => {
               if (index === 2) eventType = 0;
               else eventType = 1;
 
-              console.log(
-                roomCode +
-                  " " +
-                  nowTurnPlayerId +
-                  " " + // recoil 전역변수
-                  pieceIdList +
-                  " " +
-                  nowPosition +
-                  " " +
-                  eventType +
-                  " " +
-                  piecePrevPos
-              );
-
-              sendEvent(
-                "/game/event/result",
-                {},
-                {
-                  roomCode: roomCode,
-                  userId: nowTurnPlayerId, // recoil 전역변수
-                  selectPiece: pieceIdList,
-                  plateNum: nowPosition,
-                  event: eventType,
-                  //prevPosition: -1,
-                  prevPosition: piecePrevPos,
-                }
-              );
+              if (myUserInfo.userId === nowTurnPlayerId) {
+                console.log(
+                  roomCode +
+                    " " +
+                    nowTurnPlayerId +
+                    " " + // recoil 전역변수
+                    pieceIdList +
+                    " " +
+                    nowPosition +
+                    " " +
+                    eventType +
+                    " " +
+                    piecePrevPos
+                );
+                sendEvent(
+                  "/game/event/result",
+                  {},
+                  {
+                    roomCode: roomCode,
+                    userId: nowTurnPlayerId, // recoil 전역변수
+                    selectPiece: pieceIdList,
+                    plateNum: nowPosition,
+                    event: eventType,
+                    //prevPosition: -1,
+                    prevPosition: piecePrevPos,
+                  }
+                );
+              }
             }
             // appendEvent();
           });
