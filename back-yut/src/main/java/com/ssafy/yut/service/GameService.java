@@ -191,16 +191,10 @@ public class GameService {
         GameUser turnUser = game.getUsers().get(turnUserIndex);
         List<Integer> turnUserPieces = turnUser.getPieces();
 
-        // FIXME: 210 -> 209로 변경
-//        Set<Integer> event = game.getEvent();
-        Set<Integer> event = new HashSet<>();
+        Set<Integer> event = game.getEvent();
         Map<Integer, List<Integer>> plate = game.getPlate();
         // 선택한 말이 있는 위치에서 말 지우기
         List<Integer> movePieces = plate.remove(plateNum);
-
-        // FIXME: 삭제
-        event.add(6);
-        event.add(25);
 
         switch (direction) {
             // 순행

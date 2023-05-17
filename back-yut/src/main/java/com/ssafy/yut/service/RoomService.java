@@ -199,7 +199,7 @@ public class RoomService {
             while(event.size() < 2) {
                 event.add((int)((Math.random()*28)+1));
             }
-
+            game.setEvent(event);
         }
 
         redisMapper.saveData(key, game);
