@@ -123,7 +123,6 @@ const EventCard = () => {
       }, 2000);
     } else {
       const list = [pieceIdx, movePieceIndex];
-      setEventIndex(2);
       setTimeout(() => {
         appendPiece();
       }, 2000);
@@ -172,12 +171,15 @@ const EventCard = () => {
 
   useEffect(() => {
     {
+      console.log(eventIndex + "값 변경됨!");
       showEventPoster(eventIndex);
     }
   }, [eventIndex]);
 
   const showEventPoster = (index: number) => {
-    setEventIndex(index);
+    // setEventIndex(index);
+    console.log("이벤트 실행!");
+
     try {
       switch (index) {
         case 0:

@@ -156,9 +156,11 @@ const Game = () => {
 
   const setEventCallback = (data: any) => {
     let eventType = data.event;
-    console.log("event 번호!: " + eventType);
+    // console.log("event 번호!: " + eventType);
 
     setEventIndex(eventType);
+
+    // 2, 3, 4번은
 
     // 이벤트 카드 보여주기
 
