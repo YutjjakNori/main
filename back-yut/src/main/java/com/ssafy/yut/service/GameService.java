@@ -432,9 +432,7 @@ public class GameService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
 
-        //HotFIX,,,,
-//        int eventNum = random.nextInt(5);
-        int eventNum = 2;
+        int eventNum = random.nextInt(5);
 
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
@@ -504,7 +502,7 @@ public class GameService {
 
             // 말 업고가기 - 위치 변경 (Kafka ver)
             resultPieceKafka = request.getSelectPiece().stream().collect(Collectors.toList());
-            resultPieceKafka.add(pieceIndex+1);
+            resultPieceKafka.add(pieceIndex + 1);
         } else {
             // event == 1 -> 자리 이동
 
@@ -516,20 +514,25 @@ public class GameService {
                 // 해당 말의 상태를 시작 전으로 되돌리기
                 resultPieceRedis = request.getSelectPiece();
                 for (int piece : resultPieceRedis) {
-                    gameUser.getPieces().set(piece, -1); // 해당 말 시작 전으로 변경
+                    gameUser.getPieces().set(piece - 1, -1); // 해당 말 시작 전으로 변경
                 }
+                // 변경 데이터 반영하기
+                gameUsers.set(turnUserIndex, gameUser);
+                game.setUsers(gameUsers);
+                // 처음으로 이동 (Kafka ver)
+                resultPieceKafka = request.getSelectPiece();
             } else {
                 // 말이 출발했던 자리로 이동하는 경우
 
                 // 기존 이벤트 위치에서 말 없애기
                 resultPieceRedis = game.getPlate().get(request.getPlateNum());
                 game.getPlate().remove(request.getPlateNum());
+                // 출발 했던 자리로 이동
+                move = request.getPrevPosition();
                 // 출발 했던 자리로 이동 (Redis ver)
                 game.getPlate().put(move, resultPieceRedis);
                 // 출발 했던 자리로 이동 (Kafka ver)
                 resultPieceKafka = request.getSelectPiece();
-                // 출발 했던 자리로 이동
-                move = request.getPrevPosition();
             }
         }
 
