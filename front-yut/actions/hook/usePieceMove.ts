@@ -33,7 +33,7 @@ const usePieceMove = () => {
   const roomCode = useRecoilValue(RoomCodeState);
   const { getYutThrowResultForUse, popYutThrowResultForUse, isResultEmpty } =
     useYutThrow();
-  const { turnEnd, selectPieceStart } = useGameAction();
+  const { turnEnd, selectPieceStart, gameEnd } = useGameAction();
   const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
   const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
   const { catchPlayerPiece, throwYut } = useGameAction();
@@ -402,6 +402,17 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
+  const resetPieceMoveState = useCallback(() => {
+    setPieceList([]);
+    setMovePieceIndex(-1);
+    setCornerSelectType("none");
+    setMoveType("None");
+    setCatchInfo({
+      catchedPieceIdList: [],
+      catchedUserId: "-1",
+    });
+  }, []);
+
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
 
@@ -429,6 +440,9 @@ const usePieceMove = () => {
           case "Event":
             // TODO : event 관련 로직 추가
             return;
+          case "End":
+            gameEnd();
+            return;
         }
 
         if (isResultEmpty) {
@@ -451,6 +465,7 @@ const usePieceMove = () => {
     appendPiece,
     catchPiece,
     saveCatchInfo,
+    resetPieceMoveState,
   };
 };
 

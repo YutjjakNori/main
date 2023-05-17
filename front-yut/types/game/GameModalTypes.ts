@@ -26,10 +26,15 @@ interface CatchPieceModalInfo {
   caughtPlayerNickname: string;
 }
 
+interface GameEndModalInfo {
+  winnerPlayerNickname: string;
+}
+
 export type {
   GameModalType,
   NoneModalInfo,
   TurnStartModalInfo,
   ChoosePieceModalInfo,
   CatchPieceModalInfo,
+  GameEndModalInfo,
 };
