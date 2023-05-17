@@ -9,4 +9,14 @@ const Text = styled.div`
   }
 `;
 
-export { Text };
+const ButtonWrapper = styled.div`
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+`;
+
+export { Text, ButtonWrapper };

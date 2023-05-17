@@ -36,6 +36,10 @@ const useGameAction = () => {
     setAction("MovePiece");
   };
 
+  const gameEnd = () => {
+    setAction("End");
+  };
+
   return {
     startGame,
     resetAction,
@@ -46,6 +50,7 @@ const useGameAction = () => {
     turnEnd,
     throwYut,
     selectPieceStart,
+    gameEnd,
   };
 };
 
