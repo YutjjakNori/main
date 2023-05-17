@@ -6,7 +6,7 @@ import {
 import { RoomCodeState } from "@/store/GameStore";
 import { UserInfoState } from "@/store/UserStore";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilCallback, useRecoilState, useRecoilValue } from "recoil";
 import { sendEvent } from "../socket-api/socketInstance";
 import useGameAction from "./useGameAction";
@@ -78,7 +78,7 @@ const useYutThrow = () => {
         pushed = true;
         cnt++;
         return result;
-      }),
+      })
     );
 
     setCanThrowYut("none");
@@ -107,7 +107,7 @@ const useYutThrow = () => {
         const firstResultType = resultList[popFirstResultIndex];
         return firstResultType;
       },
-    [],
+    []
   );
 
   const popYutThrowResultForUse = useRecoilCallback(
@@ -120,8 +120,12 @@ const useYutThrow = () => {
         setResultList(newList);
         return firstResultType;
       },
-    [],
+    []
   );
+
+  const resetThrowResultList = useCallback(() => {
+    setResultList(["", "", "", "", ""]);
+  }, []);
 
   useEffect(() => {
     // 윷을 안던질때는 display none
@@ -143,6 +147,7 @@ const useYutThrow = () => {
     resultType,
     getYutThrowResultForUse,
     popYutThrowResultForUse,
+    resetThrowResultList,
     isResultEmpty,
   };
 };

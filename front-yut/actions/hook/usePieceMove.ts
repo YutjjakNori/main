@@ -402,6 +402,17 @@ const usePieceMove = () => {
     setCornerSelectType("none");
   }, []);
 
+  const resetPieceMoveState = useCallback(() => {
+    setPieceList([]);
+    setMovePieceIndex(-1);
+    setCornerSelectType("none");
+    setMoveType("None");
+    setCatchInfo({
+      catchedPieceIdList: [],
+      catchedUserId: "-1",
+    });
+  }, []);
+
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
 
@@ -454,6 +465,7 @@ const usePieceMove = () => {
     appendPiece,
     catchPiece,
     saveCatchInfo,
+    resetPieceMoveState,
   };
 };
 
