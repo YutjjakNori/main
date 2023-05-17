@@ -39,6 +39,7 @@ const ImgContainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: 5px;
+  justify-content: center;
 `;
 
 // const RectContainer = styled.div<{ display: string }>`
