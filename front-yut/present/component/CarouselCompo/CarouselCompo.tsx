@@ -1,9 +1,10 @@
+import { ContentType } from "@/types/rule/RuleLayoutTypes";
 import Image, { StaticImageData } from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import * as style from "./CarouselCompo.style";
 
 interface CarouselCompoProps {
-  contents: Array<string>;
+  contents: Array<ContentType>;
 }
 
 const CarouselCompo = ({ contents }: CarouselCompoProps) => {
@@ -42,10 +43,11 @@ const CarouselCompo = ({ contents }: CarouselCompoProps) => {
         onMouseOver={() => setIsHover(true)}
         onMouseLeave={() => setIsHover(false)}
       >
+        <style.Subtitle>{contents[nowItemIndex].subTitle}</style.Subtitle>
         {/* contents */}
         <style.StyledImgBox>
           <Image
-            src={contents[nowItemIndex]}
+            src={contents[nowItemIndex].imgSrc}
             alt={""}
             width={500}
             height={500}

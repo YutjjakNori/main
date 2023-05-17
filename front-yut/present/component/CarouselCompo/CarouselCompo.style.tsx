@@ -4,10 +4,16 @@ import styled from "styled-components";
 const Container = styled.div`
   width: 80vw;
   height: auto;
-  max-height: 80vh;
+  max-height: 70vh;
   aspect-ratio: 5/3;
   position: relative;
   z-index: 0;
+`;
+
+const Subtitle = styled.div`
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
 `;
 
 const StyledImgBox = styled.div`
@@ -90,4 +96,5 @@ export {
   Button,
   IndicatorBox,
   Indicator,
+  Subtitle,
 };
