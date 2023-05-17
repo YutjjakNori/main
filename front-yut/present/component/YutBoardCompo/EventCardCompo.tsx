@@ -199,7 +199,9 @@ const EventCard = () => {
           break;
         case 2:
           // 말 업기
+          console.log("말 업기 실행 ");
           hideEventCard(() => {
+            // 현재 차례가 자기인 경우의 플레이어만 소켓 통신 요청 보냄.
             if (myUserInfo.userId === nowTurnPlayerId) {
               // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
               const pieceIdList = [pieceList[movePieceIndex].pieceId];
@@ -210,34 +212,32 @@ const EventCard = () => {
               if (index === 2) eventType = 0;
               else eventType = 1;
 
-              if (myUserInfo.userId === nowTurnPlayerId) {
-                console.log(
-                  roomCode +
-                    " " +
-                    nowTurnPlayerId +
-                    " " + // recoil 전역변수
-                    pieceIdList +
-                    " " +
-                    nowPosition +
-                    " " +
-                    eventType +
-                    " " +
-                    piecePrevPos
-                );
-                sendEvent(
-                  "/game/event/result",
-                  {},
-                  {
-                    roomCode: roomCode,
-                    userId: nowTurnPlayerId, // recoil 전역변수
-                    selectPiece: pieceIdList,
-                    plateNum: nowPosition,
-                    event: eventType,
-                    //prevPosition: -1,
-                    prevPosition: piecePrevPos,
-                  }
-                );
-              }
+              console.log(
+                roomCode +
+                  " " +
+                  nowTurnPlayerId +
+                  " " + // recoil 전역변수
+                  pieceIdList +
+                  " " +
+                  nowPosition +
+                  " " +
+                  eventType +
+                  " " +
+                  piecePrevPos
+              );
+              sendEvent(
+                "/game/event/result",
+                {},
+                {
+                  roomCode: roomCode,
+                  userId: nowTurnPlayerId, // recoil 전역변수
+                  selectPiece: pieceIdList,
+                  plateNum: nowPosition,
+                  event: eventType,
+                  //prevPosition: -1,
+                  prevPosition: piecePrevPos,
+                }
+              );
             }
             // appendEvent();
           });
