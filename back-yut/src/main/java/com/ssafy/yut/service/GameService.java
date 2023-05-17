@@ -68,16 +68,9 @@ public class GameService {
                     .build());
         }
 
-        // FIXME: 삭제
-        Set<Integer> event = new HashSet<>();
-        event.add(6);
-        event.add(25);
-
         GameDto.Response gameStartResponse = GameDto.Response.builder()
                 .users(users)
-                // FIXME: 76 -> 75로 변경
-                // .event(game.getEvent())
-                .event(event)
+                .event(game.getEvent())
                 .build();
         response.put("sessionId", sessionId);
         response.put("response", gameStartResponse);
