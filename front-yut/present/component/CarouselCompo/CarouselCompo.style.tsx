@@ -14,6 +14,8 @@ const Subtitle = styled.div`
   font-size: 1.5rem;
   font-weight: bold;
   text-align: center;
+  position: relative;
+  top: 5%;
 `;
 
 const StyledImgBox = styled.div`

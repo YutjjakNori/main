@@ -49,8 +49,8 @@ const CarouselCompo = ({ contents }: CarouselCompoProps) => {
           <Image
             src={contents[nowItemIndex].imgSrc}
             alt={""}
-            width={500}
-            height={500}
+            width={1000}
+            height={1000}
           />
         </style.StyledImgBox>
         {/* hover box */}
