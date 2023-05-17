@@ -7,6 +7,7 @@ import {
   SelectedPieceIndex,
   YutPieceListState,
   EventIndex,
+  IsEventCompleteState,
 } from "@/store/GameStore";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -22,6 +23,7 @@ import useYutThrow from "./useYutThrow";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import useGameAction from "./useGameAction";
 import { PieceMoveType } from "@/types/game/YutPieceTypes";
+import { UserInfoState } from "@/store/UserStore";
 
 const animationSeconds = 0.5;
 
@@ -48,6 +50,8 @@ const usePieceMove = () => {
   const { throwYut } = useGameAction();
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
+  const myUserInfo = useRecoilValue(UserInfoState);
+  const isEventComplete = useRecoilValue(IsEventCompleteState);
 
   //말 동내기
   const pieceOver = useRecoilCallback(
@@ -425,14 +429,16 @@ const usePieceMove = () => {
   }, []);
 
   const getEvent = () => {
-    sendEvent(
-      "/game/event",
-      {},
-      {
-        roomCode: roomCode,
-        userId: nowTurnPlayerId, // recoil 전역변수
-      }
-    );
+    if (myUserInfo.userId === nowTurnPlayerId) {
+      sendEvent(
+        "/game/event",
+        {},
+        {
+          roomCode: roomCode,
+          userId: nowTurnPlayerId, // recoil 전역변수
+        }
+      );
+    }
   };
 
   useEffect(() => {
@@ -456,13 +462,12 @@ const usePieceMove = () => {
             return;
           case "Event":
             getEvent();
-            return;
+            return; // 다시 풀음. -> '이벤트실행' sendEvent() 콜백이 끝나면 그때 
         }
 
         if (isResultEmpty) {
           turnEnd();
-          // // 이벤트값 초기화.
-          // setEventIndex(-1);
+          
           return;
         }
         selectPieceStart();

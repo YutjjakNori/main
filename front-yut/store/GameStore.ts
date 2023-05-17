@@ -7,6 +7,8 @@ import {
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import { atom } from "recoil";
 
+import { RunEventResponseType } from "@/types/game/SocketResponseTypes";
+
 const RoomCodeState = atom<string>({
   key: "GameRoomCode",
   default: "",
@@ -86,6 +88,34 @@ const PiecePrevPosState = atom<number>({
   default: -1,
 });
 
+// 윷 이벤트
+const IsEventCompleteState = atom<boolean>({
+  key: "isEventComplete",
+  default: false,
+});
+
+// 2, 3, 4번 이벤트 실행을 위한 전역변수
+const RunEventIndex = atom<number>({
+  key: "runEventIndex",
+  default: -1,
+});
+
+const EventCallbackValue = atom<RunEventResponseType>({
+  key: "eventCallbackValue",
+  default: {
+    roomCode: "",
+    userId: "",
+    selectPiece: [],
+    event: -1,
+    move: 0,
+  },
+});
+
+const RunEventCallback = atom<boolean>({
+  key: "runEventCallback",
+  default: false,
+});
+
 export {
   RoomCodeState,
   YutPieceListState,
@@ -101,4 +131,8 @@ export {
   PieceMoveTypeState,
   PieceCatchInfoState,
   PiecePrevPosState,
+  IsEventCompleteState,
+  RunEventIndex,
+  EventCallbackValue,
+  RunEventCallback,
 };

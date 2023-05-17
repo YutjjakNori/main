@@ -42,6 +42,14 @@ interface EventResponseType {
   roomCode: string;
 }
 
+interface RunEventResponseType {
+  roomCode: string;
+  userId: string;
+  selectPiece: Array<number>;
+  event: number;
+  move: number;
+}
+
 export type {
   GameStartResponseType,
   GameStartUserType,
@@ -49,4 +57,5 @@ export type {
   YutThrowResponseType,
   PieceMoveResponseType,
   EventResponseType,
+  RunEventResponseType,
 };

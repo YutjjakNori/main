@@ -21,7 +21,7 @@ import useGameAction from "./useGameAction";
 //사용자의 초기 말 3개 생성
 const createUserPieceList = (
   userId: string,
-  pieceType: YutPieceType,
+  pieceType: YutPieceType
 ): Array<YutPieceCompoProps> => {
   const list: Array<YutPieceCompoProps> = [];
   for (let i = 1; i <= 3; i++) {
@@ -87,23 +87,23 @@ const useGameTurn = () => {
     ({ snapshot }) =>
       async () => {
         const latestNowTurnPlayerId = await snapshot.getPromise(
-          NowTurnPlayerIdState,
+          NowTurnPlayerIdState
         );
         const latestPlayerTurnList = await snapshot.getPromise(PlayTurnState);
 
-        console.log("getNextPlayerId", latestNowTurnPlayerId);
+        console.log("현재 사용자 ID: ", latestNowTurnPlayerId);
 
         if (latestNowTurnPlayerId === "-1") {
           return latestPlayerTurnList[0];
         }
 
         const nowIndex = latestPlayerTurnList.findIndex(
-          (id) => id === latestNowTurnPlayerId,
+          (id) => id === latestNowTurnPlayerId
         );
         const nextIndex = (nowIndex + 1) % latestPlayerTurnList.length;
         return latestPlayerTurnList[nextIndex];
       },
-    [],
+    []
   );
 
   // 턴 넘기기
@@ -113,7 +113,7 @@ const useGameTurn = () => {
       startTurn();
       turnStart();
     },
-    [playerTurnList],
+    [playerTurnList]
   );
 
   //다음 차례가 내 차례인 경우 알림
@@ -128,7 +128,7 @@ const useGameTurn = () => {
           {
             roomCode: roomCode,
             userId: nextPlayerId,
-          },
+          }
         );
       }, 1000);
     }
