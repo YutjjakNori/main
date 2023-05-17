@@ -532,7 +532,7 @@ public class GameService {
         }
 
         // 변경 데이터 redis로 저장하기
-        redisMapper.saveData(request.getRoomCode(), game);
+        redisMapper.saveData(key, game);
         // 변경 데이터 kafka로 보내기
         kafkaTemplate.send(TOPIC + ".eventResult",
                 EventDto.responseResult.builder()
