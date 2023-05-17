@@ -3,12 +3,12 @@ import PatternSvg from "@/public/icon/ProfilePattern.svg";
 import DefaultProfile from "@/public/icon/DefaultProfile.svg";
 import { colors } from "@/styles/theme";
 
-const Container = styled.div<{ color: string }>`
+const Container = styled.div<{ color: string; large: boolean }>`
   display: inline-block;
   position: relative;
   border: 3px solid ${({ color }) => color ?? "white"};
   background-color: ${colors.achromaticColor.white};
-  width: 10rem;
+  width: ${({ large }) => (large ? "13rem" : "10rem")};
   height: auto;
   aspect-ratio: 4/3;
   box-sizing: border-box;
@@ -39,9 +39,9 @@ const Container = styled.div<{ color: string }>`
 `;
 
 //경첩 문양
-const ContainerPattern = styled(PatternSvg)`
+const ContainerPattern = styled(PatternSvg)<{ large: boolean }>`
   position: absolute;
-  width: 1.5em;
+  width: ${({ large }) => (large ? "2rem" : "1.5em")};
   height: auto;
 `;
 

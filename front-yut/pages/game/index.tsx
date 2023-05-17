@@ -147,16 +147,10 @@ const Game = () => {
     initSubscribe();
   }, []);
 
-  const testNextTurn = () => {
-    turnEnd();
-  };
-
   return (
     <>
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
       <GameModalLayout />
-
-      <button onClick={testNextTurn}>다음 차례</button>
     </>
   );
 };
