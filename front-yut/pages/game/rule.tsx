@@ -13,6 +13,17 @@ import readyImage1 from "@/public/image/rule/ready1.png";
 import readyImage2 from "@/public/image/rule/ready2.png";
 import readyImage3 from "@/public/image/rule/ready3.png";
 
+// 게임 룰
+import winRuleImage from "@/public/image/rule/winRule.png";
+import throwYutImage1 from "@/public/image/rule/throwYut1.png";
+import throwYutImage2 from "@/public/image/rule/throwYut2.png";
+import choosePieceImage1 from "@/public/image/rule/choosePiece1.png";
+import choosePieceImage2 from "@/public/image/rule/choosePiece2.png";
+import choosePieceImage3 from "@/public/image/rule/choosePiece3.png";
+import appendPieceImage from "@/public/image/rule/appendPiece.png";
+import catchPieceImage from "@/public/image/rule/catchPiece.png";
+import eventCardImage from "@/public/image/rule/eventCard.png";
+
 const Rule = () => {
   const contens: Array<RuleLayoutContentType> = [
     {
@@ -56,14 +67,40 @@ const Rule = () => {
       title: "게임 규칙",
       contents: [
         {
-          subTitle: "test2",
-          imgSrc:
-            "https://cdn.pixabay.com/photo/2023/04/23/11/11/flowers-7945521_960_720.jpg",
+          subTitle: "승리 조건",
+          imgSrc: winRuleImage.src,
         },
         {
-          subTitle: "test2",
-          imgSrc:
-            "https://cdn.pixabay.com/photo/2023/05/02/17/33/blue-tit-7965696_960_720.jpg",
+          subTitle: "윷 던지기",
+          imgSrc: throwYutImage1.src,
+        },
+        {
+          subTitle: "윷 던지기",
+          imgSrc: throwYutImage2.src,
+        },
+        {
+          subTitle: "윷 말 선택하기",
+          imgSrc: choosePieceImage1.src,
+        },
+        {
+          subTitle: "윷 말 선택하기",
+          imgSrc: choosePieceImage2.src,
+        },
+        {
+          subTitle: "윷 말 선택하기",
+          imgSrc: choosePieceImage3.src,
+        },
+        {
+          subTitle: "윷 말 업기",
+          imgSrc: appendPieceImage.src,
+        },
+        {
+          subTitle: "윷 말 잡기",
+          imgSrc: catchPieceImage.src,
+        },
+        {
+          subTitle: "이벤트 카드",
+          imgSrc: eventCardImage.src,
         },
       ],
     },
