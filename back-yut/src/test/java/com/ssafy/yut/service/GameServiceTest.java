@@ -113,7 +113,7 @@ public class GameServiceTest {
                         .build());
 
                 // then
-                verify(redisMapper, times(1)).saveData(eq(ROOM_CODE), any(Game.class));
+                verify(redisMapper, times(1)).saveData(eq("game:"+ROOM_CODE), any(Game.class));
                 verify(kafkaTemplate, times(1)).send(eq(TOPIC + ".eventResult"), any(EventDto.responseResult.class));
             }
 
@@ -155,7 +155,7 @@ public class GameServiceTest {
                         .build());
 
                 // then
-                verify(redisMapper, times(1)).saveData(eq(ROOM_CODE), any(Game.class));
+                verify(redisMapper, times(1)).saveData(eq("game:"+ROOM_CODE), any(Game.class));
                 verify(kafkaTemplate, times(1)).send(eq(TOPIC + ".eventResult"), any(EventDto.responseResult.class));
             }
 
@@ -197,7 +197,7 @@ public class GameServiceTest {
                         .build());
 
                 // then
-                verify(redisMapper, times(1)).saveData(eq(ROOM_CODE), any(Game.class));
+                verify(redisMapper, times(1)).saveData(eq("game:"+ROOM_CODE), any(Game.class));
                 verify(kafkaTemplate, times(1)).send(eq(TOPIC + ".eventResult"), any(EventDto.responseResult.class));
             }
             
