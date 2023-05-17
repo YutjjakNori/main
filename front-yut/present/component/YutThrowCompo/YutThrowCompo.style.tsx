@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { RectStyleInfo } from "@/present/component/YutThrowCompo/YutThrowCompo";
+import YutBackIcon from "@/public/icon/yutImage/YutBack.svg";
+import YutFrontIcon from "@/public/icon/yutImage/YutFront.svg";
 
 const StyledContainer = styled.div`
   position: relative;
@@ -8,6 +10,15 @@ const StyledContainer = styled.div`
   width: 45%;
   right: 15%;
   /* margin: auto;  */
+`;
+
+const YutFront = styled(YutFrontIcon)`
+  height: 10rem;
+  width: auto;
+`;
+const YutBack = styled(YutBackIcon)`
+  height: 10rem;
+  width: auto;
 `;
 
 const StyledResultList = styled.div`
@@ -25,6 +36,9 @@ const StyledResultList = styled.div`
 
 const ImgContainer = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
 `;
 
 // const RectContainer = styled.div<{ display: string }>`
@@ -47,6 +61,8 @@ export {
   StyledContainer,
   StyledResultList,
   ImgContainer,
+  YutFront,
+  YutBack,
   RectContainer,
   StyledResult,
 };

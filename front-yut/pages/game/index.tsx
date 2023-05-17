@@ -33,10 +33,13 @@ import useGameAction from "@/actions/hook/useGameAction";
 import useYutThrow from "@/actions/hook/useYutThrow";
 import { UserInfoState } from "@/store/UserStore";
 import { MemberReadyListState } from "@/store/MemberStore";
+import GameModalLayout from "@/present/layout/game/GameModalLayout";
+import { messageLogState } from "@/store/ChatStore";
+import { makeMessage } from "@/utils/chatModule";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
-  const { turnEnd, movePiece } = useGameAction();
+  const { turnEnd, movePiece, gameEnd } = useGameAction();
   const { pieceMove, saveCatchInfo } = usePieceMove();
   const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
@@ -59,6 +62,16 @@ const Game = () => {
   const setEventCallbackValue = useSetRecoilState(EventCallbackValue);
   const [runEventCallback, setRunEventCallback] =
     useRecoilState(RunEventCallback);
+  const setMessageLog = useSetRecoilState(messageLogState);
+
+  const addMessageLog = useCallback(
+    (userId: string, text: string) => {
+      const playerInfo = playerNicknameList.find((u) => u.userId === userId);
+      const message = makeMessage("SYSTEM", `${playerInfo?.nickName}${text}`);
+      setMessageLog((current) => [...current, message]);
+    },
+    [messageLogState]
+  );
 
   //게임 시작시 사용자 정보 셋팅
   const gameStartCallback = useCallback((response: GameStartResponseType) => {
@@ -82,12 +95,16 @@ const Game = () => {
   //현재 턴인 사람 정보 수정
   const startTurnCallback = (response: GameTurnStartResponseType) => {
     // TODO : timer 설정
+    const { userId } = response;
+    addMessageLog(userId, "님의 차례입니다");
     nextTurn(response.userId);
   };
 
   // 윷 던지기
   const throwYutCallback = (response: YutThrowResponseType) => {
-    saveThrowResult(response.result);
+    const { userId, result } = response;
+    addMessageLog(userId, `님이 ${result} 를 던졌습니다`);
+    saveThrowResult(result);
   };
 
   const selectPieceCallback = (response: PieceMoveResponseType) => {
@@ -104,28 +121,34 @@ const Game = () => {
         pieceMove(userId, selectPiece, move, "Event");
         return;
       case 2:
-        if (!event) {
-          const { caughtUserId, caughtPiece } = response.data;
-          if (!caughtUserId || !caughtPiece) {
-            throw Error("잡을 사용자의 정보가 없습니다");
-          }
-          saveCatchInfo(caughtUserId, caughtPiece);
-          pieceMove(userId, selectPiece, move, "Catch");
-          return;
+        const { caughtUserId, caughtPiece } = response.data;
+        if (!caughtUserId || !caughtPiece) {
+          throw Error("잡을 사용자의 정보가 없습니다");
         }
+        const caughtUser = playerNicknameList.find(
+          (u) => u.userId === caughtUserId
+        );
+        addMessageLog(
+          userId,
+          `님이 ${caughtUser?.nickName}님의 말을 잡았습니다.`
+        );
+        saveCatchInfo(caughtUserId, caughtPiece);
+        pieceMove(userId, selectPiece, move, "Catch");
+        return;
       // 말 합치기
       case 3:
-        if (!event) {
-          pieceMove(userId, selectPiece, move, "Append");
-          return;
-        }
+        pieceMove(userId, selectPiece, move, "Append");
+        return;
       // 말 동나기
       case 4:
         const { end } = response.data;
         // 게임 종료
         if (end) {
+          addMessageLog(userId, `님이 승리입니다.`);
+          pieceMove(userId, selectPiece, move, "End");
           return;
         }
+        addMessageLog(userId, `님의 말이 동났습니다.`);
         pieceMove(userId, selectPiece, move, "Over");
         return;
     }
@@ -237,9 +260,12 @@ const Game = () => {
 
   return (
     <>
-      <GameLayout userList={userList} eventPositionList={eventPositionList} />x
+      <GameLayout userList={userList} eventPositionList={eventPositionList} />
       <button onClick={moveToEvent}>이벤트 칸으로 이동</button>
       <button onClick={resetPiece}>처음으로 이동</button>
+      {/* <GameLayout userList={userList} eventPositionList={eventPositionList} /> */}
+      <GameModalLayout />
+
       <button onClick={testNextTurn}>다음 차례</button>
       <button onClick={testEvent}>이벤트 받아오기</button>
     </>

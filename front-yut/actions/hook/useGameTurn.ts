@@ -74,8 +74,12 @@ const useGameTurn = () => {
 
     const pieceList = createAllPieceList(turnInfoList);
     setPlayerPieceList(pieceList);
-
     startGame();
+  };
+
+  const resetGameTurnState = () => {
+    setPlayerPieceList([]);
+    setPlayerTurnList([]);
   };
 
   //턴 시작
@@ -152,7 +156,7 @@ const useGameTurn = () => {
     }
   }, [action]);
 
-  return { initPlayerTurn, getNextPlayerId, nextTurn };
+  return { initPlayerTurn, getNextPlayerId, nextTurn, resetGameTurnState };
 };
 
 export default useGameTurn;

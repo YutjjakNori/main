@@ -2,34 +2,25 @@ import CircleButton from "@/present/common/Button/Circle/CircleButton";
 import { CircleButtonProps } from "@/present/common/Button//Circle/CircleButton";
 import * as style from "@/present/component/YutThrowCompo/YutThrowCompo.style";
 
-import Do from "@/public/icon/yutImage/do.svg";
-import Gae from "@/public/icon/yutImage/gae.svg";
-import Gul from "@/public/icon/yutImage/gul.svg";
-import Yut from "@/public/icon/yutImage/yut.svg";
-import Mo from "@/public/icon/yutImage/mo.svg";
-import BackDo from "@/public/icon/yutImage/backDo.svg";
-
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
 import useYutThrow from "@/actions/hook/useYutThrow";
+import { ThrowResultType, YutjjakType } from "@/types/game/YutThrowTypes";
+import { useCallback, useEffect, useState } from "react";
 
 interface RectStyleInfo {
   display: string;
 }
 
-const yutResultImg = {
-  도: <Do width={"100%"} height={"100%"} />,
-  개: <Gae width={"100%"} height={"100%"} />,
-  걸: <Gul width={"100%"} height={"100%"} />,
-  윷: <Yut width={"100%"} height={"100%"} />,
-  모: <Mo width={"100%"} height={"100%"} />,
-  빽도: <BackDo width={"100%"} height={"100%"} />,
-  "": null,
-};
-
 const YutThrowCompo = () => {
   const { canIThrow, resultList, throwYut, resultType } = useYutThrow();
+  const [yutjjakIconList, setYutjjakIconList] = useState<Array<YutjjakType>>([
+    "back",
+    "back",
+    "back",
+    "back",
+  ]);
 
   const yutResultInfo: CircleButtonProps = {
     text: "윷",
@@ -46,6 +37,49 @@ const YutThrowCompo = () => {
     backgroundColor: "#6EBA91",
   };
 
+  const setRandomYutIconList = useCallback((resultType: ThrowResultType) => {
+    let frontCnt = 0;
+    switch (resultType) {
+      case "도":
+        frontCnt = 1;
+        break;
+      case "개":
+        frontCnt = 2;
+        break;
+      case "걸":
+        frontCnt = 3;
+        break;
+      case "윷":
+        frontCnt = 4;
+        break;
+      case "모":
+        setYutjjakIconList(["back", "back", "back", "back"]);
+        return;
+    }
+
+    let array: Array<YutjjakType> = ["back", "back", "back", "back"];
+    let indices: Array<number> = [];
+
+    // frontCount 개수만큼의 랜덤한 인덱스를 선택함.
+    while (indices.length < frontCnt) {
+      let index = Math.floor(Math.random() * 4);
+      if (!indices.includes(index)) {
+        indices.push(index);
+      }
+    }
+
+    for (let i = 0; i < indices.length; i++) {
+      array[indices[i]] = "front"; // 선택된 인덱스에 "front"를 할당합니다.
+    }
+
+    console.log(array);
+    setYutjjakIconList(array);
+  }, []);
+
+  useEffect(() => {
+    setRandomYutIconList(resultType);
+  }, [resultType]);
+
   return (
     <style.StyledContainer>
       <style.StyledResultList>
@@ -55,7 +89,14 @@ const YutThrowCompo = () => {
       </style.StyledResultList>
 
       <style.StyledResult>
-        <style.ImgContainer>{yutResultImg[resultType]}</style.ImgContainer>
+        <style.ImgContainer>
+          {yutjjakIconList.map((type, index) => {
+            if (type === "front") {
+              return <style.YutFront key={`yutjjak-${index}`} />;
+            }
+            return <style.YutBack key={`yutjjak-${index}`} />;
+          })}
+        </style.ImgContainer>
         <style.RectContainer
           onClick={throwYut}
           display={canIThrow ? "block" : "none"}

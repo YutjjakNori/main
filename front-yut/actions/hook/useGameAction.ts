@@ -24,6 +24,10 @@ const useGameAction = () => {
     setAction("TurnEnd");
   };
 
+  const catchPlayerPiece = () => {
+    setAction("Catch");
+  };
+
   const selectPieceStart = () => {
     setAction("ChoosePiece");
   };
@@ -32,15 +36,21 @@ const useGameAction = () => {
     setAction("MovePiece");
   };
 
+  const gameEnd = () => {
+    setAction("End");
+  };
+
   return {
     startGame,
     resetAction,
     action,
     turnStart,
+    catchPlayerPiece,
     movePiece,
     turnEnd,
     throwYut,
     selectPieceStart,
+    gameEnd,
   };
 };
 

@@ -100,12 +100,12 @@ const ReadyLayout = () => {
 
   //대기 - 방 입장 구독 콜백함수
   const settingMembers = (data: { users: Member[]; ready: string }) => {
-    printMessage(
-      "SYSTEM",
-      `${
-        data.users.filter((member) => !isExistMember(member))[0].nickName
-      }님이 입장하셨습니다.`
+    const newMembers: Member[] = data.users.filter(
+      (member) => !isExistMember(member)
     );
+    newMembers.forEach((member) => {
+      printMessage("SYSTEM", `${member.nickName}님이 입장하셨습니다.`);
+    });
 
     const newMemberList = [...data.users];
     setMemberList(newMemberList); //유저 아이디와 닉네임 저장
@@ -127,8 +127,8 @@ const ReadyLayout = () => {
     for (let i = 0; i < simpleMemberList.length; i++) {
       const nowMember = simpleMemberList[i];
       if (nowMember.userId === member.userId) return true;
-      else return false;
     }
+    return false;
   };
 
   //대기 - 준비 구독 콜백함수

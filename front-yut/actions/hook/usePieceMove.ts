@@ -44,10 +44,10 @@ const usePieceMove = () => {
   const roomCode = useRecoilValue(RoomCodeState);
   const { getYutThrowResultForUse, popYutThrowResultForUse, isResultEmpty } =
     useYutThrow();
-  const { turnEnd, selectPieceStart } = useGameAction();
+  const { turnEnd, selectPieceStart, gameEnd } = useGameAction();
   const [moveType, setMoveType] = useRecoilState(PieceMoveTypeState);
   const [, setCatchInfo] = useRecoilState(PieceCatchInfoState);
-  const { throwYut } = useGameAction();
+  const { catchPlayerPiece, throwYut } = useGameAction();
   const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
   const myUserInfo = useRecoilValue(UserInfoState);
@@ -440,6 +440,16 @@ const usePieceMove = () => {
       );
     }
   };
+  const resetPieceMoveState = useCallback(() => {
+    setPieceList([]);
+    setMovePieceIndex(-1);
+    setCornerSelectType("none");
+    setMoveType("None");
+    setCatchInfo({
+      catchedPieceIdList: [],
+      catchedUserId: "-1",
+    });
+  }, []);
 
   useEffect(() => {
     if (movePieceIndex === -1 || movePathList.length === 0) return;
@@ -458,16 +468,24 @@ const usePieceMove = () => {
             pieceOver();
             break;
           case "Catch":
-            catchPiece().then(() => throwYut());
+            catchPiece().then(() => {
+              catchPlayerPiece();
+              setTimeout(() => {
+                throwYut();
+              }, 1000);
+            });
             return;
           case "Event":
             getEvent();
-            return; // 다시 풀음. -> '이벤트실행' sendEvent() 콜백이 끝나면 그때 
+            return; // 다시 풀음. -> '이벤트실행' sendEvent() 콜백이 끝나면 그때
+          case "End":
+            gameEnd();
+            return;
         }
 
         if (isResultEmpty) {
           turnEnd();
-          
+
           return;
         }
         selectPieceStart();
@@ -488,6 +506,7 @@ const usePieceMove = () => {
     saveCatchInfo,
     doPieceMove,
     resetPieceState,
+    resetPieceMoveState,
   };
 };
 
