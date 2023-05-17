@@ -483,7 +483,7 @@ public class GameService {
 
             int pieceIndex = -1;    // 얹힐 말의 인덱스
             // 말 업고가기 - 말 사용 상태 변경
-            for (int i = 2; i >= 0; i--) {
+            for (int i = 0; i < 3; i++) {
                 if (gameUser.getPieces().get(i) == -1) {
                     // 말 상태가 사용전이라면
                     pieceIndex = i;
@@ -504,7 +504,7 @@ public class GameService {
 
             // 말 업고가기 - 위치 변경 (Kafka ver)
             resultPieceKafka = request.getSelectPiece().stream().collect(Collectors.toList());
-            resultPieceKafka.add(pieceIndex);
+            resultPieceKafka.add(pieceIndex+1);
         } else {
             // event == 1 -> 자리 이동
 
