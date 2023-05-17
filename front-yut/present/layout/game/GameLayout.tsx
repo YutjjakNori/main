@@ -10,6 +10,7 @@ import GameBackgroundCloudImage from "@/public/image/GameBackgroundCloud.png";
 import YutThrowCompo from "@/present/component/YutThrowCompo/YutThrowCompo";
 
 import styled from "styled-components";
+import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
 
 interface GameLayoutProps {
   userList: Array<PlayerCompoProps>;
@@ -42,6 +43,7 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
         <div>
           <RightLayout>
             <YutThrowCompo />
+            <ChatCompo />
           </RightLayout>
         </div>
       </style.Container>
