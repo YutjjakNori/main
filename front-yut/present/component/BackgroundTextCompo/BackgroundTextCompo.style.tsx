@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import backgroundImage from "@/public/image/gyeungbokgung_sunset.jpg";
+import backgroundImage from "@/public/image/hanOk.gif";
 
 const MainText = styled.div`
   font-size: 40vmin;

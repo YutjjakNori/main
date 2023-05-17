@@ -14,7 +14,6 @@ import { UserInfoState } from "@/store/UserStore";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
-// import CherryGif from "@/public/image/cherryGif.gif";
 
 const LobbyLayout = () => {
   //모달 나가기 버튼
