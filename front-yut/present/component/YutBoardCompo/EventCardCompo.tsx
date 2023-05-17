@@ -98,6 +98,13 @@ const EventCard = () => {
         }
         break;
     }
+
+    if (isResultEmpty) {
+      turnEnd();
+      return;
+    }
+    selectPieceStart();
+    return;
   };
 
   // 이벤트) 말 업고 가기
@@ -254,7 +261,6 @@ const EventCard = () => {
                   selectPiece: pieceIdList,
                   plateNum: nowPosition,
                   event: eventType,
-                  //prevPosition: -1,
                   prevPosition: piecePrevPos,
                 }
               );

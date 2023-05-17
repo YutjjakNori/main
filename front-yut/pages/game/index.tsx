@@ -184,7 +184,6 @@ const Game = () => {
     // setRunEventIndex(eventType);
     setEventCallbackValue(data);
     setRunEventCallback(true);
-    
   };
 
   const initSubscribe = () => {
