@@ -23,7 +23,6 @@ const ChatLogContent = styled.div`
 `;
 
 const ChatLogBox = styled.div`
-  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
