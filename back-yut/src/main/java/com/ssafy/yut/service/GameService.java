@@ -432,7 +432,9 @@ public class GameService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
 
-        int eventNum = random.nextInt(5);
+        // TODO : 추후 되돌리기
+//        int eventNum = random.nextInt(5);
+        int eventNum = 2;
 
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
