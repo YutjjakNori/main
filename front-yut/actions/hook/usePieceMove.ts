@@ -219,7 +219,6 @@ const usePieceMove = () => {
           direction: direction,
         };
 
-        // console.log("select piece", request.selectPiece);
         sendEvent("/game/piece", {}, request);
       }
   );
@@ -320,10 +319,6 @@ const usePieceMove = () => {
         let basePiece = latestPieceList[movePieceIndex];
         let targetPiece = latestPieceList[targetPieceIndex];
 
-        // console.log("append a to b");
-        // console.log("move piece index", movePieceIndex);
-        // console.log("target piece", targetPieceIndex);
-
         if (
           basePiece.state === "NotStarted" &&
           targetPiece.state === "NotStarted"
@@ -347,9 +342,6 @@ const usePieceMove = () => {
           targetPiece = tmpPiece;
         }
 
-        // console.log("move piece index", movePieceIndex);
-        // console.log("target piece", targetPieceIndex);
-
         //target에 move를 append함
         let newArr = latestPieceList.map((p, idx) => {
           if (idx !== targetPieceIndex) return p;
@@ -363,7 +355,6 @@ const usePieceMove = () => {
         });
 
         newArr.splice(movePieceIndex, 1);
-        // console.log("append result", newArr);
 
         setPieceList(newArr);
       },
@@ -461,7 +452,6 @@ const usePieceMove = () => {
   }, []);
 
   const getEvent = () => {
-    // console.log(myUserInfo.userId + ", " + nowTurnPlayerId);
     if (myUserInfo.userId === nowTurnPlayerId) {
       sendEvent(
         "/game/event",

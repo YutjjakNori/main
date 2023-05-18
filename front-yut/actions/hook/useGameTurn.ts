@@ -95,8 +95,6 @@ const useGameTurn = () => {
         );
         const latestPlayerTurnList = await snapshot.getPromise(PlayTurnState);
 
-        // console.log("현재 사용자 ID: ", latestNowTurnPlayerId);
-
         if (latestNowTurnPlayerId === "-1") {
           return latestPlayerTurnList[0];
         }
@@ -123,8 +121,6 @@ const useGameTurn = () => {
   //다음 차례가 내 차례인 경우 알림
   const ifNextTurnIsMe = async () => {
     const nextPlayerId = await getNextPlayerId();
-
-    // console.log("nextPlayerId : ", nextPlayerId);
 
     if (nextPlayerId === myInfo.userId) {
       setTimeout(() => {

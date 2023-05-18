@@ -158,7 +158,6 @@ const Game = () => {
 
   const setEventCallback = (data: any) => {
     let eventType = data.event;
-    // console.log("event 번호!: " + eventType);
 
     setEventIndex(eventType);
 
@@ -209,14 +208,6 @@ const Game = () => {
     // 이 이벤트 부분이 끝나고 난뒤에 turnEnd()시키기.
     // 2,3,4 인 경우만 (0 또는 1로 ) 이벤트 실행
     // setRunEventIndex(eventType);
-
-    // console.log("서버 결과값: ");
-
-    // console.log("roomCode: " + data.roomCode);
-    // console.log("userId: " + data.userId);
-    // console.log("selectPiece: " + data.selectPiece);
-    // console.log("event: " + data.event);
-    // console.log("move: " + data.move);
 
     // eventCard.runEvent(data);
     // runEvent()

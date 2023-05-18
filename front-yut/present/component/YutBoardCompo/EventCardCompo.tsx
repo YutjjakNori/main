@@ -85,10 +85,7 @@ const EventCard = () => {
   }
 
   useEffect(() => {
-    // console.log("event value", eventCallbackValue);
-    // console.log("이벤트 콜백 실행시킬지 말지", runEventCallback);
     runEvent(eventCallbackValue);
-    // console.log(runEventCallback);
   }, [eventCallbackValue]);
 
   // 2,3,4 (=> 0, 1) 인 경우만 event 다같이 실행.
@@ -108,7 +105,6 @@ const EventCard = () => {
         break;
       case 1:
         if (data.move === -1) {
-          // console.log("data.selectPiece : " + data.selectPiece);
           moveToStartPosEvent(data.selectPiece, data.userId);
         } else {
           // moveToPrevPosEvent();
@@ -164,7 +160,6 @@ const EventCard = () => {
     // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
     // const pieceId = pieceList[movePieceIndex].pieceId;
 
-    // console.log("현재 말 index: " + movePieceIndex);
     // // Array<number> 형식으로 맞춰주기.
     // const pieceIdList = [pieceId];
     // const movePath = [piecePrevPos];
@@ -196,13 +191,8 @@ const EventCard = () => {
     });
 
     if (index === -1) {
-      console.log(pieceIdList, pieceList);
       throw Error("시작점으로 되돌릴 말을 찾지 못했습니다");
     }
-
-    console.log("처음으로 되돌리기", pieceIdList);
-    console.log("처음으로 되돌릴 index", index);
-    console.log("처음으로 되돌릴 piece의 정보", pieceList[index]);
 
     const latestPieceList = pieceList;
     const targetPiece = latestPieceList[index];
@@ -215,28 +205,19 @@ const EventCard = () => {
     newArr.splice(index, 1);
     newArr = newArr.concat(appendedPieceList);
 
-    // console.log("reset result", newArr);
     setPieceList(newArr);
   }
 
   useEffect(() => {
     {
-      // if (eventIndex === -1) console.log("이벤트카드 숨기기");
-      // else console.log(eventIndex + " :번 이벤트 시작!");
       showEventPoster(eventIndex);
     }
   }, [eventIndex]);
-
-  useEffect(() => {
-    // console.log("movePieceIndex 확인! : " + movePieceIndex);
-    // console.log("curUserId 확인! : " + curUserId);
-  }, [movePieceIndex]);
 
   const showEventPoster = useRecoilCallback(
     ({ snapshot }) =>
       async (index: number) => {
         // setEventIndex(index);
-        // console.log("이벤트 실행!");
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
         const latestSelectedPieceIndex = await snapshot.getPromise(
           SelectedPieceIndex
@@ -247,14 +228,6 @@ const EventCard = () => {
         );
         const latestMyInfo = await snapshot.getPromise(UserInfoState);
 
-        // console.log("event card");
-        // console.log("curUserId 확인! : " + curUserId);
-        // console.log("현재 선택된 말 index", latestSelectedPieceIndex);
-        // console.log(
-        //   "현재 차례인 말",
-        //   latestPieceList[latestSelectedPieceIndex]
-        // );
-
         try {
           switch (index) {
             // 꽝
@@ -262,7 +235,6 @@ const EventCard = () => {
               //턴 돌리기 호출
               hideEventCard(() => {
                 if (isResultEmpty) {
-                  console.log("꽝, turn end");
                   turnEnd();
                   return;
                 }
@@ -278,7 +250,6 @@ const EventCard = () => {
               break;
             case 2:
               // 말 업기
-              console.log("말 업기 실행 ");
               hideEventCard(() => {
                 // 현재 차례가 자기인 경우의 플레이어만 소켓 통신 요청 보냄.
                 // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
@@ -292,17 +263,6 @@ const EventCard = () => {
                 if (index === 2) eventType = 0;
                 else eventType = 1;
 
-                // console.log(
-                //   "roomCode: " + roomCode,
-                //   " latestNowTurnPlayerId: " +
-                //     latestNowTurnPlayerId +
-                //     " pieceIdList: " +
-                //     pieceIdList,
-                //   " nowPosition: " + nowPosition,
-                //   " eventType: " + eventType,
-                //   " piecePrevPos: " + piecePrevPos
-                // );
-
                 // 시작안한 말이 없다면 꽝으로 치환.
                 const pieceIdx = latestPieceList.findIndex((piece) => {
                   return (
@@ -314,11 +274,6 @@ const EventCard = () => {
                   setTimeout(() => {
                     setEventIndex(0);
                     return;
-                    // console.log("yut reulst is Empty? : ", isResultEmpty);
-                    // if (isResultEmpty) {
-                    //   turnEnd();
-                    //   return;
-                    // }
                   }, 2000);
                 }
 
