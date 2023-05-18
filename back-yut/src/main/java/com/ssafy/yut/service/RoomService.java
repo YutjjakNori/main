@@ -197,10 +197,10 @@ public class RoomService {
             game.setGameStatus("start");
             Set<Integer> event = new HashSet<>();
             while(event.size() < 2) {
-                // TODO : 추후 되돌리기
-//                event.add((int)((Math.random()*28)+1));
-                event.add(2);
-                event.add(3);
+                int eventPoint = (int)((Math.random()*28)+1);
+                if(!(eventPoint == 0 || eventPoint == 5 || eventPoint == 10 || eventPoint == 15 || eventPoint == 22 || eventPoint == 27)) {
+                    event.add(eventPoint);
+                }
             }
             game.setEvent(event);
         }
