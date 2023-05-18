@@ -114,7 +114,6 @@ const deleteAsync = async <D>(
       ...config,
     });
 
-    console.log(response.data);
 
     return { isSuccess: true, result: response.data };
   } catch (err) {
