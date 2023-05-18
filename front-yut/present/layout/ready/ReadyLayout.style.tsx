@@ -158,6 +158,10 @@ const Container3 = styled.div`
   grid-column-gap: 120px;
 `;
 
+const modalBackGround = styled.div`
+  margin-top: 75px;
+`;
+
 export {
   Container3,
   Container2,
@@ -170,4 +174,5 @@ export {
   RoomInfo,
   ReadyBtnContainer,
   ChatingContatiner,
+  modalBackGround,
 };
