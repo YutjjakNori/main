@@ -368,6 +368,36 @@ const usePieceMove = () => {
     []
   );
 
+  const eventAppendAToB = useRecoilCallback(
+    ({ snapshot }) =>
+      async (
+        userId: string,
+        movePieceIndex: number, //움직여서 합칠 말
+        targetPieceIndex: number //원래 말 판에 있던 말
+      ) => {
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+
+        let basePiece = latestPieceList[movePieceIndex];
+        let targetPiece = latestPieceList[targetPieceIndex];
+
+        //target에 move를 append함
+        let newArr = latestPieceList.map((p, idx) => {
+          if (idx !== targetPieceIndex) return p;
+
+          const tmpP = { ...p };
+          const baseTmpP = { ...latestPieceList[movePieceIndex] };
+          baseTmpP.state = "Appended";
+          baseTmpP.position = tmpP.position;
+          tmpP.appendArray = [...tmpP.appendArray, baseTmpP];
+          return tmpP;
+        });
+
+        newArr.splice(movePieceIndex, 1);
+        setPieceList(newArr);
+      },
+    []
+  );
+
   const saveCatchInfo = useCallback(
     (catchedUserId: string, catchedPieceList: Array<number>) => {
       setCatchInfo({
@@ -502,6 +532,8 @@ const usePieceMove = () => {
     selectPiece,
     selectArrow,
     clearActiveCornerArrow,
+    appendAToB,
+    eventAppendAToB,
     appendPiece,
     catchPiece,
     saveCatchInfo,

@@ -36,6 +36,8 @@ import { MemberReadyListState } from "@/store/MemberStore";
 import GameModalLayout from "@/present/layout/game/GameModalLayout";
 import { messageLogState } from "@/store/ChatStore";
 import { makeMessage } from "@/utils/chatModule";
+// import * as eventCard from "@/present/component/YutBoardCompo/EventCardCompo";
+// import runEvent from "@/present/component/YutBoardCompo/EventCardCompo";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
@@ -207,7 +209,24 @@ const Game = () => {
     // 이 이벤트 부분이 끝나고 난뒤에 turnEnd()시키기.
     // 2,3,4 인 경우만 (0 또는 1로 ) 이벤트 실행
     // setRunEventIndex(eventType);
+
+    console.log("서버 결과값: ");
+
+    console.log("roomCode: " + data.roomCode);
+    console.log("userId: " + data.userId);
+    console.log("selectPiece: " + data.selectPiece);
+    console.log("event: " + data.event);
+    console.log("move: " + data.move);
+
+    // eventCard.runEvent(data);
+    // runEvent()
+    //   (data);
+    // }
+
+    // EventCardCompo.tsx의 useEffect의 deps가 변경된 값을 감지.
+    // 받아온 값 설정
     setEventCallbackValue(data);
+    // useEffect 로 변경된 값 감지.
     setRunEventCallback(true);
   };
 

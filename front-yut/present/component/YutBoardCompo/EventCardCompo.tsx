@@ -49,8 +49,13 @@ const EventCard = () => {
   const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
   const curUserId = useRecoilValue(NowTurnPlayerIdState);
   const [eventIndex, setEventIndex] = useRecoilState(EventIndex);
-  const { appendPiece, pieceMove, doPieceMove, resetPieceState } =
-    usePieceMove();
+  const {
+    eventAppendAToB,
+    appendAToB,
+    pieceMove,
+    doPieceMove,
+    resetPieceState,
+  } = usePieceMove();
   const { isResultEmpty } = useYutThrow();
   const { turnEnd, selectPieceStart, throwYut } = useGameAction();
 
@@ -83,12 +88,15 @@ const EventCard = () => {
   const runEvent = (data: RunEventResponseType) => {
     const eventType = data.event;
 
-    console.log(data);
     // const prevPos = data.
 
     switch (eventType) {
       case 0:
-        appendEvent();
+        const movePieceIndex = data.selectPiece[0];
+        const targetPieceIndex = data.selectPiece[1];
+
+        appendEvent(targetPieceIndex, movePieceIndex);
+
         break;
       case 1:
         if (data.move === -1) {
@@ -100,33 +108,46 @@ const EventCard = () => {
     }
 
     if (isResultEmpty) {
-      turnEnd();
+      setTimeout(() => {
+        turnEnd();
+      }, 1000);
       return;
     }
     selectPieceStart();
     return;
   };
 
+  // function appendEvent() {
+  //   const pieceIdx = pieceList.findIndex((piece) => {
+  //     return piece.userId === curUserId && piece.state === "NotStarted";
+  //   });
+  //   // 시작안한 말이 없다면 꽝으로 치환.
+  //   if (pieceIdx === -1) {
+  //     setTimeout(() => {
+  //       setEventIndex(0);
+  //     }, 2000);
+  //   } else {
+  //     const list = [pieceIdx, movePieceIndex];
+  //     setTimeout(() => {
+  //       appendPiece();
+  //     }, 2000);
+  //   }
+  // }
+
   // 이벤트) 말 업고 가기
   // 1. 시작 안한 말이 있는지 확인.
   // 1-1. 없다면(-1) 꽝으로 치환
   // 1-2. 있다면(>0) 첫 말번호 알아내기.
   //
-  function appendEvent() {
-    const pieceIdx = pieceList.findIndex((piece) => {
-      return piece.userId === curUserId && piece.state === "NotStarted";
+  function appendEvent(movePieceIndex: number, targetPieceIndex: number) {
+    const A = pieceList.findIndex((piece) => {
+      return piece.userId === curUserId && piece.pieceId === movePieceIndex;
     });
-    // 시작안한 말이 없다면 꽝으로 치환.
-    if (pieceIdx === -1) {
-      setTimeout(() => {
-        setEventIndex(0);
-      }, 2000);
-    } else {
-      const list = [pieceIdx, movePieceIndex];
-      setTimeout(() => {
-        appendPiece();
-      }, 2000);
-    }
+    const B = pieceList.findIndex((piece) => {
+      return piece.userId === curUserId && piece.pieceId === targetPieceIndex;
+    });
+
+    appendAToB(curUserId, A, B);
   }
 
   function moveToPrevPosEvent() {
@@ -171,14 +192,15 @@ const EventCard = () => {
 
   useEffect(() => {
     {
-      console.log(eventIndex + "값 변경됨!");
+      if (eventIndex === -1) console.log("이벤트카드 숨기기");
+      else console.log(eventIndex + " :번 이벤트 시작!");
       showEventPoster(eventIndex);
     }
   }, [eventIndex]);
 
   const showEventPoster = (index: number) => {
     // setEventIndex(index);
-    console.log("이벤트 실행!");
+    // console.log("이벤트 실행!");
 
     try {
       switch (index) {
@@ -207,7 +229,6 @@ const EventCard = () => {
             if (myUserInfo.userId === nowTurnPlayerId) {
               // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
               const pieceIdList = [pieceList[movePieceIndex].pieceId];
-
               const nowPosition = pieceList[movePieceIndex].position;
 
               let eventType;
@@ -227,6 +248,20 @@ const EventCard = () => {
                   " " +
                   piecePrevPos
               );
+
+              // 시작안한 말이 없다면 꽝으로 치환.
+              const pieceIdx = pieceList.findIndex((piece) => {
+                return (
+                  piece.userId === curUserId && piece.state === "NotStarted"
+                );
+              });
+              if (pieceIdx === -1) {
+                setTimeout(() => {
+                  setEventIndex(0);
+                }, 2000);
+                return;
+              }
+
               sendEvent(
                 "/game/event/result",
                 {},
