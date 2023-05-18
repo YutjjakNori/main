@@ -36,10 +36,26 @@ interface PieceMoveResponseType {
   data: PieceMoveResponseDataType;
 }
 
+interface EventResponseType {
+  userId: string;
+  event: number;
+  roomCode: string;
+}
+
+interface RunEventResponseType {
+  roomCode: string;
+  userId: string;
+  selectPiece: Array<number>;
+  event: number;
+  move: number;
+}
+
 export type {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
   YutThrowResponseType,
   PieceMoveResponseType,
+  EventResponseType,
+  RunEventResponseType,
 };
