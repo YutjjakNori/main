@@ -21,6 +21,10 @@ const Container = styled.div`
   }
 `;
 
+const ChatContainer = styled.div`
+  width: 65%;
+`;
+
 const LeftLayout = styled.div`
   position: relative;
   left: 0;
@@ -81,4 +85,4 @@ const RightLayout = styled.div`
   gap: 2rem;
 `;
 
-export { Container, LeftLayout, BackgroundImage, RightLayout };
+export { Container, LeftLayout, BackgroundImage, ChatContainer, RightLayout };

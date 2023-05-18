@@ -11,8 +11,8 @@ const Container = styled.div`
   border-radius: 15px;
   background-color: rgba(256, 256, 256, 0.9);
   padding: 10px;
-  width: 300px;
-  height: 450px;
+  width: 100%;
+  height: 100%;
 `;
 
 const ChatLogContent = styled.div`

@@ -43,14 +43,14 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
         <div>
           <style.RightLayout>
             <YutThrowCompo />
-            <ChatCompo />
+            <style.ChatContainer>
+              <ChatCompo />
+            </style.ChatContainer>
           </style.RightLayout>
         </div>
       </style.Container>
     </>
   );
 };
-
-
 
 export default GameLayout;
