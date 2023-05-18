@@ -146,10 +146,11 @@ public class RoomService {
         for (GameUser getUser : gameUsers) {
             userResponse.add(new RoomDto.User(getUser.getUserId(), getUser.getNickName()));
         }
+        StringBuffer readyStatus = new StringBuffer(game.getGameStatus());
 
         RoomDto.WaitingResponse waitingResponse = RoomDto.WaitingResponse.builder()
                 .users(userResponse)
-                .ready(game.getGameStatus())
+                .ready(readyStatus.reverse().toString())
                 .build();
 
         Map<String, Object> response = new HashMap<>();
