@@ -14,7 +14,6 @@ const ready = () => {
 
   return (
     <>
-      <button onClick={() => router.push("/game")}>click</button>
       <ReadyLayout />
     </>
   );

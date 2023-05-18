@@ -70,4 +70,15 @@ const BackgroundImage = styled.div`
   }
 `;
 
-export { Container, LeftLayout, BackgroundImage };
+const RightLayout = styled.div`
+  position: relative;
+  /* left: 0; */
+  /* top: 0; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+`;
+
+export { Container, LeftLayout, BackgroundImage, RightLayout };

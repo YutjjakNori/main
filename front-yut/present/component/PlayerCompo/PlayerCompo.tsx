@@ -43,7 +43,6 @@ const PlayerCompo = ({
           color={color}
           timerSeconds={timerSeconds}
         />
-        {userId}
         <style.PieceWrapper>
           {notStartedPieceList?.map((piece, index) => {
             return <YutPieceCompo key={index} {...piece} />;
