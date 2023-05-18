@@ -6,6 +6,7 @@ import pattern3 from "@/public/image/pattern3.png";
 import pattern4 from "@/public/image/pattern4.png";
 
 const MainText = styled.div`
+  font-family: CWDangamAsac-Bold;
   font-size: 43vmin;
   font-weight: bold;
   text-align: center;
