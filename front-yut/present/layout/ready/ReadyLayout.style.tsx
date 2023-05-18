@@ -142,7 +142,6 @@ const RightContainer = styled.div`
   position: absolute;
   right: 3%;
   display: grid;
-  grid-template-rows: 3fr 1fr;
   width: 20%;
   gap: 1rem;
 `;
