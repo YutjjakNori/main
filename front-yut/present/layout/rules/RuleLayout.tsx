@@ -7,8 +7,6 @@ import * as style from "./RuleLayout.style";
 import styled from "styled-components";
 
 import BackBtn from "@/public/icon/backBtn.svg";
-import Frame from "@/public/icon/ruleItems/frame.svg";
-
 interface RuleLayoutProps {
   layoutContents: Array<RuleLayoutContentType>;
 }
