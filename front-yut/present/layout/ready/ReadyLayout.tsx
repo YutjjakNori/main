@@ -364,17 +364,16 @@ const ReadyLayout = () => {
             ))}
           </style.Container3>
 
-          <style.ReadyBtnContainer
-            onClick={() => {
-              handleIsReady();
-            }}
-          >
-            <RectButton
-              text={isReady === "0" ? "준비" : "준비 취소"}
-              fontSize={readyBtnInfo.fontSize}
-              backgroundColor={isReady === "0" ? "#6EBA91" : "#F07F7F"}
-            />
-          </style.ReadyBtnContainer>
+          <style.RightContainer>
+            <ChatCompo />
+            <div onClick={handleIsReady}>
+              <RectButton
+                text={isReady === "0" ? "준비" : "준비 취소"}
+                fontSize={readyBtnInfo.fontSize}
+                backgroundColor={isReady === "0" ? "#6EBA91" : "#F07F7F"}
+              />
+            </div>
+          </style.RightContainer>
 
           <style.CopyContainer
             onClick={() => {
@@ -427,9 +426,6 @@ const ReadyLayout = () => {
               />
             </style.modalBackGround>
           </Modal>
-          <style.ChatingContatiner>
-            <ChatCompo />
-          </style.ChatingContatiner>
         </style.Container2>
       </style.Container>
     </>

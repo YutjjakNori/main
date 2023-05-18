@@ -154,7 +154,8 @@ const LobbyLayout = () => {
 
   return (
     <>
-      <style.Container onClick={userInteract}>
+      {/* <style.Container onClick={userInteract}> */}
+      <style.Container>
         <BackgroundTextCompo />
 
         <style.ButtonContainer>

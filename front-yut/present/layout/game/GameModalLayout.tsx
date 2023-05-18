@@ -24,9 +24,12 @@ const GameModalLayout = () => {
     switch (action) {
       // 누군가 턴을 시작했을때 내 차례면 modal on
       case "TurnStart":
+        const nowTurnPlayer = playerInfoList.find(
+          (u) => u.userId === nowTurnPlayerId
+        );
         setModalInfo({
           data: {
-            nowTurnPlayerNickname: myInfo.nickName,
+            nowTurnPlayerNickname: nowTurnPlayer?.nickName ?? nowTurnPlayerId,
             isMyTurn: nowTurnPlayerId === myInfo.userId,
           },
         });

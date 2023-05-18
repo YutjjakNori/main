@@ -95,8 +95,6 @@ const useGameTurn = () => {
         );
         const latestPlayerTurnList = await snapshot.getPromise(PlayTurnState);
 
-        console.log("getNextPlayerId", latestNowTurnPlayerId);
-
         if (latestNowTurnPlayerId === "-1") {
           return latestPlayerTurnList[0];
         }

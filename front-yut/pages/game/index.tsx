@@ -7,14 +7,27 @@ import useGameTurn from "@/actions/hook/useGameTurn";
 import usePieceMove from "@/actions/hook/usePieceMove";
 import GameLayout from "@/present/layout/game/GameLayout";
 import { sendEvent, subscribeTopic } from "@/actions/socket-api/socketInstance";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { RoomCodeState } from "@/store/GameStore";
+import { useRecoilValue, useSetRecoilState, useRecoilState } from "recoil";
+import {
+  RoomCodeState,
+  EventIndex,
+  NowTurnPlayerIdState,
+  PiecePrevPosState,
+  YutPieceListState,
+  SelectedPieceIndex,
+  YutThrowResultListState,
+  RunEventIndex,
+  EventCallbackValue,
+  RunEventCallback,
+} from "@/store/GameStore";
 import {
   GameStartResponseType,
   GameStartUserType,
   GameTurnStartResponseType,
   PieceMoveResponseType,
   YutThrowResponseType,
+  EventResponseType,
+  RunEventResponseType,
 } from "@/types/game/SocketResponseTypes";
 import useGameAction from "@/actions/hook/useGameAction";
 import useYutThrow from "@/actions/hook/useYutThrow";
@@ -23,6 +36,8 @@ import { MemberReadyListState } from "@/store/MemberStore";
 import GameModalLayout from "@/present/layout/game/GameModalLayout";
 import { messageLogState } from "@/store/ChatStore";
 import { makeMessage } from "@/utils/chatModule";
+// import * as eventCard from "@/present/component/YutBoardCompo/EventCardCompo";
+// import runEvent from "@/present/component/YutBoardCompo/EventCardCompo";
 import audioModule from "@/utils/audioModule";
 
 const Game = () => {
@@ -32,11 +47,24 @@ const Game = () => {
   const { saveThrowResult } = useYutThrow();
   const roomCode = useRecoilValue(RoomCodeState);
   const [userList, setUserList] = useState<Array<PlayerCompoProps>>([]);
-  const myInfo = useRecoilValue(UserInfoState);
+  const myUserInfo = useRecoilValue(UserInfoState);
   const [eventPositionList, setEventPositionList] = useState<Array<number>>([
     -1, -1,
   ]);
+  const setEventIndex = useSetRecoilState(EventIndex);
+  const setRunEventIndex = useSetRecoilState(RunEventIndex);
+  const nowTurnPlayerId = useRecoilValue(NowTurnPlayerIdState);
   const playerNicknameList = useRecoilValue(MemberReadyListState);
+  const piecePrevPos = useRecoilValue(PiecePrevPosState);
+  const [pieceList, setPieceList] = useRecoilState(YutPieceListState);
+  const [movePieceIndex, setMovePieceIndex] =
+    useRecoilState(SelectedPieceIndex);
+  const [yutResultList, setYutResultList] = useRecoilState(
+    YutThrowResultListState
+  );
+  const setEventCallbackValue = useSetRecoilState(EventCallbackValue);
+  const [runEventCallback, setRunEventCallback] =
+    useRecoilState(RunEventCallback);
   const setMessageLog = useSetRecoilState(messageLogState);
 
   const addMessageLog = useCallback(
@@ -132,11 +160,83 @@ const Game = () => {
     }
   };
 
+  const setEventCallback = (data: any) => {
+    let eventType = data.event;
+    const userId = data.userId;
+
+    addMessageLog(userId, `님이 이벤트 카드를 뽑았습니다`);
+    setEventIndex(eventType);
+
+    // 2, 3, 4번은
+
+    // 이벤트 카드 보여주기
+
+    // 이벤트 타입이 꽝인 경우
+    // 턴 돌리기 호출
+
+    // 이벤트 타입이 한번더던지기인 경우
+    // 윷 던지기 호출
+
+    // '이벤트 실행' sendEvent 보내기
+    // event - (0: 말 업고가기 / 1: 자리 이동) 인 경우만 sendEvent 실행시키기
+
+    // if (eventType === 2 || eventType === 3 || eventType === 4) {
+    //   if (myUserInfo.userId === nowTurnPlayerId) {
+    //     const pieceId = pieceList[movePieceIndex].pieceId;
+    //     const nowPosition = pieceList[movePieceIndex].position;
+
+    //     if (eventType === 2) eventType = 0;
+    //     else eventType = 1;
+
+    //     sendEvent(
+    //       "/game/event/result",
+    //       {},
+    //       {
+    //         roomCode: roomCode,
+    //         userId: nowTurnPlayerId, // recoil 전역변수
+    //         selectPiece: pieceId,
+    //         plateNum: nowPosition,
+    //         event: eventType,
+    //         //prevPosition: piecePrevPos,
+    //         prevPosition: -1,
+    //       }
+    //     );
+    //   }
+    // }
+
+    // 출발햇던 자리인 경우
+    //piecePrevPos
+    // 처음으로 이동하는 경우
+  };
+
+  const showEventResCallback = (data: RunEventResponseType) => {
+    // const eventType = data.event;
+    // 이 이벤트 부분이 끝나고 난뒤에 turnEnd()시키기.
+    // 2,3,4 인 경우만 (0 또는 1로 ) 이벤트 실행
+    // setRunEventIndex(eventType);
+
+    // eventCard.runEvent(data);
+    // runEvent()
+    //   (data);
+    // }
+
+    // EventCardCompo.tsx의 useEffect의 deps가 변경된 값을 감지.
+    // 받아온 값 설정
+    setEventCallbackValue(data);
+    // useEffect 로 변경된 값 감지.
+    setRunEventCallback(true);
+  };
+
   const initSubscribe = () => {
-    subscribeTopic(`/topic/game/start/${myInfo.userId}`, gameStartCallback);
+    subscribeTopic(`/topic/game/start/${myUserInfo.userId}`, gameStartCallback);
     subscribeTopic(`/topic/game/turn/${roomCode}`, startTurnCallback);
     subscribeTopic(`/topic/game/stick/${roomCode}`, throwYutCallback);
     subscribeTopic(`/topic/game/piece/${roomCode}`, selectPieceCallback);
+    subscribeTopic(`/topic/game/event/${roomCode}`, setEventCallback);
+    subscribeTopic(
+      `/topic/game/event/result/${roomCode}`,
+      showEventResCallback
+    );
 
     sendEvent(
       "/game/start",
@@ -151,9 +251,35 @@ const Game = () => {
     initSubscribe();
   }, []);
 
+  const testNextTurn = () => {
+    turnEnd();
+  };
+
+  const testEvent = () => {
+    sendEvent(
+      "/game/event",
+      {},
+      {
+        roomCode: roomCode,
+        userId: nowTurnPlayerId, // recoil 전역변수
+      }
+    );
+  };
+
+  const moveToEvent = () => {
+    setYutResultList(["도"]);
+    pieceMove(nowTurnPlayerId, [1], [6], "Event");
+  };
+
+  const resetPiece = () => {
+    setYutResultList(["도"]);
+    pieceMove(nowTurnPlayerId, [1], [0], "Move");
+  };
+
   return (
     <>
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
+      {/* <GameLayout userList={userList} eventPositionList={eventPositionList} /> */}
       <GameModalLayout />
     </>
   );

@@ -30,7 +30,7 @@ const PlayerCompo = ({
 
   useEffect(() => {
     const list = pieceList.filter(
-      (piece) => piece.userId === userId && piece.state === "NotStarted",
+      (piece) => piece.userId === userId && piece.state === "NotStarted"
     );
     setNotStartedPieceList(list);
   }, [pieceList]);
