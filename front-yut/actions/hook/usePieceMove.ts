@@ -75,17 +75,13 @@ const usePieceMove = () => {
 
   const setMoveInfo = useRecoilCallback(
     ({ snapshot }) =>
-      async (userId: string, pieceId: number, movePath: Array<number>) => {
+      async (userId: string, pieceIndex: number, movePath: Array<number>) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
-        const pieceIndex = latestPieceList.findIndex(
-          (p) => p.userId === userId && p.pieceId === pieceId
-        );
         await popYutThrowResultForUse();
         setMovePieceIndex(pieceIndex);
         setMovePathList(movePath);
         // 말 이동 전 이전 위치 저장.
         const prevPosition = latestPieceList[pieceIndex].position;
-        console.log("말 이동 전 위치: " + prevPosition);
         setPiecePrevPos(prevPosition);
       },
     []
@@ -100,13 +96,6 @@ const usePieceMove = () => {
         moveType: PieceMoveType
       ) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
-
-        // latestPieceList.forEach((piece) => {
-        //   console.log(piece.userId + ", " + piece.pieceId);
-        // });
-        // console.log("말번호: " + pieceIdList[0]);
-        // console.log("현재 유저 id: " + userId);
-
         let findIndex = -1;
 
         if (pieceIdList.length === 1) {
@@ -137,7 +126,7 @@ const usePieceMove = () => {
 
         if (playerPieceList.length === 0)
           throw Error("움직일 piece를 찾을수 없습니다");
-        setMoveInfo(userId, playerPieceList[0].pieceId, movePath);
+        setMoveInfo(userId, findIndex, movePath);
         setMoveType(moveType);
       },
     []
@@ -229,6 +218,8 @@ const usePieceMove = () => {
           yut: yutType,
           direction: direction,
         };
+
+        console.log("select piece", request.selectPiece);
         sendEvent("/game/piece", {}, request);
       }
   );
