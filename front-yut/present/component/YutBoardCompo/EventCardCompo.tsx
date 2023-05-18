@@ -25,6 +25,7 @@ import Option1 from "@/public/icon/eventItems/1.svg";
 import Option2 from "@/public/icon/eventItems/2.svg";
 import Option3 from "@/public/icon/eventItems/3.svg";
 import Option4 from "@/public/icon/eventItems/4.svg";
+import audioModule from "@/utils/audioModule";
 
 import { YutPieceCompoProps } from "../YutPieceCompo/YutPieceCompo";
 import useYutThrow from "@/actions/hook/useYutThrow";

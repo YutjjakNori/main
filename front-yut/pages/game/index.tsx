@@ -38,6 +38,7 @@ import { messageLogState } from "@/store/ChatStore";
 import { makeMessage } from "@/utils/chatModule";
 // import * as eventCard from "@/present/component/YutBoardCompo/EventCardCompo";
 // import runEvent from "@/present/component/YutBoardCompo/EventCardCompo";
+import audioModule from "@/utils/audioModule";
 
 const Game = () => {
   const { initPlayerTurn, nextTurn } = useGameTurn();
@@ -107,6 +108,9 @@ const Game = () => {
     const { userId, result } = response;
     addMessageLog(userId, `님이 ${result} 를 던졌습니다`);
     saveThrowResult(result);
+    const filePath = "/audio/yutThrow.mp3";
+    const volume = 1;
+    audioModule(filePath, volume);
   };
 
   const selectPieceCallback = (response: PieceMoveResponseType) => {

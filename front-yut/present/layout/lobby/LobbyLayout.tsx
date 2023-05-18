@@ -14,7 +14,6 @@ import { UserInfoState } from "@/store/UserStore";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
-// import CherryGif from "@/public/image/cherryGif.gif";
 
 const LobbyLayout = () => {
   //모달 나가기 버튼
@@ -151,6 +150,7 @@ const LobbyLayout = () => {
       {/* <style.Container onClick={userInteract}> */}
       <style.Container>
         <BackgroundTextCompo />
+
         <style.ButtonContainer>
           {buttonInfoList.map((button) => (
             <LobbyButtonCompo key={button.text} {...button} />
