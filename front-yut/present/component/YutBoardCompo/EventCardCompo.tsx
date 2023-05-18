@@ -228,7 +228,9 @@ const EventCard = () => {
           NowTurnPlayerIdState
         );
         const latestMyInfo = await snapshot.getPromise(UserInfoState);
-
+        const filePath = "/audio/eventOpen.mp3";
+        const volume = 1;
+        audioModule(filePath, volume);
         try {
           switch (index) {
             // 꽝

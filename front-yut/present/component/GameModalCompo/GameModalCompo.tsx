@@ -11,6 +11,7 @@ import ChoosePieceModalCompo from "./ActionModalCompo/ChoosePieceModalCompo";
 import GameEndModalCompo from "./ActionModalCompo/GameEndModalCompo";
 import TurnStartModalCompo from "./ActionModalCompo/TurnStartModalCompo";
 import * as style from "./GameModalCompo.style";
+import audioModule from "@/utils/audioModule";
 
 // modal에 따른 타입이 data에 바인딩됨
 interface GameModalCompoProps {
@@ -54,6 +55,9 @@ const GameModalCompo = ({ data }: GameModalCompoProps) => {
           </>
         );
       case "End":
+        const filePath = "/audio/victory.mp3";
+        const volume = 0.3;
+        audioModule(filePath, volume);
         const { winnerPlayerNickname } = data as GameEndModalInfo;
         return (
           <>
