@@ -38,6 +38,12 @@ import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
 import audioModule from "@/utils/audioModule";
+import { UserInteractionState } from "@/store/AudioStore";
+import BGMAudioControl from "@/present/common/Audio/BGMAudioControl";
+import { BgmMuteState } from "@/store/AudioStore";
+
+import UnMute from "@/public/icon/music/UnMute.svg";
+import Mute from "@/public/icon/music/Mute.svg";
 
 const ReadyLayout = () => {
   //준비 버튼
@@ -66,6 +72,17 @@ const ReadyLayout = () => {
     color: "#575757",
     backgroundColor: "#FFF",
     borderColor: "gray",
+    margin: "1rem",
+  };
+
+  // bgm버튼
+  const musicBtnInfo: CircleButtonProps = {
+    Icon: "",
+    fontSize: "",
+    text: "",
+    color: "#575757",
+    backgroundColor: "transparent",
+    borderColor: "black",
     margin: "1rem",
   };
 
@@ -309,6 +326,19 @@ const ReadyLayout = () => {
       });
   };
 
+  // BGM 실행
+  const [userInteraction, setUserInteraction] =
+    useRecoilState(UserInteractionState);
+
+  const userInteract = () => {
+    setUserInteraction(!userInteraction);
+  };
+
+  const [bgmMute, setBgmMute] = useRecoilState(BgmMuteState);
+  const bgmMuteToggle = () => {
+    setBgmMute(!bgmMute);
+  };
+
   return (
     <>
       <style.BackgroundImage>
@@ -430,6 +460,25 @@ const ReadyLayout = () => {
               />
             </style.modalBackGround>
           </Modal>
+
+          <style.BgmBtnContainer onClick={userInteract}>
+            <BGMAudioControl />
+            <style.BgmBtnContainer2 onClick={bgmMuteToggle}>
+              <CircleButton
+                Icon={bgmMute ? Mute : UnMute}
+                fontSize={musicBtnInfo.fontSize}
+                text={musicBtnInfo.text}
+                color={musicBtnInfo.color}
+                backgroundColor={musicBtnInfo.backgroundColor}
+                borderColor={musicBtnInfo.borderColor}
+                margin={musicBtnInfo.margin}
+              />
+            </style.BgmBtnContainer2>
+          </style.BgmBtnContainer>
+
+          <style.ChatingContatiner>
+            <ChatCompo />
+          </style.ChatingContatiner>
         </style.Container2>
       </style.Container>
     </>

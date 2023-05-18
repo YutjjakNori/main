@@ -2,7 +2,7 @@ import { atom } from "recoil";
 
 const BgmMuteState = atom<boolean>({
   key: "BgmMute",
-  default: false,
+  default: true,
 });
 
 const UserInteractionState = atom<boolean>({
