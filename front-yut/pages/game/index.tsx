@@ -277,12 +277,8 @@ const Game = () => {
   return (
     <>
       <GameLayout userList={userList} eventPositionList={eventPositionList} />
-      <button onClick={moveToEvent}>이벤트 칸으로 이동</button>
-      <button onClick={resetPiece}>처음으로 이동</button>
       {/* <GameLayout userList={userList} eventPositionList={eventPositionList} /> */}
       <GameModalLayout />
-      <button onClick={testNextTurn}>다음 차례</button>
-      <button onClick={testEvent}>이벤트 받아오기</button>
     </>
   );
 };
