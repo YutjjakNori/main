@@ -37,6 +37,7 @@ import CherryGif3 from "@/public/image/cherryGif.gif";
 import RectButton, {
   RectButtonProps,
 } from "@/present/common/Button/Rect/RectButton";
+import audioModule from "@/utils/audioModule";
 
 const ReadyLayout = () => {
   //준비 버튼
@@ -106,6 +107,9 @@ const ReadyLayout = () => {
     newMembers.forEach((member) => {
       printMessage("SYSTEM", `${member.nickName}님이 입장하셨습니다.`);
     });
+    const filePath = "/audio/userInput.mp3";
+    const volume = 0.3;
+    audioModule(filePath, volume);
 
     const newMemberList = [...data.users];
     setMemberList(newMemberList); //유저 아이디와 닉네임 저장
@@ -276,6 +280,9 @@ const ReadyLayout = () => {
         ready: ready,
       }
     );
+    const filePath = "/audio/readyAudio.mp3";
+    const volume = 0.3;
+    audioModule(filePath, volume);
   };
 
   //나가기
@@ -383,6 +390,7 @@ const ReadyLayout = () => {
               margin={copyBtnInfo.margin}
             />
           </style.CopyContainer>
+
           <style.ExitContainer
             onClick={() => {
               handleIsExit();

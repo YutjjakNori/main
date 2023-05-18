@@ -40,11 +40,6 @@ const Container2 = styled.div`
   height: 50vh;
 `;
 
-const SoundContainer = styled.div`
-  position: relative;
-  width: 30px;
-`;
-
 const CopyContainer = styled.div`
   position: fixed;
   top: 9.5vh;
@@ -182,7 +177,6 @@ export {
   ExitContainer,
   CopyContainer,
   ExitAlertContainer,
-  SoundContainer,
   BackgroundImage,
   RoomInfo,
   ChatingContatiner,
