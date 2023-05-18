@@ -29,7 +29,10 @@ public class WebConfig implements WebMvcConfigurer {
                         "http://localhost:3000",
                         "http://192.168.100.184:3000",
                         "http://192.168.100.130:3000",
-                        "http://192.168.100.89:3000")
+                        "http://192.168.100.89:3000",
+                        "http://192.168.123.119:3000",
+                        "http://192.168.123.107:3000",
+                        "http://192.168.123.110:3000")
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true)
