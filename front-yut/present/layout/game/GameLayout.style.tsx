@@ -23,7 +23,7 @@ const Container = styled.div`
 
 const ChatContainer = styled.div`
   width: 65%;
-  height: 75%;
+  height: 55%;
 `;
 
 const LeftLayout = styled.div`
@@ -85,4 +85,20 @@ const RightLayout = styled.div`
   height: calc(100vh - 4.5rem);
 `;
 
-export { Container, LeftLayout, BackgroundImage, ChatContainer, RightLayout };
+const ButtonContainer = styled.div`
+  display: block;
+  width: 40%;
+  bottom: 30px;
+  right: 45px;
+  align-items: center;
+  text-align: center;
+`;
+
+export {
+  ButtonContainer,
+  Container,
+  LeftLayout,
+  BackgroundImage,
+  ChatContainer,
+  RightLayout,
+};

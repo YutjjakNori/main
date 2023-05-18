@@ -9,8 +9,16 @@ import GameBackgroundCloudImage from "@/public/image/GameBackgroundCloud.png";
 
 import YutThrowCompo from "@/present/component/YutThrowCompo/YutThrowCompo";
 
-import styled from "styled-components";
 import ChatCompo from "@/present/component/ChatCompo/ChatCompo";
+import RectButton, {
+  RectButtonProps,
+} from "@/present/common/Button/Rect/RectButton";
+import audioModule from "@/utils/audioModule";
+import { useRecoilState } from "recoil";
+import { MessageLogProps, messageLogState } from "@/store/ChatStore";
+import { Member, MemberListState } from "@/store/MemberStore";
+import { stompClient } from "@/actions/socket-api/socketInstance";
+import router from "next/router";
 
 interface GameLayoutProps {
   userList: Array<PlayerCompoProps>;
@@ -18,6 +26,58 @@ interface GameLayoutProps {
 }
 
 const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
+  let simpleMemberList: Member[] = [];
+  const [memberList, setMemberList] = useRecoilState(MemberListState);
+  //채팅
+  const [messageLog, setMessageLog] =
+    useRecoilState<MessageLogProps[]>(messageLogState);
+  const exitBtnInfo: RectButtonProps = {
+    text: "나가기",
+    fontSize: "19px",
+    backgroundColor: "#EA857C",
+  };
+  //대기 - 나가기 구독 콜백함수
+  const requestToLeave = (data: any) => {
+    const exitUserId = data.userId;
+    const filePath = "/audio/userOutput.mp3";
+    const volume = 1;
+    audioModule(filePath, volume);
+
+    printMessage(
+      "SYSTEM",
+      `${findMember(data.userId)?.nickName || "#알수없음"}님이 퇴장하셨습니다.`
+    );
+
+    setMemberList((prev) => {
+      return prev.filter((member) => member !== exitUserId);
+    });
+  };
+  //채팅메시지 추가 함수
+  const printMessage = (name: string, message: string) => {
+    setMessageLog((prev) => {
+      return [
+        ...prev,
+        {
+          chatName: name,
+          chatMessage: message,
+        },
+      ];
+    });
+  };
+  const findMember = (userId: string) => {
+    for (let i = 0; i < simpleMemberList.length; i++) {
+      const nowMember = simpleMemberList[i];
+      // 찾으면 멤버 반환
+      if (nowMember.userId === userId) return nowMember;
+    }
+  };
+  //나가기
+  const handleIsExit = (): void => {
+    if (stompClient !== null && stompClient !== undefined) {
+      stompClient.disconnect();
+      router.push("/lobby");
+    }
+  };
   return (
     <>
       <style.BackgroundImage>
@@ -46,6 +106,17 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
             <style.ChatContainer>
               <ChatCompo />
             </style.ChatContainer>
+            <style.ButtonContainer
+              onClick={() => {
+                handleIsExit();
+              }}
+            >
+              <RectButton
+                text={exitBtnInfo.text}
+                fontSize={exitBtnInfo.fontSize}
+                backgroundColor={exitBtnInfo.backgroundColor}
+              />
+            </style.ButtonContainer>
           </style.RightLayout>
         </div>
       </style.Container>

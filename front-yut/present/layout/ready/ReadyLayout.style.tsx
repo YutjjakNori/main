@@ -55,25 +55,6 @@ const ExitContainer = styled.div`
   align-items: center;
 `;
 
-// const ReadyBtnContainer = styled.div`
-//   width: 300px;
-//   height: 50px;
-//   display: flex;
-//   justify-content: space-between;
-//   width: fit-contents;
-//   margin: auto;
-//   position: absolute;
-//   bottom: 10px;
-//   right: 50px;
-//   top: 70vh;
-//   border-radius: 20px;
-//   transition: box-shadow 0.3s;
-
-//   &:hover {
-//     box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-//   }
-// `;
-
 const ExitAlertContainer = styled.div`
   position: relative;
   margin-left: 10px;
