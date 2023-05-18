@@ -72,7 +72,7 @@ const ReadyLayout = () => {
     color: "#575757",
     backgroundColor: "#FFF",
     borderColor: "gray",
-    margin: "0.5rem",
+    margin: "0.5rem 0.5rem 0.5rem 2rem ",
   };
 
   // bgm버튼
