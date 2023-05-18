@@ -62,11 +62,23 @@ const GameProfile = ({
 
   return (
     <>
-      <style.Container color={profileColor} large={isLarge}>
-        <style.ContainerPattern className="pattern" large={isLarge} />
-        <style.ContainerPattern className="pattern" large={isLarge} />
-        <style.ContainerPattern className="pattern" large={isLarge} />
-        <style.ContainerPattern className="pattern" large={isLarge} />
+      <style.Container color={profileColor} large={isLarge.toString()}>
+        <style.ContainerPattern
+          className="pattern"
+          large={isLarge.toString()}
+        />
+        <style.ContainerPattern
+          className="pattern"
+          large={isLarge.toString()}
+        />
+        <style.ContainerPattern
+          className="pattern"
+          large={isLarge.toString()}
+        />
+        <style.ContainerPattern
+          className="pattern"
+          large={isLarge.toString()}
+        />
 
         <style.ProfileImage>
           <style.Timer isShow={seconds > 0}>
