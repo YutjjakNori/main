@@ -286,7 +286,6 @@ const Game = () => {
       <button onClick={resetPiece}>처음으로 이동</button>
       {/* <GameLayout userList={userList} eventPositionList={eventPositionList} /> */}
       <GameModalLayout />
-
       <button onClick={testNextTurn}>다음 차례</button>
       <button onClick={testEvent}>이벤트 받아오기</button>
     </>
