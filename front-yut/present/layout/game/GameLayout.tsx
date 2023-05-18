@@ -43,7 +43,9 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
         <div>
           <RightLayout>
             <YutThrowCompo />
-            <ChatCompo />
+            <style.ChatContainer>
+              <ChatCompo />
+            </style.ChatContainer>
           </RightLayout>
         </div>
       </style.Container>

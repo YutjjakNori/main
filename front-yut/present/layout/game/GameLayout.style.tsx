@@ -21,6 +21,10 @@ const Container = styled.div`
   }
 `;
 
+const ChatContainer = styled.div`
+  width: 65%;
+`;
+
 const LeftLayout = styled.div`
   position: relative;
   left: 0;
@@ -70,4 +74,4 @@ const BackgroundImage = styled.div`
   }
 `;
 
-export { Container, LeftLayout, BackgroundImage };
+export { Container, LeftLayout, BackgroundImage, ChatContainer };
