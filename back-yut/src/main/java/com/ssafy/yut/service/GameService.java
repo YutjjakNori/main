@@ -335,7 +335,7 @@ public class GameService {
         else {
             // 시작 전인 말 시작으로 바꿔주기
             if(selectPieces.size() == 1 && turnUserPieces.get(selectPieces.get(0) - 1) == -1) {
-                turnUserPieces.set(0, 1);
+                turnUserPieces.set(selectPieces.get(0) - 1, 1);
             }
 
             List<Integer> piecesInPlate;
