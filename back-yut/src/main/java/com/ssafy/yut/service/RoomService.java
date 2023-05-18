@@ -197,7 +197,7 @@ public class RoomService {
             game.setGameStatus("start");
             Set<Integer> event = new HashSet<>();
             while(event.size() < 2) {
-                // HotFIX,,,,, 추후 변경
+                // TODO : 추후 되돌리기
 //                event.add((int)((Math.random()*28)+1));
                 event.add(2);
                 event.add(3);
