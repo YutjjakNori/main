@@ -90,10 +90,12 @@ const ExitAlertContainer = styled.div`
     transition: all ease 0.5s;
     right: 0px;
     top: 100%;
+    pointer-events: none; /* 클릭 이벤트 비활성화 */
   }
 
   .btn-alert:hover + .btn-alert-text {
     opacity: 1;
+    position: absolute;
   }
 `;
 
