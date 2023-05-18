@@ -117,9 +117,9 @@ public class GameService {
             result = "도";
         } else if(random > 15 && random <= 50) {
             result = "개";
-        } else if(random > 50 && random <= 85) {
+        } else if(random > 50 && random <= 90) {
             result = "걸";
-        } else if(random > 85 && random <= 98) {
+        } else if(random > 90 && random <= 98) {
             result = "윷";
         } else {
             result = "모";
@@ -432,7 +432,12 @@ public class GameService {
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
 
-        int eventNum = random.nextInt(5);
+        // TODO : 모든 이벤트 사용하기
+        // 이벤트 종류 : 0:꽝, 1:한번 던지기, 4:처음으로 돌아가기
+        int eventNum = random.nextInt(3);
+        if (eventNum == 3) {
+            eventNum = 4;
+        }
 
         // 이벤트 발생한 것 카프카로 보내기
         kafkaTemplate.send(TOPIC + ".event",
