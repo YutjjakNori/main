@@ -162,7 +162,9 @@ const Game = () => {
 
   const setEventCallback = (data: any) => {
     let eventType = data.event;
+    const userId = data.userId;
 
+    addMessageLog(userId, `님이 이벤트 카드를 뽑았습니다`);
     setEventIndex(eventType);
 
     // 2, 3, 4번은
