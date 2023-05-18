@@ -90,10 +90,12 @@ const ExitAlertContainer = styled.div`
     transition: all ease 0.5s;
     right: 0px;
     top: 100%;
+    pointer-events: none; /* 클릭 이벤트 비활성화 */
   }
 
   .btn-alert:hover + .btn-alert-text {
     opacity: 1;
+    position: absolute;
   }
 `;
 
@@ -168,6 +170,10 @@ const Container3 = styled.div`
   grid-column-gap: 120px;
 `;
 
+const modalBackGround = styled.div`
+  margin-top: 75px;
+`;
+
 export {
   Container3,
   Container2,
@@ -179,5 +185,6 @@ export {
   BackgroundImage,
   RoomInfo,
   ChatingContatiner,
+  modalBackGround,
   RightContainer,
 };
