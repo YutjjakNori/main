@@ -41,27 +41,16 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
         <YutBoardCompo eventPositionList={eventPositionList} />
         {/* 윷 던지기, 채팅 */}
         <div>
-          <RightLayout>
+          <style.RightLayout>
             <YutThrowCompo />
             <style.ChatContainer>
               <ChatCompo />
             </style.ChatContainer>
-          </RightLayout>
+          </style.RightLayout>
         </div>
       </style.Container>
     </>
   );
 };
-
-const RightLayout = styled.div`
-  position: relative;
-  /* left: 0; */
-  /* top: 0; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-`;
 
 export default GameLayout;
