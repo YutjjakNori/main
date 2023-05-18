@@ -72,7 +72,7 @@ const ReadyLayout = () => {
     color: "#575757",
     backgroundColor: "#FFF",
     borderColor: "gray",
-    margin: "1rem",
+    margin: "0.5rem",
   };
 
   // bgm버튼
@@ -475,10 +475,6 @@ const ReadyLayout = () => {
               />
             </style.BgmBtnContainer2>
           </style.BgmBtnContainer>
-
-          <style.ChatingContatiner>
-            <ChatCompo />
-          </style.ChatingContatiner>
         </style.Container2>
       </style.Container>
     </>
