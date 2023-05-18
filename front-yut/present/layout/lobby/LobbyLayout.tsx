@@ -142,7 +142,7 @@ const LobbyLayout = () => {
   };
 
   //모달 닉네임 엔터
-  const onKeyPress = (e: React.KeyboardEvent<HTMLFormElement>) => {
+  const onKeyPress = (e: any) => {
     if (e.key === "Enter") {
       handleSubmit(e);
     }
