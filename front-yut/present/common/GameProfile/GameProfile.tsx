@@ -26,8 +26,8 @@ const GameProfile = ({
   const [seconds, setSeconds] = useState<number>(0);
   const router = useRouter();
 
-  const isLarge: boolean = useMemo(() => {
-    return router.pathname === "/ready";
+  const isLarge = useMemo<boolean>(() => {
+    return router.isReady ? router.pathname === "/ready" : false;
   }, [router.pathname]);
 
   // isReady가 변경되면 색깔 변경
@@ -62,7 +62,7 @@ const GameProfile = ({
 
   return (
     <>
-      <style.Container color={profileColor} large={isLarge}>
+      <style.Container color={profileColor} large={isLarge ?? false}>
         <style.ContainerPattern className="pattern" large={isLarge} />
         <style.ContainerPattern className="pattern" large={isLarge} />
         <style.ContainerPattern className="pattern" large={isLarge} />
