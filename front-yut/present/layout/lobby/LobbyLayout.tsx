@@ -149,6 +149,7 @@ const LobbyLayout = () => {
     <>
       <style.Container onClick={userInteract}>
         <BackgroundTextCompo />
+
         <style.ButtonContainer>
           {buttonInfoList.map((button) => (
             <LobbyButtonCompo key={button.text} {...button} />
