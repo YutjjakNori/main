@@ -133,14 +133,14 @@ const Container = styled.div`
     right: 4%;
   }
   .cornerCenter1 {
-    transform: rotate(50deg);
-    left: 34%;
-    top: 50%;
+    transform: rotate(45deg);
+    left: 40%;
+    top: 58%;
   }
   .cornerCenter2 {
-    transform: rotate(-50deg);
-    right: 34%;
-    top: 50%;
+    transform: rotate(-45deg);
+    right: 40%;
+    top: 58%;
   }
 `;
 
