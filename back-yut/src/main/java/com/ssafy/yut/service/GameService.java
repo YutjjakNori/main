@@ -435,7 +435,7 @@ public class GameService {
         // TODO : 모든 이벤트 사용하기
         // 이벤트 종류 : 0:꽝, 1:한번 던지기, 4:처음으로 돌아가기
         int eventNum = random.nextInt(3);
-        if (eventNum == 3) {
+        if (eventNum == 2) {
             eventNum = 4;
         }
 
