@@ -141,6 +141,13 @@ const LobbyLayout = () => {
     closeModal();
   };
 
+  //모달 닉네임 엔터
+  const onKeyPress = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === "Enter") {
+      handleSubmit(e);
+    }
+  };
+
   const userInteract = () => {
     setUserInteraction(!userInteraction);
   };
@@ -163,6 +170,7 @@ const LobbyLayout = () => {
               id="nickname-input"
               value={nickName}
               onChange={handleChange}
+              onKeyDown={onKeyPress}
               placeholder="10글자 미만 별명 작성"
             />
 

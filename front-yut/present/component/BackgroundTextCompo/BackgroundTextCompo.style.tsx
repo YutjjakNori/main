@@ -1,4 +1,4 @@
-import backgroundImage from "@/public/image/gyeungbokgung_sunset.jpg";
+import backgroundImage from "@/public/image/crop.gif";
 import styled, { keyframes } from "styled-components";
 import pattern1 from "@/public/image/pattern1.png";
 import pattern2 from "@/public/image/pattern2.png";
@@ -35,9 +35,62 @@ const flyCycle = keyframes`
 	}
 `;
 
+// const flyRightOne = keyframes`
+// 	0% {
+// 		transform: scale(0.3) translateX(-10vw);
+// 	}
+// 	10% {
+// 		transform: translateY(2vh) translateX(10vw) scale(0.4);
+// 	}
+// 	20% {
+// 		transform: translateY(0vh) translateX(30vw) scale(0.5);
+// 	}
+// 	30% {
+// 		transform: translateY(4vh) translateX(50vw) scale(0.6);
+// 	}
+// 	40% {
+// 		transform: translateY(2vh) translateX(70vw) scale(0.6);
+// 	}
+// 	50% {
+// 		transform: translateY(0vh) translateX(90vw) scale(0.6);
+// 	}
+// 	60% {
+// 		transform: translateY(-3vh) translateX(110vw) scale(0.6);
+// 	}
+// 	100% {
+// 		transform: translateY(-3vh) translateX(110vw) scale(0.6);
+// 	}
+// `;
+// const flyRightTwo = keyframes`
+// 	0% {
+// 		transform: translateY(-4vh) translateX(-10vw) scale(0.5);
+// 	}
+// 	10% {
+// 		transform: translateY(-2vh) translateX(10vw) scale(0.4);
+// 	}
+// 	20% {
+// 		transform: translateY(-10vh) translateX(30vw) scale(0.6);
+// 	}
+// 	30% {
+// 		transform: translateY(4vh) translateX(50vw) scale(0.45);
+// 	}
+// 	40% {
+// 		transform: translateY(-5.5vh) translateX(70vw) scale(0.5);
+// 	}
+// 	50% {
+// 		transform: translateY(0vh) translateX(90vw) scale(0.45);
+// 	}
+// 	51% {
+// 		transform: translateY(10vh) translateX(110vw) scale(0.45);
+// 	}
+// 	100% {
+// 		transform: translateY(10vh) translateX(110vw) scale(0.45);
+// 	}
+// `;
+
 const flyRightOne = keyframes`
 	0% {
-		transform: scale(0.3) translateX(-10vw);
+		transform: scale(0.3) translateX(-10vw) translateY(0vh);
 	}
 	10% {
 		transform: translateY(2vh) translateX(10vw) scale(0.4);
@@ -55,10 +108,10 @@ const flyRightOne = keyframes`
 		transform: translateY(0vh) translateX(90vw) scale(0.6);
 	}
 	60% {
-		transform: translateY(0vh) translateX(110vw) scale(0.6);
+		transform: translateY(-3vh) translateX(110vw) scale(0.6);
 	}
 	100% {
-		transform: translateY(0vh) translateX(110vw) scale(0.6);
+		transform: translateY(-3vh) translateX(110vw) scale(0.6);
 	}
 `;
 
@@ -82,20 +135,20 @@ const flyRightTwo = keyframes`
 		transform: translateY(0vh) translateX(90vw) scale(0.45);
 	}
 	51% {
-		transform: translateY(0vh) translateX(110vw) scale(0.45);
+		transform: translateY(10vh) translateX(110vw) scale(0.45);
 	}
 	100% {
-		transform: translateY(0vh) translateX(110vw) scale(0.45);
+		transform: translateY(10vh) translateX(110vw) scale(0.45);
 	}
 `;
 
 const Pattern = styled.div`
   background-size: auto 100%;
-  width: 138px;
-  height: 138px;
+  width: 207px;
+  height: 207px;
   will-change: background-position;
   animation-name: ${flyCycle};
-  animation-timing-function: steps(30);
+  animation-timing-function: steps(50);
   animation-iteration-count: infinite;
 `;
 
@@ -126,7 +179,7 @@ const PatternOne = styled(PatternContainer)`
   animation-name: ${flyRightOne};
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  animation-duration: 10s;
+  animation-duration: 15s;
   animation-delay: 0;
   z-index: -1;
 `;
@@ -135,7 +188,7 @@ const PatternTwo = styled(PatternContainer)`
   animation-name: ${flyRightTwo};
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  animation-duration: 11s;
+  animation-duration: 16s;
   animation-delay: 1s;
   z-index: -1;
 `;
@@ -144,8 +197,8 @@ const PatternThree = styled(PatternContainer)`
   animation-name: ${flyRightOne};
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  animation-duration: 13.5s;
-  animation-delay: 3.5s;
+  animation-duration: 18.5s;
+  animation-delay: 2.5s;
   z-index: -1;
 `;
 
@@ -153,8 +206,8 @@ const PatternFour = styled(PatternContainer)`
   animation-name: ${flyRightTwo};
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  animation-duration: 15.25s;
-  animation-delay: 5.25s;
+  animation-duration: 20.25s;
+  animation-delay: 5s;
   z-index: -1;
 `;
 

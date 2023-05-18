@@ -414,15 +414,17 @@ const ReadyLayout = () => {
 
           {/* 모달 */}
           <Modal title={"게임을 시작합니다"}>
-            <Timer
-              ss={5}
-              size={65}
-              color={"#000"}
-              handleOver={() => {
-                closeModal();
-                router.push("game");
-              }}
-            />
+            <style.modalBackGround>
+              <Timer
+                ss={5}
+                size={65}
+                color={"#000"}
+                handleOver={() => {
+                  closeModal();
+                  router.push("game");
+                }}
+              />
+            </style.modalBackGround>
           </Modal>
         </style.Container2>
       </style.Container>
