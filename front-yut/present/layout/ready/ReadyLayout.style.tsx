@@ -158,6 +158,15 @@ const Container3 = styled.div`
   grid-column-gap: 120px;
 `;
 
+const BgmBtnContainer = styled.div``; // BGMAudio 컴포넌트 실행을 위한 컨테이너
+
+const BgmBtnContainer2 = styled.div`
+  width: 2vw;
+  position: fixed;
+  top: 12%;
+  right: 6%;
+`;
+
 export {
   Container3,
   Container2,
@@ -170,4 +179,6 @@ export {
   RoomInfo,
   ReadyBtnContainer,
   ChatingContatiner,
+  BgmBtnContainer,
+  BgmBtnContainer2,
 };
