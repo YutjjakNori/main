@@ -55,24 +55,24 @@ const ExitContainer = styled.div`
   align-items: center;
 `;
 
-const ReadyBtnContainer = styled.div`
-  width: 300px;
-  height: 50px;
-  display: flex;
-  justify-content: space-between;
-  width: fit-contents;
-  margin: auto;
-  position: absolute;
-  bottom: 10px;
-  right: 50px;
-  top: 70vh;
-  border-radius: 20px;
-  transition: box-shadow 0.3s;
+// const ReadyBtnContainer = styled.div`
+//   width: 300px;
+//   height: 50px;
+//   display: flex;
+//   justify-content: space-between;
+//   width: fit-contents;
+//   margin: auto;
+//   position: absolute;
+//   bottom: 10px;
+//   right: 50px;
+//   top: 70vh;
+//   border-radius: 20px;
+//   transition: box-shadow 0.3s;
 
-  &:hover {
-    box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
-  }
-`;
+//   &:hover {
+//     box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.4);
+//   }
+// `;
 
 const ExitAlertContainer = styled.div`
   position: relative;
@@ -90,10 +90,12 @@ const ExitAlertContainer = styled.div`
     transition: all ease 0.5s;
     right: 0px;
     top: 100%;
+    pointer-events: none; /* 클릭 이벤트 비활성화 */
   }
 
   .btn-alert:hover + .btn-alert-text {
     opacity: 1;
+    position: absolute;
   }
 `;
 
@@ -137,12 +139,22 @@ const BackgroundImage = styled.div`
     opacity: 0.3;
   }
 `;
+
+const RightContainer = styled.div`
+  position: absolute;
+  right: 3%;
+  display: grid;
+  width: 20%;
+  gap: 1rem;
+`;
+
 const ChatingContatiner = styled.div`
   display: flex;
   position: fixed;
   top: 20vh;
-  right: 50px;
+  right: 0;
   align-items: center;
+  width: 28%;
 `;
 
 const Container3 = styled.div`
@@ -167,6 +179,10 @@ const BgmBtnContainer2 = styled.div`
   right: 6%;
 `;
 
+const modalBackGround = styled.div`
+  margin-top: 75px;
+`;
+
 export {
   Container3,
   Container2,
@@ -177,8 +193,9 @@ export {
   ExitAlertContainer,
   BackgroundImage,
   RoomInfo,
-  ReadyBtnContainer,
   ChatingContatiner,
   BgmBtnContainer,
   BgmBtnContainer2,
+  modalBackGround,
+  RightContainer,
 };

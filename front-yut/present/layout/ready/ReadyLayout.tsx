@@ -202,6 +202,10 @@ const ReadyLayout = () => {
   //대기 - 나가기 구독 콜백함수
   const requestToLeave = (data: any) => {
     const exitUserId = data.userId;
+    const filePath = "/audio/userOutput.mp3";
+    const volume = 1;
+    audioModule(filePath, volume);
+
     printMessage(
       "SYSTEM",
       `${findMember(data.userId)?.nickName || "#알수없음"}님이 퇴장하셨습니다.`
@@ -394,17 +398,16 @@ const ReadyLayout = () => {
             ))}
           </style.Container3>
 
-          <style.ReadyBtnContainer
-            onClick={() => {
-              handleIsReady();
-            }}
-          >
-            <RectButton
-              text={isReady === "0" ? "준비" : "준비 취소"}
-              fontSize={readyBtnInfo.fontSize}
-              backgroundColor={isReady === "0" ? "#6EBA91" : "#F07F7F"}
-            />
-          </style.ReadyBtnContainer>
+          <style.RightContainer>
+            <ChatCompo />
+            <div onClick={handleIsReady}>
+              <RectButton
+                text={isReady === "0" ? "준비" : "준비 취소"}
+                fontSize={readyBtnInfo.fontSize}
+                backgroundColor={isReady === "0" ? "#6EBA91" : "#F07F7F"}
+              />
+            </div>
+          </style.RightContainer>
 
           <style.CopyContainer
             onClick={() => {
@@ -445,15 +448,17 @@ const ReadyLayout = () => {
 
           {/* 모달 */}
           <Modal title={"게임을 시작합니다"}>
-            <Timer
-              ss={5}
-              size={65}
-              color={"#000"}
-              handleOver={() => {
-                closeModal();
-                router.push("game");
-              }}
-            />
+            <style.modalBackGround>
+              <Timer
+                ss={5}
+                size={65}
+                color={"#000"}
+                handleOver={() => {
+                  closeModal();
+                  router.push("game");
+                }}
+              />
+            </style.modalBackGround>
           </Modal>
 
           <style.BgmBtnContainer onClick={userInteract}>

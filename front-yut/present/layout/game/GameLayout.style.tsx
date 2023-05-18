@@ -21,6 +21,11 @@ const Container = styled.div`
   }
 `;
 
+const ChatContainer = styled.div`
+  width: 65%;
+  height: 75%;
+`;
+
 const LeftLayout = styled.div`
   position: relative;
   left: 0;
@@ -72,13 +77,12 @@ const BackgroundImage = styled.div`
 
 const RightLayout = styled.div`
   position: relative;
-  /* left: 0; */
-  /* top: 0; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
+  gap: 1rem;
+  height: calc(100vh - 4.5rem);
 `;
 
-export { Container, LeftLayout, BackgroundImage, RightLayout };
+export { Container, LeftLayout, BackgroundImage, ChatContainer, RightLayout };

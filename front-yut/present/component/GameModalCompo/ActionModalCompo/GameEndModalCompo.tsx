@@ -5,7 +5,6 @@ import { GameEndModalInfo } from "@/types/game/GameModalTypes";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import * as style from "./ActionModalCompo.style";
-import audioModule from "@/utils/audioModule";
 
 const GameEndModalCompo = ({ winnerPlayerNickname }: GameEndModalInfo) => {
   const router = useRouter();
@@ -13,10 +12,6 @@ const GameEndModalCompo = ({ winnerPlayerNickname }: GameEndModalInfo) => {
   const exit = useCallback(() => {
     stompClient?.disconnect();
     router.replace("/lobby");
-
-    const filePath = "/audio/victory.mp3";
-    const volume = 0.3;
-    audioModule(filePath, volume);
   }, []);
 
   return (
