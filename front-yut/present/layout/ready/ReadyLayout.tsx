@@ -185,6 +185,10 @@ const ReadyLayout = () => {
   //대기 - 나가기 구독 콜백함수
   const requestToLeave = (data: any) => {
     const exitUserId = data.userId;
+    const filePath = "/audio/userOutput.mp3";
+    const volume = 1;
+    audioModule(filePath, volume);
+
     printMessage(
       "SYSTEM",
       `${findMember(data.userId)?.nickName || "#알수없음"}님이 퇴장하셨습니다.`
