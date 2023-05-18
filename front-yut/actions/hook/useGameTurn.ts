@@ -124,7 +124,7 @@ const useGameTurn = () => {
   const ifNextTurnIsMe = async () => {
     const nextPlayerId = await getNextPlayerId();
 
-    console.log("nextPlayerId : ", nextPlayerId);
+    // console.log("nextPlayerId : ", nextPlayerId);
 
     if (nextPlayerId === myInfo.userId) {
       setTimeout(() => {

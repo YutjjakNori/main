@@ -85,8 +85,8 @@ const EventCard = () => {
   }
 
   useEffect(() => {
-    console.log("event value", eventCallbackValue);
-    console.log("이벤트 콜백 실행시킬지 말지", runEventCallback);
+    // console.log("event value", eventCallbackValue);
+    // console.log("이벤트 콜백 실행시킬지 말지", runEventCallback);
     runEvent(eventCallbackValue);
     // console.log(runEventCallback);
   }, [eventCallbackValue]);
@@ -108,7 +108,7 @@ const EventCard = () => {
         break;
       case 1:
         if (data.move === -1) {
-          console.log("data.selectPiece : " + data.selectPiece);
+          // console.log("data.selectPiece : " + data.selectPiece);
           moveToStartPosEvent(data.selectPiece, data.userId);
         } else {
           // moveToPrevPosEvent();
@@ -321,8 +321,6 @@ const EventCard = () => {
                     // }
                   }, 2000);
                 }
-
-                // console.log("game event result 보내기");
 
                 if (latestMyInfo.userId === latestNowTurnPlayerId) {
                   sendEvent(

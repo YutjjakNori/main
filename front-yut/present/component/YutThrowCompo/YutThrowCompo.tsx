@@ -72,7 +72,6 @@ const YutThrowCompo = () => {
       array[indices[i]] = "front"; // 선택된 인덱스에 "front"를 할당합니다.
     }
 
-    //console.log(array);
     setYutjjakIconList(array);
   }, []);
 

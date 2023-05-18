@@ -219,7 +219,7 @@ const usePieceMove = () => {
           direction: direction,
         };
 
-        console.log("select piece", request.selectPiece);
+        // console.log("select piece", request.selectPiece);
         sendEvent("/game/piece", {}, request);
       }
   );
