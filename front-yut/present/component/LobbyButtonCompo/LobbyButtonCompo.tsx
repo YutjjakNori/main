@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import * as style from "./LobbyButtonCompo.style";
+import audioModule from "@/utils/audioModule";
 
 interface LobbyButtonCompoProps {
   color: string;
@@ -19,6 +20,10 @@ const LobbyButtonCompo = ({
 
   const onClick = useCallback(() => {
     //edit mode로 바꿀수 없는 버튼은 handler 실행
+    const filePath = "/audio/lobbyBtn.mp3";
+    const volume = 1;
+    audioModule(filePath, volume);
+
     if (!isEditable) {
       handler();
       return;
@@ -38,7 +43,7 @@ const LobbyButtonCompo = ({
         handler(inputText);
       }
     },
-    [inputText],
+    [inputText]
   );
 
   return (

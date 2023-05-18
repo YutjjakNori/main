@@ -14,6 +14,7 @@ import Option1 from "@/public/icon/eventItems/1.svg";
 import Option2 from "@/public/icon/eventItems/2.svg";
 import Option3 from "@/public/icon/eventItems/3.svg";
 import Option4 from "@/public/icon/eventItems/4.svg";
+import audioModule from "@/utils/audioModule";
 
 const EventCard = () => {
   const getEventByIndex = useCallback((index: number) => {
@@ -76,6 +77,10 @@ const EventCard = () => {
   }, [eventIndex]);
 
   const takeAction = (index: number) => {
+    const filePath = "/audio/eventOpen.mp3";
+    const volume = 0.3;
+    audioModule(filePath, volume);
+
     try {
       switch (index) {
         case 0:
