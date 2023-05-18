@@ -1,6 +1,7 @@
 import { colors } from "@/styles/theme";
 import Image, { StaticImageData } from "next/image";
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useEffect, useMemo, useState } from "react";
 import Timer from "../Timer/Timer";
 import * as style from "./GameProfile.style";
 
@@ -23,6 +24,11 @@ const GameProfile = ({
     colors.readyPage.notReady
   );
   const [seconds, setSeconds] = useState<number>(0);
+  const router = useRouter();
+
+  const isLarge: boolean = useMemo(() => {
+    return router.pathname === "/ready";
+  }, [router.pathname]);
 
   // isReady가 변경되면 색깔 변경
   useEffect(() => {
@@ -56,11 +62,11 @@ const GameProfile = ({
 
   return (
     <>
-      <style.Container color={profileColor}>
-        <style.ContainerPattern className="pattern" />
-        <style.ContainerPattern className="pattern" />
-        <style.ContainerPattern className="pattern" />
-        <style.ContainerPattern className="pattern" />
+      <style.Container color={profileColor} large={isLarge}>
+        <style.ContainerPattern className="pattern" large={isLarge} />
+        <style.ContainerPattern className="pattern" large={isLarge} />
+        <style.ContainerPattern className="pattern" large={isLarge} />
+        <style.ContainerPattern className="pattern" large={isLarge} />
 
         <style.ProfileImage>
           <style.Timer isShow={seconds > 0}>
