@@ -1,6 +1,11 @@
 interface RuleLayoutContentType {
   title: string;
-  contents: Array<string>;
+  contents: Array<ContentType>;
 }
 
-export type { RuleLayoutContentType };
+interface ContentType {
+  subTitle: string;
+  imgSrc: string;
+}
+
+export type { RuleLayoutContentType, ContentType };
