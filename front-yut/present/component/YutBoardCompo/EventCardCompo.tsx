@@ -1,5 +1,10 @@
 import { useCallback, useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  useRecoilCallback,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 import usePieceMove from "@/actions/hook/usePieceMove";
 import {
   YutThrowBtnState,
@@ -80,9 +85,11 @@ const EventCard = () => {
   }
 
   useEffect(() => {
+    console.log("event value", eventCallbackValue);
+    console.log("이벤트 콜백 실행시킬지 말지", runEventCallback);
     runEvent(eventCallbackValue);
-    console.log(runEventCallback);
-  }, [runEventCallback]);
+    // console.log(runEventCallback);
+  }, [eventCallbackValue]);
 
   // 2,3,4 (=> 0, 1) 인 경우만 event 다같이 실행.
   const runEvent = (data: RunEventResponseType) => {
@@ -91,24 +98,27 @@ const EventCard = () => {
     // const prevPos = data.
 
     switch (eventType) {
+      // 말 업기
       case 0:
-        const movePieceIndex = data.selectPiece[0];
-        const targetPieceIndex = data.selectPiece[1];
+        const movePieceIndex = data.selectPiece[0]; //2
+        const targetPieceIndex = data.selectPiece[1]; //3
 
-        appendEvent(targetPieceIndex, movePieceIndex);
+        appendEvent(movePieceIndex, targetPieceIndex);
 
         break;
       case 1:
         if (data.move === -1) {
-          moveToStartPosEvent();
+          console.log("data.selectPiece : " + data.selectPiece);
+          moveToStartPosEvent(data.selectPiece, data.userId);
         } else {
-          moveToPrevPosEvent();
+          // moveToPrevPosEvent();
         }
         break;
     }
 
     if (isResultEmpty) {
       setTimeout(() => {
+        // setRunEventCallback(true);
         turnEnd();
       }, 1000);
       return;
@@ -150,11 +160,11 @@ const EventCard = () => {
     appendAToB(curUserId, A, B);
   }
 
-  function moveToPrevPosEvent() {
+  function moveToPrevPosEvent(pieceIdList: Array<number>, userId: string) {
     // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
     // const pieceId = pieceList[movePieceIndex].pieceId;
 
-    console.log("현재 말 index: " + movePieceIndex);
+    // console.log("현재 말 index: " + movePieceIndex);
     // // Array<number> 형식으로 맞춰주기.
     // const pieceIdList = [pieceId];
     // const movePath = [piecePrevPos];
@@ -162,7 +172,7 @@ const EventCard = () => {
 
     // 만약 이전 위치가 시작전인 경우
     if (piecePrevPos == -1) {
-      moveToStartPosEvent();
+      moveToStartPosEvent(pieceIdList, userId);
       return;
     }
 
@@ -171,174 +181,235 @@ const EventCard = () => {
     }, 1000);
   }
 
-  function moveToStartPosEvent() {
-    // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기.
-    const pieceId = pieceList[movePieceIndex].pieceId;
-    const pieceType = pieceList[movePieceIndex].pieceType;
+  function moveToStartPosEvent(pieceIdList: Array<number>, userId: string) {
+    // userId, 말 정보, 이동위치move 모두 recoil에서 받아오기
+    let index = -1;
 
-    // const targetPiece = {curUserId, pieceId, pieceType, "InBoard", }
+    pieceIdList.forEach((id) => {
+      const idx = pieceList.findIndex(
+        (p) => p.userId === userId && p.pieceId === id
+      );
+
+      if (idx !== -1) {
+        index = idx;
+      }
+    });
+
+    if (index === -1) {
+      console.log(pieceIdList, pieceList);
+      throw Error("시작점으로 되돌릴 말을 찾지 못했습니다");
+    }
+
+    console.log("처음으로 되돌리기", pieceIdList);
+    console.log("처음으로 되돌릴 index", index);
+    console.log("처음으로 되돌릴 piece의 정보", pieceList[index]);
+
     const latestPieceList = pieceList;
-    const targetPiece = latestPieceList[movePieceIndex];
+    const targetPiece = latestPieceList[index];
     const appendedPieceList = [
       ...targetPiece.appendArray,
       latestPieceList[movePieceIndex],
     ].map((p) => resetPieceState(p));
 
     let newArr = [...latestPieceList];
-    newArr.splice(movePieceIndex, 1);
+    newArr.splice(index, 1);
     newArr = newArr.concat(appendedPieceList);
+
+    // console.log("reset result", newArr);
     setPieceList(newArr);
   }
 
   useEffect(() => {
     {
-      if (eventIndex === -1) console.log("이벤트카드 숨기기");
-      else console.log(eventIndex + " :번 이벤트 시작!");
+      // if (eventIndex === -1) console.log("이벤트카드 숨기기");
+      // else console.log(eventIndex + " :번 이벤트 시작!");
       showEventPoster(eventIndex);
     }
   }, [eventIndex]);
 
-  const showEventPoster = (index: number) => {
-    // setEventIndex(index);
-    // console.log("이벤트 실행!");
+  useEffect(() => {
+    // console.log("movePieceIndex 확인! : " + movePieceIndex);
+    // console.log("curUserId 확인! : " + curUserId);
+  }, [movePieceIndex]);
 
-    try {
-      switch (index) {
-        case 0:
-          //턴 돌리기 호출
-          hideEventCard(() => {
-            if (isResultEmpty) {
-              turnEnd();
-              return;
-            }
-            selectPieceStart();
-            return;
-          });
-          return;
-        case 1:
-          // 윷 던지기 호출
-          hideEventCard(() => {
-            throwYut();
-          });
-          break;
-        case 2:
-          // 말 업기
-          console.log("말 업기 실행 ");
-          hideEventCard(() => {
-            // 현재 차례가 자기인 경우의 플레이어만 소켓 통신 요청 보냄.
-            if (myUserInfo.userId === nowTurnPlayerId) {
-              // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
-              const pieceIdList = [pieceList[movePieceIndex].pieceId];
-              const nowPosition = pieceList[movePieceIndex].position;
+  const showEventPoster = useRecoilCallback(
+    ({ snapshot }) =>
+      async (index: number) => {
+        // setEventIndex(index);
+        // console.log("이벤트 실행!");
+        const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const latestSelectedPieceIndex = await snapshot.getPromise(
+          SelectedPieceIndex
+        );
 
-              let eventType;
-              if (index === 2) eventType = 0;
-              else eventType = 1;
+        const latestNowTurnPlayerId = await snapshot.getPromise(
+          NowTurnPlayerIdState
+        );
+        const latestMyInfo = await snapshot.getPromise(UserInfoState);
 
-              console.log(
-                roomCode +
-                  " " +
-                  nowTurnPlayerId +
-                  " " + // recoil 전역변수
-                  pieceIdList +
-                  " " +
-                  nowPosition +
-                  " " +
-                  eventType +
-                  " " +
-                  piecePrevPos
-              );
+        // console.log("event card");
+        // console.log("curUserId 확인! : " + curUserId);
+        // console.log("현재 선택된 말 index", latestSelectedPieceIndex);
+        // console.log(
+        //   "현재 차례인 말",
+        //   latestPieceList[latestSelectedPieceIndex]
+        // );
 
-              // 시작안한 말이 없다면 꽝으로 치환.
-              const pieceIdx = pieceList.findIndex((piece) => {
-                return (
-                  piece.userId === curUserId && piece.state === "NotStarted"
-                );
-              });
-              if (pieceIdx === -1) {
-                setTimeout(() => {
-                  setEventIndex(0);
-                }, 2000);
+        try {
+          switch (index) {
+            // 꽝
+            case 0:
+              //턴 돌리기 호출
+              hideEventCard(() => {
+                if (isResultEmpty) {
+                  console.log("꽝, turn end");
+                  turnEnd();
+                  return;
+                }
+                selectPieceStart();
                 return;
-              }
+              });
+              return;
+            case 1:
+              // 윷 던지기 호출
+              hideEventCard(() => {
+                throwYut();
+              });
+              break;
+            case 2:
+              // 말 업기
+              console.log("말 업기 실행 ");
+              hideEventCard(() => {
+                // 현재 차례가 자기인 경우의 플레이어만 소켓 통신 요청 보냄.
+                // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
+                const pieceIdList = [
+                  latestPieceList[latestSelectedPieceIndex].pieceId,
+                ];
+                const nowPosition =
+                  latestPieceList[latestSelectedPieceIndex].position;
 
-              sendEvent(
-                "/game/event/result",
-                {},
-                {
-                  roomCode: roomCode,
-                  userId: nowTurnPlayerId, // recoil 전역변수
-                  selectPiece: pieceIdList,
-                  plateNum: nowPosition,
-                  event: eventType,
-                  //prevPosition: -1,
-                  prevPosition: piecePrevPos,
+                let eventType;
+                if (index === 2) eventType = 0;
+                else eventType = 1;
+
+                // console.log(
+                //   "roomCode: " + roomCode,
+                //   " latestNowTurnPlayerId: " +
+                //     latestNowTurnPlayerId +
+                //     " pieceIdList: " +
+                //     pieceIdList,
+                //   " nowPosition: " + nowPosition,
+                //   " eventType: " + eventType,
+                //   " piecePrevPos: " + piecePrevPos
+                // );
+
+                // 시작안한 말이 없다면 꽝으로 치환.
+                const pieceIdx = latestPieceList.findIndex((piece) => {
+                  return (
+                    piece.userId === latestNowTurnPlayerId &&
+                    piece.state === "NotStarted"
+                  );
+                });
+                if (pieceIdx === -1) {
+                  setTimeout(() => {
+                    setEventIndex(0);
+                    return;
+                    // console.log("yut reulst is Empty? : ", isResultEmpty);
+                    // if (isResultEmpty) {
+                    //   turnEnd();
+                    //   return;
+                    // }
+                  }, 2000);
                 }
-              );
-            }
-            // appendEvent();
-          });
-          break;
-        case 3:
-          hideEventCard(() => {
-            if (myUserInfo.userId === nowTurnPlayerId) {
-              // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
-              const pieceIdList = [pieceList[movePieceIndex].pieceId];
 
-              const nowPosition = pieceList[movePieceIndex].position;
+                // console.log("game event result 보내기");
 
-              let eventType;
-              eventType = 1;
-
-              sendEvent(
-                "/game/event/result",
-                {},
-                {
-                  roomCode: roomCode,
-                  userId: nowTurnPlayerId, // recoil 전역변수
-                  selectPiece: pieceIdList,
-                  plateNum: nowPosition,
-                  event: eventType,
-                  prevPosition: piecePrevPos,
+                if (latestMyInfo.userId === latestNowTurnPlayerId) {
+                  sendEvent(
+                    "/game/event/result",
+                    {},
+                    {
+                      roomCode: roomCode,
+                      userId: latestNowTurnPlayerId, // recoil 전역변수
+                      selectPiece: pieceIdList,
+                      plateNum: nowPosition,
+                      event: eventType,
+                      //prevPosition: -1,
+                      prevPosition: piecePrevPos,
+                    }
+                  );
                 }
-              );
-            }
-            // moveToPrevPosEvent();
-          });
-          break;
-        case 4:
-          // 맨 처음 위치로 이동
-          hideEventCard(() => {
-            if (myUserInfo.userId === nowTurnPlayerId) {
-              // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
-              const pieceIdList = [pieceList[movePieceIndex].pieceId];
+                // appendEvent();
+              }); //end of hideEventCard
+              break;
+            case 3:
+              hideEventCard(() => {
+                if (latestMyInfo.userId === latestNowTurnPlayerId) {
+                  // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
+                  const pieceIdList = [
+                    latestPieceList[latestSelectedPieceIndex].pieceId,
+                  ];
 
-              const nowPosition = pieceList[movePieceIndex].position;
+                  const nowPosition =
+                    latestPieceList[latestSelectedPieceIndex].position;
 
-              let eventType;
-              eventType = 1;
+                  let eventType;
+                  eventType = 1;
 
-              sendEvent(
-                "/game/event/result",
-                {},
-                {
-                  roomCode: roomCode,
-                  userId: nowTurnPlayerId, // recoil 전역변수
-                  selectPiece: pieceIdList,
-                  plateNum: nowPosition,
-                  event: eventType,
-                  prevPosition: -1,
+                  sendEvent(
+                    "/game/event/result",
+                    {},
+                    {
+                      roomCode: roomCode,
+                      userId: latestNowTurnPlayerId, // recoil 전역변수
+                      selectPiece: pieceIdList,
+                      plateNum: nowPosition,
+                      event: eventType,
+                      prevPosition: piecePrevPos,
+                    }
+                  );
                 }
-              );
-            }
-            // moveToStartPosEvent();
-          });
-          break;
-      }
-    } catch (err) {
-      throw err;
-    }
-  };
+                // moveToPrevPosEvent();
+              });
+              break;
+            case 4:
+              // 맨 처음 위치로 이동
+              hideEventCard(() => {
+                if (latestMyInfo.userId === latestNowTurnPlayerId) {
+                  // 말이 1개인 경우만 먼저 처리. 말이 이미 업힌 경우는 나중에 해볼것!
+                  const pieceIdList = [
+                    latestPieceList[latestSelectedPieceIndex].pieceId,
+                  ];
+
+                  const nowPosition =
+                    latestPieceList[latestSelectedPieceIndex].position;
+
+                  let eventType;
+                  eventType = 1;
+
+                  sendEvent(
+                    "/game/event/result",
+                    {},
+                    {
+                      roomCode: roomCode,
+                      userId: latestNowTurnPlayerId, // recoil 전역변수
+                      selectPiece: pieceIdList,
+                      plateNum: nowPosition,
+                      event: eventType,
+                      prevPosition: -1,
+                    }
+                  );
+                }
+                // moveToStartPosEvent();
+              });
+              break;
+          }
+        } catch (err) {
+          throw err;
+        }
+      },
+    []
+  );
 
   return <>{getEventByIndex(eventIndex)}</>;
 };

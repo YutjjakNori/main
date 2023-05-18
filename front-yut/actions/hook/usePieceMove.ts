@@ -296,9 +296,11 @@ const usePieceMove = () => {
 
         const fromIdx = latestMovePieceIndex; //움직인 말
         const toIdx = latestPieceList.findIndex(
-          (p) =>
+          (p, idx) =>
+            idx !== fromIdx &&
             p.userId === latestNowTurnPlayerId &&
-            p.pieceId === samePositionIdList[0]
+            (p.pieceId === samePositionIdList[0] ||
+              p.pieceId === samePositionIdList[1])
         ); //가만히 있던 말
         appendAToB(latestNowTurnPlayerId, fromIdx, toIdx);
         return;
@@ -318,6 +320,10 @@ const usePieceMove = () => {
         let basePiece = latestPieceList[movePieceIndex];
         let targetPiece = latestPieceList[targetPieceIndex];
 
+        // console.log("append a to b");
+        // console.log("move piece index", movePieceIndex);
+        // console.log("target piece", targetPieceIndex);
+
         if (
           basePiece.state === "NotStarted" &&
           targetPiece.state === "NotStarted"
@@ -327,19 +333,22 @@ const usePieceMove = () => {
           );
         }
 
-        // if (
-        //   basePiece.state === "InBoard" &&
-        //   targetPiece.state === "NotStarted"
-        // ) {
-        //   const tmpIndex = movePieceIndex;
-        //   const tmpPiece = basePiece;
+        if (
+          basePiece.state === "InBoard" &&
+          targetPiece.state === "NotStarted"
+        ) {
+          const tmpIndex = movePieceIndex;
+          const tmpPiece = basePiece;
 
-        //   movePieceIndex = targetPieceIndex;
-        //   basePiece = targetPiece;
+          movePieceIndex = targetPieceIndex;
+          basePiece = targetPiece;
 
-        //   targetPieceIndex = tmpIndex;
-        //   targetPiece = tmpPiece;
-        // }
+          targetPieceIndex = tmpIndex;
+          targetPiece = tmpPiece;
+        }
+
+        // console.log("move piece index", movePieceIndex);
+        // console.log("target piece", targetPieceIndex);
 
         //target에 move를 append함
         let newArr = latestPieceList.map((p, idx) => {
@@ -354,6 +363,8 @@ const usePieceMove = () => {
         });
 
         newArr.splice(movePieceIndex, 1);
+        // console.log("append result", newArr);
+
         setPieceList(newArr);
       },
     []
@@ -450,7 +461,7 @@ const usePieceMove = () => {
   }, []);
 
   const getEvent = () => {
-    console.log(myUserInfo.userId + ", " + nowTurnPlayerId);
+    // console.log(myUserInfo.userId + ", " + nowTurnPlayerId);
     if (myUserInfo.userId === nowTurnPlayerId) {
       sendEvent(
         "/game/event",
