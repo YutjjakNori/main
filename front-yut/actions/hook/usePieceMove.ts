@@ -16,6 +16,7 @@ import useYutThrow from "./useYutThrow";
 import { ThrowResultType } from "@/types/game/YutThrowTypes";
 import useGameAction from "./useGameAction";
 import { PieceMoveType } from "@/types/game/YutPieceTypes";
+import audioModule from "@/utils/audioModule";
 
 const animationSeconds = 0.5;
 
@@ -121,6 +122,9 @@ const usePieceMove = () => {
     ({ snapshot }) =>
       async (movePieceIndex: number, pointIndex: number) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
+        const filePath = "/audio/movePlayer.mp3";
+        const volume = 0.3;
+        audioModule(filePath, volume);
 
         const list = latestPieceList.map((p, idx) => {
           if (movePieceIndex !== idx) return p;
