@@ -202,8 +202,8 @@ public class RoomService {
 //                if(!(eventPoint == 0 || eventPoint == 5 || eventPoint == 10 || eventPoint == 15 || eventPoint == 22 || eventPoint == 27)) {
 //                    event.add(eventPoint);
 //                }
-                event.add(12);
-                event.add(13);
+                event.add(3);
+                event.add(9);
             }
             game.setEvent(event);
         }
