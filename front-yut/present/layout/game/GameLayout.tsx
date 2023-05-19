@@ -42,7 +42,7 @@ const musicBtnInfo: CircleButtonProps = {
   color: "#575757",
   backgroundColor: "transparent",
   borderColor: "black",
-  margin: "1rem",
+  margin: "0",
 };
 
 const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
@@ -143,7 +143,7 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
             <style.ButtonLayout>
               <style.BgmBtnContainer onClick={userInteract}>
                 <BGMAudioControl />
-                <style.BgmBtnContainer2 onClick={bgmMuteToggle}>
+                <style.BgmBtnContainer onClick={bgmMuteToggle}>
                   <CircleButton
                     Icon={bgmMute ? Mute : UnMute}
                     fontSize={musicBtnInfo.fontSize}
@@ -153,7 +153,7 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
                     borderColor={musicBtnInfo.borderColor}
                     margin={musicBtnInfo.margin}
                   />
-                </style.BgmBtnContainer2>
+                </style.BgmBtnContainer>
               </style.BgmBtnContainer>
               <style.ButtonContainer
                 onClick={() => {

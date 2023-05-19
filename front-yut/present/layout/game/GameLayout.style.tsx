@@ -87,30 +87,28 @@ const RightLayout = styled.div`
 
 const ButtonContainer = styled.div`
   display: block;
-  width: 40%;
+  width: 65%;
   bottom: 30px;
   right: 45px;
   align-items: center;
   text-align: center;
 `;
 
-const BgmBtnContainer = styled.div``; // BGMAudio 컴포넌트 실행을 위한 컨테이너
+const BgmBtnContainer = styled.div`
+  width: 2.7rem;
+`; // BGMAudio 컴포넌트 실행을 위한 컨테이너
 
-const BgmBtnContainer2 = styled.div`
-  width: 2vw;
-  right: 0;
-  /* position: relative; */
-  /* top: 12%; */
-  /* right: 6%; */
-`;
 const ButtonLayout = styled.div`
-  display: grid;
-  grid-template-columns: auto 2fr;
-  /* justify-content: center; */
-  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   gap: 1rem;
-  padding-left: 0.5rem;
-  /* right: 0; */
+  position: relative;
+  right: 0;
+  width: 65%;
+  gap: 1rem;
+  padding-left: 1rem;
 `;
 
 export {
@@ -121,6 +119,5 @@ export {
   ChatContainer,
   RightLayout,
   BgmBtnContainer,
-  BgmBtnContainer2,
   ButtonLayout,
 };
