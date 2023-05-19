@@ -440,7 +440,6 @@ const usePieceMove = () => {
         newArr = newArr.concat(appendedPieceList);
         setPieceList(newArr);
 
-        //TODO : 말 잡기 효과음
         const filePath = "/audio/catchPiece.mp3";
         const volume = 0.5;
         audioModule(filePath, volume);
