@@ -1,0 +1,53 @@
+{/* Colors.mdx */}
+
+import { Meta, ColorPalette, ColorItem } from "@storybook/blocks";
+
+<Meta title="Colors" />
+
+<ColorPalette>
+  <ColorItem
+    title="글자 색상"
+    colors={{
+      "dark-black": "#000000",
+      "black": "#232323",
+      "light-black": "#575757",
+      "white": "#fff",
+      "chat-mine" : "#B778FF",
+      "chat-system" : "#FF9436"
+    }}
+  />
+  <ColorItem
+    title="대기 화면"
+    colors={{
+      "background": "#F0F6FF",
+      "not-ready": "#F07F7F",
+      "ready": "#6EBA91",
+      "exit": "#EA857C",
+      "button-unactive" : "#CBCBCB"
+    }}
+  />
+  <ColorItem
+    title="플레이어 색상"
+    subtitle="대기 화면, 게임 화면에서 사용"
+    colors={{
+      "player1": "#825A92",
+      "player2": "#F07F7F",
+      "player3": "#9C9F84",
+      "player4": "#D8C6AD",
+    }}
+  />
+
+{" "}
+
+<ColorItem
+  title="게임 화면"
+  subtitle="윷판에서 사용"
+  colors={{
+    white: "#FAFAFA",
+    black: "#575757",
+    "dark-blue": "#5C6E91",
+    "light-blue": "#829DCF",
+  }}
+/>
+
+</ColorPalette>
