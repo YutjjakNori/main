@@ -1,11 +1,6 @@
 package com.ssafy.yut.service;
 
-import com.ssafy.yut.dto.EventDto;
-import com.ssafy.yut.dto.GameDto;
-import com.ssafy.yut.dto.PieceDto;
-import com.ssafy.yut.dto.RequestDto;
-import com.ssafy.yut.dto.UserDto;
-import com.ssafy.yut.dto.YutDto;
+import com.ssafy.yut.dto.*;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
 import com.ssafy.yut.util.RedisMapper;
@@ -18,14 +13,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +29,7 @@ import java.util.stream.Collectors;
 public class GameService {
 
     private final RedisMapper redisMapper;
-    private final String TOPIC = "game", GROUP_ID = "yut";
+    private final String TOPIC = "game";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 

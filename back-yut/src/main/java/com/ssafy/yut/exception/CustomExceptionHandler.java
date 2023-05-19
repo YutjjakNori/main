@@ -4,6 +4,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+/**
+ * 예외처리 핸들러
+ *
+ * @author 이준
+ */
 @ControllerAdvice
 public class CustomExceptionHandler {
 

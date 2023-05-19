@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private static final String TOPIC = "chat", GROUP_ID = "yut";
+    private static final String TOPIC = "chat";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 

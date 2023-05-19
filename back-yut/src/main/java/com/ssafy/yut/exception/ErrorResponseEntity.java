@@ -1,13 +1,14 @@
 package com.ssafy.yut.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * 예외 응답
+ *
+ * @author 이준
+ */
 @Slf4j
 @Getter
 @Setter
