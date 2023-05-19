@@ -1,0 +1,3 @@
+[submodule "back-yut/yutconfig"]
+	path = back-yut/yutconfig
+	url = https://lab.ssafy.com/soyeon_9605/yutconfig.git
