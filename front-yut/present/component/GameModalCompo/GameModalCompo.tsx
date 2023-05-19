@@ -55,9 +55,10 @@ const GameModalCompo = ({ data }: GameModalCompoProps) => {
           </>
         );
       case "End":
-        const filePath = "/audio/victory.mp3";
-        const volume = 0.3;
+        const filePath = "/audio/victory1.mp3";
+        const volume = 1;
         audioModule(filePath, volume);
+
         const { winnerPlayerNickname } = data as GameEndModalInfo;
         return (
           <>

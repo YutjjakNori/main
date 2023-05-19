@@ -40,7 +40,7 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
   const requestToLeave = (data: any) => {
     const exitUserId = data.userId;
     const filePath = "/audio/userOutput.mp3";
-    const volume = 1;
+    const volume = 0.6;
     audioModule(filePath, volume);
 
     printMessage(

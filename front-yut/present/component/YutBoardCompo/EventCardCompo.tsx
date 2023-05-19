@@ -229,7 +229,7 @@ const EventCard = () => {
         );
         const latestMyInfo = await snapshot.getPromise(UserInfoState);
         const filePath = "/audio/eventOpen.mp3";
-        const volume = 1;
+        const volume = 0.4;
         audioModule(filePath, volume);
         try {
           switch (index) {

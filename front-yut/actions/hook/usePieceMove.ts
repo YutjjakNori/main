@@ -138,7 +138,7 @@ const usePieceMove = () => {
       async (movePieceIndex: number, pointIndex: number) => {
         const latestPieceList = await snapshot.getPromise(YutPieceListState);
         const filePath = "/audio/movePlayer.mp3";
-        const volume = 0.3;
+        const volume = 0.4;
         audioModule(filePath, volume);
 
         const list = latestPieceList.map((p, idx) => {
@@ -439,6 +439,11 @@ const usePieceMove = () => {
         newArr.splice(targetPieceIndex, 1);
         newArr = newArr.concat(appendedPieceList);
         setPieceList(newArr);
+
+        //TODO : 말 잡기 효과음
+        const filePath = "/audio/catchPiece.mp3";
+        const volume = 0.5;
+        audioModule(filePath, volume);
       },
     []
   );
