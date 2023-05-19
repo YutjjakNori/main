@@ -1,4 +1,4 @@
-![윷짝놀이.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%EC%A7%9D%EB%86%80%EC%9D%B4.png)
+[윷짝놀이.png](/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%EC%A7%9D%EB%86%80%EC%9D%B4.png)
 
 ## ✨ 프로젝트 진행 기간
 
@@ -8,7 +8,7 @@ SSAFY 8기 2학기 자율 프로젝트 - **윷짝놀이**
 
 ## ✨ 팀원 소개
 
-[팀원소개.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a4c103b4-b1b2-4331-b727-ba1b79a3b8ac/%ED%8C%80%EC%9B%90%EC%86%8C%EA%B0%9C.png)
+[팀원소개.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%ED%8C%80%EC%9B%90%EC%86%8C%EA%B0%9C.png)
 
 ## ✨ 기획 배경
 
@@ -74,7 +74,7 @@ SSAFY 8기 2학기 자율 프로젝트 - **윷짝놀이**
 
 WebSocket 위에서 동작하는 STOMP를 사용하여 메세지 형식을 정의하지 않고 발행(pub)과 구독(sub)을 통해 메세지 송수신이 가능하기 때문에 편리하고 정확한 통신 구축이 가능하다.
 
-[서버 통신 구조.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ad0f3d59-1052-4239-8429-8dfa70a4addf/%EC%84%9C%EB%B2%84_%ED%86%B5%EC%8B%A0_%EA%B5%AC%EC%A1%B0.png)
+[서버 통신 구조.png](/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%84%9C%EB%B2%84%20%ED%86%B5%EC%8B%A0%20%EA%B5%AC%EC%A1%B0.png)
 
 실시간으로 정보를 주고 받는 게임은 정확하게 정보를 특정한 사용자들에게 전달하고 받는 것이 중요하기 때문에 STOMP를 사용합니다.
 
@@ -84,7 +84,7 @@ Kafka는 메시지 큐 방식 기반으로 분산 메시징 시스템이다.
 많은 양의 데이터를 partitioning하는 것에 초점을 맞춘 시스템이라 실시간으로 들어오는 데이터를 빠르게 처리할 수 있다.
 하나의 메시지는 "topic"으로 분류 -> 하나의 토픽은 다수 개의 "partition"으로 분류된다.
 
-[kafka.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2443dae9-8581-4253-956f-0a5334e3ce6e/kafka.png)
+[kafka.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/kafka.png)
 
 ### - 게임의 실시간의 접근 시간 단축을 위한 Redis 사용
 
@@ -100,22 +100,22 @@ Redis는 성능이 뛰어난 인 메모리 캐시를 생성하여 엑세스 지�
 
 ### 1️⃣ 아키텍처 구조
 
-[YutJjakNori.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/a009ab87-5fbe-495b-8e14-1249633940e7/YutJjakNori.png)
+[아키텍처.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98.png)
 
 ### 2️⃣ 서비스 화면
 
 **대기 화면 및 준비 하기**
 
-[대기화면.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/23559b4e-4bde-4c2b-acc5-428ae1212c5b/Untitled.png)
+[대기화면.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EB%8C%80%EA%B8%B0%ED%99%94%EB%A9%B4.png)
 
-[준비하기.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1c799c35-af24-49b4-85ad-b6fbf1d3d399/Untitled.png)
+[준비하기.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%A4%80%EB%B9%84%ED%99%94%EB%A9%B4.png)
 
 **게임 시작**
 
-[게임시작.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2f4fc32d-34af-468f-90f1-40179ea239b4/Untitled.png)
+[게임시작.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EA%B2%8C%EC%9E%84%EC%8B%9C%EC%9E%91.png)
 
 **윷 던지기 및 말 이동**
 
-[윷 던지기 및 말 이동 1.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/945d99be-9a92-469a-80a4-89181a82e0fb/Untitled.png)
+[윷 던지기 및 말 이동 1.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%20%EB%8D%98%EC%A7%80%EA%B8%B0%20%EB%B0%8F%20%EB%A7%90%20%EC%9D%B4%EB%8F%99%201.png)
 
-[윷 던지기 및 말 이동 1.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6ae42446-7c0a-401c-9616-fb838dcd2ee1/Untitled.png)
+[윷 던지기 및 말 이동 2.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%20%EB%8D%98%EC%A7%80%EA%B8%B0%20%EB%B0%8F%20%EB%A7%90%20%EC%9D%B4%EB%8F%99%202.png)
