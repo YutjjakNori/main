@@ -13,7 +13,6 @@ import java.util.List;
  *
  * @author 김정은
  */
-
 public class RoomDto extends RequestDto{
 
     /**

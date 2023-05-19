@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 김정은
  * @author 이준
  */
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/room")

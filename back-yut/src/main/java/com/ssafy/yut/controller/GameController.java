@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author 김정은
  * @author 이준
+ * @author 박소연
  */
 @RestController
 @RequiredArgsConstructor
