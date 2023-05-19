@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
  *
  * @author 김정은
  */
-
 public class ChatDto {
+
     /**
      * 채팅 요청 메시지
      */

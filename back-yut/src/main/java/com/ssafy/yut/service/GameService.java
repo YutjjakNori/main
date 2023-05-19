@@ -1,11 +1,6 @@
 package com.ssafy.yut.service;
 
-import com.ssafy.yut.dto.EventDto;
-import com.ssafy.yut.dto.GameDto;
-import com.ssafy.yut.dto.PieceDto;
-import com.ssafy.yut.dto.RequestDto;
-import com.ssafy.yut.dto.UserDto;
-import com.ssafy.yut.dto.YutDto;
+import com.ssafy.yut.dto.*;
 import com.ssafy.yut.entity.Game;
 import com.ssafy.yut.entity.GameUser;
 import com.ssafy.yut.util.RedisMapper;
@@ -18,14 +13,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +29,7 @@ import java.util.stream.Collectors;
 public class GameService {
 
     private final RedisMapper redisMapper;
-    private final String TOPIC = "game", GROUP_ID = "yut";
+    private final String TOPIC = "game";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 
@@ -51,8 +39,7 @@ public class GameService {
      * @param request 게임 시작
      */
     public void startGame(GameDto.Request request, Message<?> message) {
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
-        String sessionId = accessor.getSessionId();
+        String sessionId = StompHeaderAccessor.wrap(message).getSessionId();
         Map<String, Object> response = new HashMap<>();
         String roomCode = request.getRoomCode();
         String key = "game:" + roomCode;
@@ -161,18 +148,22 @@ public class GameService {
      */
     public void actPiece(PieceDto.Request request) {
         // 1번 0, 1, 2 | 2번 3, 4, 5 | 3번 6, 7, 8 | 4번 9, 10, 11
-        // type : 1 말 이동, 2 말 잡기, 3 말 합치기, 4 말 동나기.
         // 말 상태
         Map<String, Object> response = new HashMap<>();
         PieceDto.Response pieceResponse;
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("userId", request.getUserId());
+
+        // 이동 경로
         List<Integer> move = new ArrayList<>();
+        // type : 1 말 이동, 2 말 잡기, 3 말 합치기, 4 말 동나기.
         int type = 1;
 
         String roomCode = request.getRoomCode();
         log.info("Piece Move From : " + roomCode);
         String key = "game:" + roomCode;
+
+        // request
         int direction = request.getDirection();
         int plateNum = request.getPlateNum();
         int yut = request.getYut();
@@ -189,6 +180,7 @@ public class GameService {
         // 선택한 말이 있는 위치에서 말 지우기
         List<Integer> movePieces = plate.remove(plateNum);
 
+        // 모서리에서 방향 선택하기
         switch (direction) {
             // 순행
             case 1:
@@ -477,6 +469,7 @@ public class GameService {
         GameUser gameUser = GameUser.builder().userId(request.getUserId()).build();
         int turnUserIndex = gameUsers.indexOf(gameUser);
         gameUser = gameUsers.get(turnUserIndex);    // 해당 turn의 유저
+
         List<Integer> resultPieceRedis = new ArrayList<>();   // 반환값 : selectPiece
         List<Integer> resultPieceKafka = new ArrayList<>();   // 반환값 : selectPiece
         int move = -1;  // 반환값 : move (이동 위치)
@@ -524,8 +517,6 @@ public class GameService {
                 // 변경 데이터 반영하기
                 gameUsers.set(turnUserIndex, gameUser);
                 game.setUsers(gameUsers);
-                // 처음으로 이동 (Kafka ver)
-                resultPieceKafka = request.getSelectPiece();
             } else {
                 // 말이 출발했던 자리로 이동하는 경우
 
@@ -536,9 +527,9 @@ public class GameService {
                 move = request.getPrevPosition();
                 // 출발 했던 자리로 이동 (Redis ver)
                 game.getPlate().put(move, resultPieceRedis);
-                // 출발 했던 자리로 이동 (Kafka ver)
-                resultPieceKafka = request.getSelectPiece();
             }
+            // 처음으로 이동 (Kafka ver) || 출발 했던 자리로 이동 (Kafka ver)
+            resultPieceKafka = request.getSelectPiece();
         }
 
         // 변경 데이터 redis로 저장하기

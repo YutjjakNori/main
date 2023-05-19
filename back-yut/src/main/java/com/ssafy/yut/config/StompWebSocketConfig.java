@@ -16,7 +16,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * @author 이준
  * @author 김정은
  */
-
 @Slf4j
 @RequiredArgsConstructor
 @Configuration

@@ -16,13 +16,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 대기방 관련 Service
@@ -37,7 +31,7 @@ import java.util.Set;
 public class RoomService {
 
     private final RedisMapper redisMapper;
-    private final String TOPIC_ROOM = "room", TOPIC_CHAT = "chat";
+    private final String TOPIC_ROOM = "room";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessagingTemplate template;
     private final int RANDOM_LEN = 5;
@@ -57,9 +51,8 @@ public class RoomService {
      * 방 입장
      *
      * @param roomDto
-     * @return
      */
-    public boolean enterRoom(RoomDto.RoomCode roomDto) {
+    public void enterRoom(RoomDto.RoomCode roomDto) {
         Game room = redisMapper.getData("game:"+roomDto.getRoomCode(), Game.class);
 
         // 방이 없을 때
@@ -77,10 +70,7 @@ public class RoomService {
             else if(room.getUsers().size() == 4) {
                 throw new CustomException(ErrorCode.FULL_ROOM);
             }
-
         }
-
-        return true;
     }
 
     /**
@@ -101,7 +91,11 @@ public class RoomService {
         pieces.add(-1);
         pieces.add(-1);
 
-        GameUser gameUser = GameUser.builder().userId(userId).nickName(nickName).pieces(pieces).build();
+        GameUser gameUser = GameUser.builder()
+                .userId(userId)
+                .nickName(nickName)
+                .pieces(pieces)
+                .build();
 
         Game game = redisMapper.getData(gameKey, Game.class);
         if (game == null && !roomCode.equals("")) {
@@ -135,7 +129,6 @@ public class RoomService {
             redisMapper.saveData(userKey, user);
             redisMapper.saveData(gameKey, game);
         }
-        // TODO: 2023/05/06 입장 요청을 그냥 보낼 경우
         else if(game == null || game.getUsers().size() == 4 || roomCode.equals("")) {
             //에러 처리
             return;
@@ -198,12 +191,10 @@ public class RoomService {
             game.setGameStatus("start");
             Set<Integer> event = new HashSet<>();
             while(event.size() < 2) {
-//                int eventPoint = (int)((Math.random()*28)+1);
-//                if(!(eventPoint == 0 || eventPoint == 5 || eventPoint == 10 || eventPoint == 15 || eventPoint == 22 || eventPoint == 27)) {
-//                    event.add(eventPoint);
-//                }
-                event.add(3);
-                event.add(9);
+                int eventPoint = (int)((Math.random()*28)+1);
+                if(!(eventPoint == 0 || eventPoint == 5 || eventPoint == 10 || eventPoint == 15 || eventPoint == 22 || eventPoint == 27)) {
+                    event.add(eventPoint);
+                }
             }
             game.setEvent(event);
         }
