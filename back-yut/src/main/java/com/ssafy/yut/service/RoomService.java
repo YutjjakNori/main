@@ -125,7 +125,6 @@ public class RoomService {
             redisMapper.saveData(userKey, user);
             redisMapper.saveData(gameKey, game);
         }
-        // TODO: 2023/05/06 입장 요청을 그냥 보낼 경우
         else if(game == null || game.getUsers().size() == 4 || roomCode.equals("")) {
             //에러 처리
             return;
