@@ -19,11 +19,31 @@ import { MessageLogProps, messageLogState } from "@/store/ChatStore";
 import { Member, MemberListState } from "@/store/MemberStore";
 import { stompClient } from "@/actions/socket-api/socketInstance";
 import router from "next/router";
+import { BgmBtnContainer } from "../ready/ReadyLayout.style";
+import BGMAudioControl from "@/present/common/Audio/BGMAudioControl";
+import CircleButton, {
+  CircleButtonProps,
+} from "@/present/common/Button/Circle/CircleButton";
+import { BgmMuteState, UserInteractionState } from "@/store/AudioStore";
+
+import UnMute from "@/public/icon/music/UnMute.svg";
+import Mute from "@/public/icon/music/Mute.svg";
 
 interface GameLayoutProps {
   userList: Array<PlayerCompoProps>;
   eventPositionList: Array<number>;
 }
+
+// bgm버튼
+const musicBtnInfo: CircleButtonProps = {
+  Icon: "",
+  fontSize: "",
+  text: "",
+  color: "#575757",
+  backgroundColor: "transparent",
+  borderColor: "black",
+  margin: "1rem",
+};
 
 const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
   let simpleMemberList: Member[] = [];
@@ -78,6 +98,20 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
       router.push("/lobby");
     }
   };
+
+  // BGM 실행
+  const [userInteraction, setUserInteraction] =
+    useRecoilState(UserInteractionState);
+
+  const userInteract = () => {
+    setUserInteraction(!userInteraction);
+  };
+
+  const [bgmMute, setBgmMute] = useRecoilState(BgmMuteState);
+  const bgmMuteToggle = () => {
+    setBgmMute(!bgmMute);
+  };
+
   return (
     <>
       <style.BackgroundImage>
@@ -106,17 +140,33 @@ const GameLayout = ({ userList, eventPositionList }: GameLayoutProps) => {
             <style.ChatContainer>
               <ChatCompo />
             </style.ChatContainer>
-            <style.ButtonContainer
-              onClick={() => {
-                handleIsExit();
-              }}
-            >
-              <RectButton
-                text={exitBtnInfo.text}
-                fontSize={exitBtnInfo.fontSize}
-                backgroundColor={exitBtnInfo.backgroundColor}
-              />
-            </style.ButtonContainer>
+            <style.ButtonLayout>
+              <style.BgmBtnContainer onClick={userInteract}>
+                <BGMAudioControl />
+                <style.BgmBtnContainer2 onClick={bgmMuteToggle}>
+                  <CircleButton
+                    Icon={bgmMute ? Mute : UnMute}
+                    fontSize={musicBtnInfo.fontSize}
+                    text={musicBtnInfo.text}
+                    color={musicBtnInfo.color}
+                    backgroundColor={musicBtnInfo.backgroundColor}
+                    borderColor={musicBtnInfo.borderColor}
+                    margin={musicBtnInfo.margin}
+                  />
+                </style.BgmBtnContainer2>
+              </style.BgmBtnContainer>
+              <style.ButtonContainer
+                onClick={() => {
+                  handleIsExit();
+                }}
+              >
+                <RectButton
+                  text={exitBtnInfo.text}
+                  fontSize={exitBtnInfo.fontSize}
+                  backgroundColor={exitBtnInfo.backgroundColor}
+                />
+              </style.ButtonContainer>
+            </style.ButtonLayout>
           </style.RightLayout>
         </div>
       </style.Container>

@@ -94,6 +94,25 @@ const ButtonContainer = styled.div`
   text-align: center;
 `;
 
+const BgmBtnContainer = styled.div``; // BGMAudio 컴포넌트 실행을 위한 컨테이너
+
+const BgmBtnContainer2 = styled.div`
+  width: 2vw;
+  right: 0;
+  /* position: relative; */
+  /* top: 12%; */
+  /* right: 6%; */
+`;
+const ButtonLayout = styled.div`
+  display: grid;
+  grid-template-columns: auto 2fr;
+  /* justify-content: center; */
+  width: 100%;
+  gap: 1rem;
+  padding-left: 0.5rem;
+  /* right: 0; */
+`;
+
 export {
   ButtonContainer,
   Container,
@@ -101,4 +120,7 @@ export {
   BackgroundImage,
   ChatContainer,
   RightLayout,
+  BgmBtnContainer,
+  BgmBtnContainer2,
+  ButtonLayout,
 };
