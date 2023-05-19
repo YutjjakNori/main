@@ -42,6 +42,13 @@ const ArrowIconCompo = ({ classStr, position }: ArrowCompoProps) => {
   const activeArrowType = useRecoilValue(ActiveCornerArrowState);
 
   useEffect(() => {
+    if (activeArrowType === "centerLeft" || activeArrowType === "centerRight") {
+      if (cornerType === "centerLeft" || cornerType === "centerRight") {
+        setActive(true);
+        return;
+      }
+    }
+
     if (cornerType === activeArrowType) {
       setActive(true);
       return;
