@@ -91,7 +91,11 @@ public class RoomService {
         pieces.add(-1);
         pieces.add(-1);
 
-        GameUser gameUser = GameUser.builder().userId(userId).nickName(nickName).pieces(pieces).build();
+        GameUser gameUser = GameUser.builder()
+                .userId(userId)
+                .nickName(nickName)
+                .pieces(pieces)
+                .build();
 
         Game game = redisMapper.getData(gameKey, Game.class);
         if (game == null && !roomCode.equals("")) {
