@@ -95,6 +95,36 @@ Redis는 성능이 뛰어난 인 메모리 캐시를 생성하여 엑세스 지�
 ## ✅ 프로젝트 파일 구조
 
 <details>
+<summary>Front-End</summary>
+<div markdown="1">
+
+```
+└─📂 actions
+    ├─📂 http-api
+    ├─📂 hook
+    ├─📂 socket-api 
+└─📂 pages
+└─📂 present
+    ├─📂 common
+    ├─📂 component
+    ├─📂 layout 
+└─📂 public
+    ├─📂 audio
+    ├─📂 fonts
+    ├─📂 icon
+    ├─📂 image
+└─📂 store
+└─📂 stories
+└─📂 styles
+    ├─📃 globals.css
+    ├─📃 theme.ts
+└─📂 types
+└─📂 utils
+```
+</div>
+</details>
+
+<details>
 <summary>Back-End</summary>
 <div markdown="1">
 
@@ -104,7 +134,7 @@ Redis는 성능이 뛰어난 인 메모리 캐시를 생성하여 엑세스 지�
     │  ├─📂 java
     │  │  └─📂 com
     │  │      └─📂 ssafy
-    │  │          └─📂 yut
+    │  │          └─📂 api
     │  │              ├─📁 config
     │  │              ├─📁 controller
     │  │              ├─📂 dto
