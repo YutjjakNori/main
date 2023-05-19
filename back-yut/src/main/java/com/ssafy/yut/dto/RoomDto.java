@@ -1,10 +1,6 @@
 package com.ssafy.yut.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,7 +9,6 @@ import java.util.List;
  *
  * @author 김정은
  */
-
 public class RoomDto extends RequestDto{
 
     /**

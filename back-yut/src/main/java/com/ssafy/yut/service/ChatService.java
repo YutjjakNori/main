@@ -13,13 +13,12 @@ import org.springframework.stereotype.Service;
  *
  * @author 김정은
  */
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ChatService {
 
-    private static final String TOPIC = "chat", GROUP_ID = "yut";
+    private static final String TOPIC = "chat";
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final SimpMessageSendingOperations template;
 

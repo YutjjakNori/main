@@ -7,11 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 대기방 관련 Controller
@@ -19,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 김정은
  * @author 이준
  */
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/room")
@@ -46,8 +41,8 @@ public class RoomController {
      * @return
      */
     @PostMapping("/entry")
-    public ResponseEntity<?> enterRoom(@RequestBody RoomDto.RoomCode roomDto) {
-        return ResponseEntity.ok(roomService.enterRoom(roomDto));
+    public void enterRoom(@RequestBody RoomDto.RoomCode roomDto) {
+        roomService.enterRoom(roomDto);
     }
 
     /**
