@@ -1,4 +1,4 @@
-[윷짝놀이.png]](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/39909086-42ad-4f35-ae5b-28ea220c4a21/Untitled.png)
+[윷짝놀이.png](https://lab.ssafy.com/s08-final/S08P31D109/-/blob/develop/exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%EC%A7%9D%EB%86%80%EC%9D%B4.png)
 
 ## ✨ 프로젝트 진행 기간
 
