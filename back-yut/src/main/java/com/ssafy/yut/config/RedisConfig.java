@@ -31,6 +31,11 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+    /**
+     * 레디스 연결 설정
+     *
+     * @return
+     */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
@@ -41,6 +46,11 @@ public class RedisConfig {
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
+    /**
+     * 레디스 템플릿 설정
+     *
+     * @return
+     */
     @Bean
     public RedisTemplate<?, ?> redisTemplate() {
         RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();

@@ -19,6 +19,12 @@ public class ErrorResponseEntity {
     private String name;
     private String status;
 
+    /**
+     * 받은 에러 코드 응답
+     *
+     * @param e
+     * @return
+     */
     public static ResponseEntity<ErrorResponseEntity> toResponseEntity(ErrorCode e) {
         return ResponseEntity
                 .status(e.getHttpStatus())
