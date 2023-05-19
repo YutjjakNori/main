@@ -125,7 +125,7 @@ const ReadyLayout = () => {
       printMessage("SYSTEM", `${member.nickName}님이 입장하셨습니다.`);
     });
     const filePath = "/audio/userInput.mp3";
-    const volume = 0.3;
+    const volume = 0.5;
     audioModule(filePath, volume);
 
     const newMemberList = [...data.users];
@@ -202,8 +202,9 @@ const ReadyLayout = () => {
   //대기 - 나가기 구독 콜백함수
   const requestToLeave = (data: any) => {
     const exitUserId = data.userId;
+
     const filePath = "/audio/userOutput.mp3";
-    const volume = 1;
+    const volume = 0.6;
     audioModule(filePath, volume);
 
     printMessage(
@@ -302,7 +303,7 @@ const ReadyLayout = () => {
       }
     );
     const filePath = "/audio/readyAudio.mp3";
-    const volume = 0.3;
+    const volume = 0.4;
     audioModule(filePath, volume);
   };
 
