@@ -161,18 +161,27 @@ Redis는 성능이 뛰어난 인 메모리 캐시를 생성하여 엑세스 지�
 
 ### 2️⃣ 서비스 화면
 
-**대기 화면 및 준비 하기**
+**방 만들기**<br/>
+![방 만들기](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EB%B0%A9%20%EB%A7%8C%EB%93%A4%EA%B8%B0.gif)
 
-![대기화면.png](./exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EB%8C%80%EA%B8%B0%ED%99%94%EB%A9%B4.png)
+**방 입장**<br/>
+![방 입장](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EB%B0%A9%20%EC%9E%85%EC%9E%A5%20%EA%B2%8C%EC%9E%84%20%EC%8B%9C%EC%9E%91.gif)
 
-![준비하기.png](./exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%A4%80%EB%B9%84%ED%99%94%EB%A9%B4.png)
+**윷 던지기 / 말 이동 (내 화면: 팝업창)**<br/>
+![윷 던지기 / 말 이동](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EC%82%AC%EC%9A%A9%EC%9E%90%201%20%EC%8B%9C%EC%A0%90%20%EC%9C%B7%20%EB%8D%98%EC%A7%80%EA%B8%B0%20%EB%A7%90%20%EC%9D%B4%EB%8F%99.gif)
 
-**게임 시작**
+**윷 던지기 / 말 이동 (상대방 화면: 팝업창 없음)**<br/>
+![윷 던지기 / 말 이동 2](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EC%82%AC%EC%9A%A9%EC%9E%90%202%20%EC%8B%9C%EC%A0%90%20%EC%9C%B7%20%EB%8D%98%EC%A7%80%EA%B8%B0%20%EB%A7%90%20%EC%9D%B4%EB%8F%99.gif)
 
-![게임시작.png](./exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EA%B2%8C%EC%9E%84%EC%8B%9C%EC%9E%91.png)
+**말 잡고 한번 더 던지기**<br/>
+![말 잡고 한번 더 던지기](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EB%A7%90%20%EC%9E%A1%EA%B3%A0%20%ED%95%9C%EB%B2%88%EB%8D%94.gif)
 
-**윷 던지기 및 말 이동**
+**말 얹기**<br/>
+![말 얹기](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EB%A7%90%20%EC%96%B9%EA%B8%B0.gif)
 
-![윷 던지기 및 말 이동 1.png](./exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%20%EB%8D%98%EC%A7%80%EA%B8%B0%20%EB%B0%8F%20%EB%A7%90%20%EC%9D%B4%EB%8F%99%201.png)
+**이벤트 칸(종류: 꽝, 한번더 던지기, 처음으로 돌아가기)**<br/>
+![이벤트 칸](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EC%9D%B4%EB%B2%A4%ED%8A%B8%20%EC%B9%B8.gif)
 
-![윷 던지기 및 말 이동 2.png](./exec/Readme%20%EC%9D%B4%EB%AF%B8%EC%A7%80/%EC%9C%B7%20%EB%8D%98%EC%A7%80%EA%B8%B0%20%EB%B0%8F%20%EB%A7%90%20%EC%9D%B4%EB%8F%99%202.png)
+**게임 끝**<br/>
+![게임 끝](./exec/%EC%84%9C%EB%B9%84%EC%8A%A4%20%EA%B0%80%EC%9D%B4%EB%93%9C%20gif/%EA%B2%8C%EC%9E%84%20%EB%81%9D.gif)
+
